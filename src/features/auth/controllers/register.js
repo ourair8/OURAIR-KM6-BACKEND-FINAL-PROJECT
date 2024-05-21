@@ -10,7 +10,9 @@ const registerUserController = async function(req, res){
 
     const {name, email, phoneNumber, password} = req.body
 
-    const otp = await registerUser(name, email, phoneNumber, password)
+    let stringPhone = String(phoneNumber)
+
+    const otp = await registerUser(name, email, stringPhone, password)
 
     console.log("otp", otp)
 
