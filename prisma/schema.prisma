@@ -35,8 +35,9 @@ model OTP {
   createdAt DateTime
   expiredAt DateTime
   userId    Int
-  user      Users    @relation("UserOTPs", fields: [userId], references: [id])
+  user      Users    @relation("UserOTPs", fields: [userId], references: [id], onDelete: Cascade)
 }
+
 
 model Ticket {
   id          Int       @id @default(autoincrement())

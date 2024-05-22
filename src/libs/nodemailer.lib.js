@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+const ejs = require('ejs');
 
 const SERVER_HOST = String(process.env.SERVER_HOST);
 const SERVER_EMAIL = String(process.env.SERVER_EMAIL);
@@ -14,4 +15,17 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-module.exports = { transporter };
+const getHTML = (fileName, data) => {
+    return new Promise((resolve, reject) => {
+        const path = `${__dirname}/../views/${fileName}`;
+        ejs.renderFile(path, data, (err, data) => {
+            if (err) {
+                return reject(err);
+            }
+            return resolve(data);
+        });
+    });
+};
+
+
+module.exports = { transporter, getHTML };

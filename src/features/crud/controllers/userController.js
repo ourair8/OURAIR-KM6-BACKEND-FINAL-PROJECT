@@ -4,6 +4,7 @@ const {
     createUserService,
     updateUserService,
     deleteUserService,
+    deleteUserManyService
 } = require('../services/userService');
 
 const { handleError } = require('../../../middleware/errorHandler');
@@ -46,12 +47,15 @@ const updateUserController = async(req, res) => {
 
 const deleteUserController = async(req, res) => {
     try {
+        // const id = req.params.id
+        // console.log(id)
         await deleteUserService(parseInt(req.params.id));
         res.status(200).json({ message: 'User deleted' });
     } catch (err) {
         handleError(err, res);
     }
 };
+
 
 
 module.exports = {

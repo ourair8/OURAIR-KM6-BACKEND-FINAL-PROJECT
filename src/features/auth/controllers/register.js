@@ -20,7 +20,7 @@ const registerUserController = async function(req, res){
         throw new ErrorWithStatusCode("Error unexpected", 401)
     }
 
-    const isEmailSuccess = await sendEmail(email, otp)
+    const isEmailSuccess = await sendEmail(name, email, otp)
 
     if(!isEmailSuccess) {
         throw new ErrorWithStatusCode("Error unexpected", 401)
@@ -32,6 +32,7 @@ const registerUserController = async function(req, res){
     }).status(201)
 
     } catch (err) {
+        console.log(err)
         handleError(err, res);
     } 
 
