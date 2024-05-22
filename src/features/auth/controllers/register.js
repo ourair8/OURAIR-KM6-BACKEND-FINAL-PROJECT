@@ -32,14 +32,7 @@ const registerUserController = async function(req, res){
     }).status(201)
 
     } catch (err) {
-        if (err instanceof ErrorWithStatusCode) {
-            return res.json({
-                status: false,
-                message: err.message
-            }).status(err.statusCode)
-        }
-
-        throw err
+        handleError(err, res);
     } 
 
 }

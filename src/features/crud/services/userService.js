@@ -2,11 +2,11 @@ const prisma = require('../../../config/prisma.config');
 const { ErrorWithStatusCode } = require('../../../middleware/errorHandler');
 
 const getAllUsersService = async() => {
-    return await prisma.user.findMany();
+    return await prisma.users.findMany();
 };
 
 const getUserByIdService = async(id) => {
-    const user = await prisma.user.findUnique({ where: { id } });
+    const user = await prisma.users.findUnique({ where: { id } });
     if (!user) {
         throw new ErrorWithStatusCode('User not found', 404);
     }
@@ -14,12 +14,12 @@ const getUserByIdService = async(id) => {
 };
 
 const createUserService = async(data) => {
-    return await prisma.user.create({ data });
+    return await prisma.users.create({ data });
 };
 
 const updateUserService = async(id, data) => {
     try {
-        return await prisma.user.update({
+        return await prisma.users.update({
             where: { id },
             data,
         });
@@ -30,7 +30,7 @@ const updateUserService = async(id, data) => {
 
 const deleteUserService = async(id) => {
     try {
-        await prisma.user.delete({ where: { id } });
+        await prisma.users.delete({ where: { id } });
     } catch (err) {
         throw new ErrorWithStatusCode('User not found', 404);
     }

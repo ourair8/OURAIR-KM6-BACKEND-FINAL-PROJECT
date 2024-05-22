@@ -5,7 +5,8 @@ const {
     updateUserService,
     deleteUserService,
 } = require('../services/userService');
-const { ErrorWithStatusCode } = require('../../../config/prisma.config');
+
+const { handleError } = require('../../../middleware/errorHandler');
 
 const getAllUsersController = async(req, res) => {
     try {
@@ -52,13 +53,6 @@ const deleteUserController = async(req, res) => {
     }
 };
 
-const handleError = (err, res) => {
-    if (err instanceof ErrorWithStatusCode) {
-        res.status(err.statusCode).json({ message: err.message });
-    } else {
-        res.status(500).json({ message: 'Internal Server Error' });
-    }
-};
 
 module.exports = {
     getAllUsersController,

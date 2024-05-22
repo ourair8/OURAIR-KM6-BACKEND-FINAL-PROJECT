@@ -5,7 +5,7 @@ const {
     updateTicketService,
     deleteTicketService,
 } = require('../services/ticketService');
-const { ErrorWithStatusCode } = require('../../../config/prisma.config');
+const { handleError } = require('../../../middleware/errorHandler');
 
 const getAllTicketsController = async(req, res) => {
     try {
@@ -49,14 +49,6 @@ const deleteTicketController = async(req, res) => {
         res.status(200).json({ message: 'Ticket deleted' });
     } catch (err) {
         handleError(err, res);
-    }
-};
-
-const handleError = (err, res) => {
-    if (err instanceof ErrorWithStatusCode) {
-        res.status(err.statusCode).json({ message: err.message });
-    } else {
-        res.status(500).json({ message: 'Internal Server Error' });
     }
 };
 
