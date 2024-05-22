@@ -1,6 +1,4 @@
 class ErrorWithStatusCode extends Error {
-    statusCode
-
     constructor(message, statusCode) {
         super(message);
         this.name = this.constructor.name;
@@ -9,4 +7,13 @@ class ErrorWithStatusCode extends Error {
     }
 }
 
-module.exports = { ErrorWithStatusCode };
+
+const handleError = (err, res) => {
+    if (err instanceof ErrorWithStatusCode) {
+        return res.status(err.statusCode).json({ message: err.message });
+    } else {
+        return res.status(500).json({ message: 'Internal Server Error' });
+    }
+};
+
+module.exports = { ErrorWithStatusCode, handleError };

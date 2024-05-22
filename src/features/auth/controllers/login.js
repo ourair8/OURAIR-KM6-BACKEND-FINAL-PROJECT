@@ -1,5 +1,5 @@
 const { loginByEmailService } = require("../services/login")
-const { ErrorWithStatusCode } = require('./../../../middleware/errorHandler');
+const { ErrorWithStatusCode, handleError } = require('./../../../middleware/errorHandler');
 const jwt = require('jsonwebtoken');
 const SECRET_KEY = process.env.JWT_SECRET_KEY
 
@@ -35,14 +35,7 @@ const loginByEmailController = async function(req, res){
         }).status(201)
 
     } catch (err) {
-        if (err instanceof ErrorWithStatusCode) {
-            return res.json({
-                status: false,
-                message: err.message
-            }).status(err.statusCode)
-        }
-
-        throw err
+        handleError(err, res);
     }
 }
 

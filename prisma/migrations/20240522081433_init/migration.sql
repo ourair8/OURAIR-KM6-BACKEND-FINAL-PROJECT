@@ -1,0 +1,5 @@
+-- DropForeignKey
+ALTER TABLE "OTP" DROP CONSTRAINT "OTP_userId_fkey";
+
+-- AddForeignKey
+ALTER TABLE "OTP" ADD CONSTRAINT "OTP_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
