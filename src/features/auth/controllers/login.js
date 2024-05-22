@@ -1,5 +1,5 @@
 const { loginByEmailService } = require("../services/login")
-const { ErrorWithStatusCode } = require('./../../../middleware/errorHandler');
+const { ErrorWithStatusCode, handleError } = require('./../../../middleware/errorHandler');
 const jwt = require('jsonwebtoken');
 const SECRET_KEY = process.env.JWT_SECRET_KEY
 

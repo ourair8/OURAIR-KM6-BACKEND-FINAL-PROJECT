@@ -1,6 +1,6 @@
 const { registerUser } = require("../services/register")
 const { sendEmail } = require("../services/sendmail")
-const { ErrorWithStatusCode } = require('./../../../middleware/errorHandler');
+const { ErrorWithStatusCode, handleError } = require('./../../../middleware/errorHandler');
 
 const registerUserController = async function(req, res){
 
