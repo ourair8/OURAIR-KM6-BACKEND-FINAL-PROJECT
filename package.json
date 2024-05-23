@@ -2,7 +2,8 @@
   "name": "ourair",
   "module": "index.js",
   "scripts": {
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "start": "bun run src/index.js"
   },
   "devDependencies": {
     "@types/bun": "latest"
