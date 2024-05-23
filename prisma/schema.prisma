@@ -14,25 +14,95 @@ datasource db {
 }
 
 model Users {
-  id          Int       @id @default(autoincrement())
-  name        String
-  email       String    @unique
+  id           Int       @id @default(autoincrement())
+  name         String
+  email        String    @unique
   phone_number String
-  username    String?   @unique
-  password    String
-  role        String    @default("user")
-  isVerified  Boolean   @default(false)
-  createdAt   DateTime
-  updateAt    DateTime?
+  username     String?   @unique
+  password     String
+  role         String    @default("user")
+  isVerified   Boolean   @default(false)
+  createdAt    DateTime
+  updateAt     DateTime?
 
-  otps        OTP[]     @relation("UserOTPs")
+  otps    OTP[]    @relation("UserOTPs")
+  tickets Ticket[]
 }
 
 model OTP {
-  id         Int       @id @default(autoincrement())
-  OTP        Int       @unique
-  createdAt  DateTime
-  expiredAt  DateTime
-  userId     Int
-  user       Users     @relation("UserOTPs", fields: [userId], references: [id])
+  id        Int      @id @default(autoincrement())
+  OTP       Int      @unique
+  createdAt DateTime
+  expiredAt DateTime
+  userId    Int
+  user      Users    @relation("UserOTPs", fields: [userId], references: [id], onDelete: Cascade)
+}
+
+
+model Ticket {
+  id          Int       @id @default(autoincrement())
+  flightId    Int
+  buyerId     Int
+  seatNumber  String
+  passangerId Int
+  status      String
+  type        String
+  createdAt   DateTime  @default(now())
+  paidAt      DateTime?
+  expiredAt   DateTime?
+
+  buyer     Users     @relation(fields: [buyerId], references: [id])
+  passanger Passanger @relation(fields: [passangerId], references: [id])
+  flight    Flight    @relation(fields: [flightId], references: [id])
+}
+
+model Passanger {
+  id                Int      @id @default(autoincrement())
+  name              String
+  age               Int
+  surname           String
+  birthDate         DateTime
+  address           String
+  nationality       String
+  civilId           String
+  passportOrigin    String
+  passportExpiredAt DateTime
+  tickets           Ticket[]
+}
+
+model Flight {
+  id          Int       @id @default(autoincrement())
+  planeId     Int
+  origin      String
+  destination String
+  totalSeat   Int
+  pTakeOff    DateTime
+  pArrival    DateTime
+  aTakeOff    DateTime?
+  aArrival    DateTime?
+  isAvailable Boolean   @default(true)
+  thumbnail   String?
+  type        String
+  ticketPrice Float
+  tickets     Ticket[]
+  plane       Plane     @relation(fields: [planeId], references: [id])
+  airport     Airport   @relation(fields: [origin], references: [code])
+}
+
+model Plane {
+  id           Int      @id @default(autoincrement())
+  name         String
+  model        String
+  baggage      Int
+  cabinBaggage Int
+  facility     String
+  createdAt    DateTime @default(now())
+  flights      Flight[]
+}
+
+model Airport {
+  id      Int      @id @default(autoincrement())
+  name    String
+  code    String   @unique
+  flights Flight[]
 }

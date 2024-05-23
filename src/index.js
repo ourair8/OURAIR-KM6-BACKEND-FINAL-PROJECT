@@ -2,14 +2,25 @@ const express = require("express")
 const bodyparser = require("body-parser")
 const logger = require("morgan")
 const { v1 } = require('./api/v1.api')
+const path = require("path")
 require('dotenv').config();
 
 const app = express()
     .use(logger("dev"))
+    .set('views', path.join(__dirname, './views'))
+    .set('view engine', 'ejs')
     .use(express.json())
     .use(express.urlencoded({extended : false}))
     .use(bodyparser.urlencoded({extended : false}))
     .use("/api/v1", v1)
+    .get('/email', (req, res) => {
+        const data = { otp: '247824', name: 'Our Air wow' };
+        res.render('email', data);
+      })
+      .get('/test', (req, res) => {
+        const data = { verification_url: '247824', name: 'Our Air wow' };
+        res.render('test', data);
+      })
     .get("/", (req, res) => {
         return res.json({
             status : true,
@@ -38,7 +49,7 @@ const app = express()
         });
     })
 
-const PORT = 3000
+const PORT = 3001
 
 app.listen(PORT, () => {
     console.log(`listening on port ${PORT}`)

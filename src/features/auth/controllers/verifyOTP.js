@@ -1,4 +1,4 @@
-const { ErrorWithStatusCode } = require('./../../../middleware/errorHandler');
+const { ErrorWithStatusCode, handleError } = require('./../../../middleware/errorHandler');
 const { verifyOTP } = require("../services/verifyOTP")
 
 const verifyOTPController = async function(req, res){
@@ -21,14 +21,7 @@ const verifyOTPController = async function(req, res){
     }).status(201)
 
     } catch (err) {
-        if (err instanceof ErrorWithStatusCode) {
-            return res.json({
-                status: false,
-                message: err.message
-            }).status(err.statusCode)
-        }
-
-        throw err
+        handleError(err, res);
     } 
 
 }
