@@ -1,0 +1,21 @@
+[0;1;32m●[0m systemd-resolved.service - Network Name Resolution
+     Loaded: loaded (]8;;file://naufalandya/usr/lib/systemd/system/systemd-resolved.service/usr/lib/systemd/system/systemd-resolved.service]8;;; [0;1;32menabled[0m; preset: [0;1;32menabled[0m)
+     Active: [0;1;32mactive (running)[0m since Thu 2024-05-23 18:18:40 WIB; 31min ago
+       Docs: ]8;;man:systemd-resolved.service(8)man:systemd-resolved.service(8)]8;;
+             ]8;;man:org.freedesktop.resolve1(5)man:org.freedesktop.resolve1(5)]8;;
+             ]8;;https://www.freedesktop.org/wiki/Software/systemd/writing-network-configuration-managershttps://www.freedesktop.org/wiki/Software/systemd/writing-network-configuration-managers]8;;
+             ]8;;https://www.freedesktop.org/wiki/Software/systemd/writing-resolver-clientshttps://www.freedesktop.org/wiki/Software/systemd/writing-resolver-clients]8;;
+   Main PID: 4093 (systemd-resolve)
+     Status: "[0;1;36mProcessing requests...[0m"
+      Tasks: 1 (limit: 1113)
+     Memory: 2.6M (peak: 2.9M)
+        CPU: 152ms
+     CGroup: /system.slice/systemd-resolved.service
+             └─[0;38;5;245m4093 /usr/lib/systemd/systemd-resolved[0m
+
+May 23 18:18:40 naufalandya systemd[1]: Starting systemd-resolved.service - Network Name Resolution...
+May 23 18:18:40 naufalandya systemd-resolved[4093]: Positive Trust Anchors:
+May 23 18:18:40 naufalandya systemd-resolved[4093]: . IN DS 20326 8 2 e06d44b80b8f1d39a95c0b0d7c65d08458e880409bbc683457104237c7f8ec8d
+May 23 18:18:40 naufalandya systemd-resolved[4093]: Negative trust anchors: home.arpa 10.in-addr.arpa 16.172.in-addr.arpa 17.172.in-addr.arpa 18.172.in-addr.arpa 19.172.in-addr.arpa 20.172.in-addr.arpa 21.172.in-addr.arpa 22.172.in-addr.arpa 23.172.in-addr.arpa 24.172.in-addr.arpa 25.172.in-addr.arpa 26.172.in-addr.arpa 27.172.in-addr.arpa 28.172.in-addr.arpa 29.172.in-addr.arpa 30.172.in-addr.arpa 31.172.in-addr.arpa 170.0.0.192.in-addr.arpa 171.0.0.192.in-addr.arpa 168.192.in-addr.arpa d.f.ip6.arpa ipv4only.arpa corp home internal intranet lan local private test
+May 23 18:18:40 naufalandya systemd-resolved[4093]: Using system hostname 'naufalandya'.
+May 23 18:18:40 naufalandya systemd[1]: Started systemd-resolved.service - Network Name Resolution.

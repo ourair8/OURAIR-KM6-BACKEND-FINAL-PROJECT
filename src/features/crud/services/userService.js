@@ -34,7 +34,6 @@ const deleteUserService = async(id) => {
     try {
         await prisma.users.delete({ where: { id } });
     } catch (err) {
-        console.log(err)
         throw new ErrorWithStatusCode('User not found', 404);
     }
 };

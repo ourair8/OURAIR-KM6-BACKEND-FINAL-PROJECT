@@ -6,8 +6,8 @@ const path = require("path")
 require('dotenv').config();
 
 const app = express()
-    .use(logger("dev"))
     .set('views', path.join(__dirname, './views'))
+    .use(logger('dev'))
     .set('view engine', 'ejs')
     .use(express.json())
     .use(express.urlencoded({extended : false}))
