@@ -14,95 +14,172 @@ datasource db {
 }
 
 model Users {
-  id           Int       @id @default(autoincrement())
-  name         String
-  email        String    @unique
-  phone_number String
-  username     String?   @unique
-  password     String
-  role         String    @default("user")
-  isVerified   Boolean   @default(false)
-  createdAt    DateTime
-  updateAt     DateTime?
+  id          Int     @id @default(autoincrement())
+  name        String
+  username    String  @unique
+  password    String
+  is_Verified Boolean
+  role        Role    @default(USER)
 
-  otps    OTP[]    @relation("UserOTPs")
-  tickets Ticket[]
+  otps          Otps[]
+  tickets       Tickets[]
+  notofications Notifications[]
+
+  @@map("users")
 }
 
-model OTP {
-  id        Int      @id @default(autoincrement())
-  OTP       Int      @unique
-  createdAt DateTime
-  expiredAt DateTime
-  userId    Int
-  user      Users    @relation("UserOTPs", fields: [userId], references: [id], onDelete: Cascade)
+model Otps {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  otp_code   String
+  created_at DateTime
+  expired_at DateTime
+
+  whomUserVerify Users @relation(fields: [user_id], references: [id])
+
+  @@map("otp")
 }
 
+model Notifications {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  title      String
+  message    String
+  is_read    Boolean
+  created_at DateTime
+  updated_at DateTime
 
-model Ticket {
+  WhomUserNotification Users @relation(fields: [user_id], references: [id])
+
+  @@map("notifications")
+}
+
+model Airlines {
+  id           Int    @id @default(autoincrement())
+  name         String @db.VarChar(255)
+  airline_code String @db.VarChar(255)
+
+  airplanes Airplanes[]
+
+  @@map("airlines")
+}
+
+model Airplanes {
+  id                   Int    @id @default(autoincrement())
+  airline_id           Int
+  airplane_code        String @db.VarChar(150)
+  baggage              Int
+  cabin_baggage        Int
+  facility             String @db.VarChar(255)
+  seat_economy         Int
+  seat_economy_premium Int
+  seat_business        Int
+  seat_first_class     Int
+
+  whomAirlinesAirplanes Airlines @relation(fields: [airline_id], references: [id])
+
+  flight Flights[]
+
+  @@map("airplanes")
+}
+
+model Airports {
+  id            Int    @id @default(autoincrement())
+  name          String @db.VarChar(150)
+  city          String @db.VarChar(100)
+  total_visited Int
+  thumbnail     String
+
+  fromFlights Flights[] @relation("fromFlights")
+  toFlights   Flights[] @relation("toFlights")
+
+  @@map("airports")
+}
+
+model Flights {
+  id             Int        @id @default(autoincrement())
+  airplane_id    Int
+  from_id        Int
+  to_id          Int
+  departure_time DateTime
+  arrival_time   DateTime
+  flight_type    FlightType @default(DOMESTIC)
+
+  fromAirport         Airports  @relation("fromFlights", fields: [from_id], references: [id])
+  toAirport           Airports  @relation("toFlights", fields: [to_id], references: [id])
+  whomAirplaneFlights Airplanes @relation(fields: [airplane_id], references: [id])
+
+  tickets Tickets[]
+
+  @@map("flights")
+}
+
+model Passengers {
+  id                  Int      @id @default(autoincrement())
+  title               String
+  fullname            String
+  surname             String
+  birth_date          DateTime
+  nationality         String
+  document            String
+  country_publication String
+  document_expired    DateTime
+  seat_number         Int
+
+  tickets Tickets[]
+
+  @@map("passengers")
+}
+
+model Tickets {
+  id             Int  @id @default(autoincrement())
+  user_id        Int
+  passanger_id   Int  @unique
+  flight_id      Int
+  transaction_id Int?
+
+  whomPassangerTicket Passengers    @relation(fields: [passanger_id], references: [id])
+  whomFlightTicket    Flights       @relation(fields: [flight_id], references: [id])
+  whomUserTicket      Users         @relation(fields: [user_id], references: [id])
+  transaction         Transactions? @relation(fields: [transaction_id], references: [id]) // Relasi ke Transactions
+
+  @@map("tickets")
+}
+
+model Transactions {
   id          Int       @id @default(autoincrement())
-  flightId    Int
-  buyerId     Int
-  seatNumber  String
-  passangerId Int
-  status      String
-  type        String
-  createdAt   DateTime  @default(now())
-  paidAt      DateTime?
-  expiredAt   DateTime?
+  adult_price Int
+  baby_price  Int
+  tax_price   Int
+  total_price Int
+  created_at  DateTime
+  status      Boolean
+  Payments    Payments?
 
-  buyer     Users     @relation(fields: [buyerId], references: [id])
-  passanger Passanger @relation(fields: [passangerId], references: [id])
-  flight    Flight    @relation(fields: [flightId], references: [id])
+  tickets Tickets[]
+
+  @@map("transactions")
 }
 
-model Passanger {
-  id                Int      @id @default(autoincrement())
-  name              String
-  age               Int
-  surname           String
-  birthDate         DateTime
-  address           String
-  nationality       String
-  civilId           String
-  passportOrigin    String
-  passportExpiredAt DateTime
-  tickets           Ticket[]
+model Payments {
+  id             Int      @id @default(autoincrement())
+  transaction_id Int      @unique
+  payment_type   String
+  payment_status String
+  created_at     DateTime
+
+  transaction Transactions @relation(fields: [transaction_id], references: [id])
+
+  @@map("payments")
 }
 
-model Flight {
-  id          Int       @id @default(autoincrement())
-  planeId     Int
-  origin      String
-  destination String
-  totalSeat   Int
-  pTakeOff    DateTime
-  pArrival    DateTime
-  aTakeOff    DateTime?
-  aArrival    DateTime?
-  isAvailable Boolean   @default(true)
-  thumbnail   String?
-  type        String
-  ticketPrice Float
-  tickets     Ticket[]
-  plane       Plane     @relation(fields: [planeId], references: [id])
-  airport     Airport   @relation(fields: [origin], references: [code])
+//enum
+enum Role {
+  USER
+  ADMIN
 }
 
-model Plane {
-  id           Int      @id @default(autoincrement())
-  name         String
-  model        String
-  baggage      Int
-  cabinBaggage Int
-  facility     String
-  createdAt    DateTime @default(now())
-  flights      Flight[]
-}
-
-model Airport {
-  id      Int      @id @default(autoincrement())
-  name    String
-  code    String   @unique
-  flights Flight[]
+enum FlightType {
+  DOMESTIC
+  INTERNATIONAL
 }
