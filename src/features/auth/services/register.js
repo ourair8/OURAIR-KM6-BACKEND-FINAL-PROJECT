@@ -1,3 +1,5 @@
+'use strict'
+
 const prisma = require("../../../config/prisma.config")
 const bcrypt = require("bcrypt")
 
@@ -44,7 +46,7 @@ const registerUser = async function(name, email, phoneNumber, password){
      const currentTime = new Date();
      const expiredAt = new Date(currentTime.getTime() + 10 * 60000);
 
-     const result = await prisma.oTP.create({
+     const result = await prisma.otps.create({
         data : {
             OTP : Number(otp),
             createdAt : new Date(),

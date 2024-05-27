@@ -20,6 +20,7 @@ model Users {
   password    String
   is_Verified Boolean
   role        Role    @default(USER)
+  avatar_link String
 
   otps          Otps[]
   tickets       Tickets[]
@@ -47,7 +48,6 @@ model Notifications {
   message    String
   is_read    Boolean
   created_at DateTime
-  updated_at DateTime
 
   WhomUserNotification Users @relation(fields: [user_id], references: [id])
 
@@ -70,7 +70,7 @@ model Airplanes {
   airplane_code        String @db.VarChar(150)
   baggage              Int
   cabin_baggage        Int
-  facility             String @db.VarChar(255)
+  description             String @db.VarChar(255)
   seat_economy         Int
   seat_economy_premium Int
   seat_business        Int

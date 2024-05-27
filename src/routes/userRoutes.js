@@ -1,3 +1,7 @@
+'use strict'
+
+import { checkRole, verifyToken } from '../features/auth/controllers/whoAmI';
+
 const express = require('express');
 const {
     getAllUsersController,
@@ -7,12 +11,11 @@ const {
     deleteUserController,
 } = require('../features/crud/controllers/userController');
 
-const userRoutes = express.Router();
-
-userRoutes.get('/', getAllUsersController);
-userRoutes.get('/:id', getUserByIdController);
-userRoutes.post('/', createUserController);
-userRoutes.put('/:id', updateUserController);
-userRoutes.delete('/:id', deleteUserController);
+const userRoutes = express.Router()
+    .get('/', verifyToken, checkRole(['admin']), getAllUsersController)
+    .get('/:id', verifyToken, checkRole(['admin']), getUserByIdController)
+    .post('/', verifyToken, checkRole(['admin']), createUserController)
+    .put('/:id', verifyToken, checkRole(['user']), updateUserController)
+    .delete('/:id', verifyToken, checkRole(['admin']), deleteUserController)
 
 module.exports = { userRoutes };

@@ -1,3 +1,5 @@
+'use strict'
+
 const {
     getAllTicketsService,
     getTicketByIdService,

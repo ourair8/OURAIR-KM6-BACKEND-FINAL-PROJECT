@@ -1,3 +1,5 @@
+'use strict'
+
 const { loginByEmailService } = require("../services/login")
 const { ErrorWithStatusCode, handleError } = require('./../../../middleware/errorHandler');
 const jwt = require('jsonwebtoken');
