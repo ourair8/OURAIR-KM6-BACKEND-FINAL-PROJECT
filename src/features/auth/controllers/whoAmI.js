@@ -1,0 +1,67 @@
+'use strict'
+
+const jwt = require('jsonwebtoken');
+const SECRET_KEY = process.env.JWT_SECRET_KEY
+
+const verifyToken = (req, res, next) => {
+
+    const { authorization } = req.headers
+
+    console.log(authorization)
+
+    if (!authorization || !authorization.split(' ')[1]) {
+        return res.json({
+            status: false,
+            message: 'token not provided!',
+            data: null
+        }).status(401);
+    }
+
+    let token = authorization.split(' ')[1];
+
+    jwt.verify(token, SECRET_KEY, (err, decoded) => {
+        if (err) {
+            return res.status(401).json({ message: 'Failed to authenticate token' });
+        }
+
+        req.user = decoded;
+        next();
+    });
+};
+
+const checkRole = (roles) => {
+    return (req, res, next) => {
+        if (!roles.includes(req.user.role)) {
+            return res.status(403).json({ message: 'Access forbidden: insufficient rights' });
+        }
+        next();
+    };
+};
+
+const whoAmIController = (req, res) => {
+    try {
+        const { id, name, username, email, phone_number, isVerified, role } = req.user;
+
+        res.json({
+            status: true,
+            message: 'User authenticated',
+            data: {
+                id,
+                name,
+                username,
+                email,
+                phone_number,
+                isVerified,
+                role
+            }
+        });
+    } catch (err) {
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+module.exports = {
+    verifyToken,
+    checkRole,
+    whoAmIController
+};
