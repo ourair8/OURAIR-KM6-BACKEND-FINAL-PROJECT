@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt")
 const { ErrorWithStatusCode } = require('./../../../middleware/errorHandler');
 
 const registerUser = async function(name, email, phoneNumber, password){
+
    try {
 
      const isEmailAlreadyExist = await prisma.users.findUnique({

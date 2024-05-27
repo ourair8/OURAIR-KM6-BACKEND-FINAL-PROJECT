@@ -111,6 +111,7 @@ CREATE TABLE "tickets" (
     "user_id" INTEGER NOT NULL,
     "passanger_id" INTEGER NOT NULL,
     "flight_id" INTEGER NOT NULL,
+    "transaction_id" INTEGER,
 
     CONSTRAINT "tickets_pkey" PRIMARY KEY ("id")
 );
@@ -129,28 +130,14 @@ CREATE TABLE "transactions" (
 );
 
 -- CreateTable
-CREATE TABLE "ticket_transactions" (
-    "id" SERIAL NOT NULL,
-    "ticket_id" INTEGER NOT NULL,
-    "transaction_id" INTEGER NOT NULL,
-
-    CONSTRAINT "ticket_transactions_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "transaction_histories" (
+CREATE TABLE "payments" (
     "id" SERIAL NOT NULL,
     "transaction_id" INTEGER NOT NULL,
-    "ticket_id" INTEGER NOT NULL,
-    "adult_price" INTEGER NOT NULL,
-    "baby_price" INTEGER NOT NULL,
-    "tax_price" INTEGER NOT NULL,
-    "total_price" INTEGER NOT NULL,
+    "payment_type" TEXT NOT NULL,
+    "payment_status" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL,
-    "status" BOOLEAN NOT NULL,
-    "change_date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "transaction_histories_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "payments_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -158,6 +145,9 @@ CREATE UNIQUE INDEX "users_username_key" ON "users"("username");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "tickets_passanger_id_key" ON "tickets"("passanger_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "payments_transaction_id_key" ON "payments"("transaction_id");
 
 -- AddForeignKey
 ALTER TABLE "otp" ADD CONSTRAINT "otp_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -187,7 +177,7 @@ ALTER TABLE "tickets" ADD CONSTRAINT "tickets_flight_id_fkey" FOREIGN KEY ("flig
 ALTER TABLE "tickets" ADD CONSTRAINT "tickets_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ticket_transactions" ADD CONSTRAINT "ticket_transactions_transaction_id_fkey" FOREIGN KEY ("transaction_id") REFERENCES "transactions"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "tickets" ADD CONSTRAINT "tickets_transaction_id_fkey" FOREIGN KEY ("transaction_id") REFERENCES "transactions"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ticket_transactions" ADD CONSTRAINT "ticket_transactions_ticket_id_fkey" FOREIGN KEY ("ticket_id") REFERENCES "tickets"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "payments" ADD CONSTRAINT "payments_transaction_id_fkey" FOREIGN KEY ("transaction_id") REFERENCES "transactions"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
