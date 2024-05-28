@@ -10,11 +10,9 @@ const registerUserController = async function(req, res){
 
     console.log("Checkpoint")
 
-    const {name, email, phoneNumber, password} = req.body
+    const {name, email, password} = req.body
 
-    let stringPhone = String(phoneNumber)
-
-    const otp = await registerUser(name, email, stringPhone, password)
+    const otp = await registerUser(name, email, password)
 
     console.log("otp", otp)
 

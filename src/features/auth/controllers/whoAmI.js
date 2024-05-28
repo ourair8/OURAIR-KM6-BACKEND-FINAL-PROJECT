@@ -34,6 +34,10 @@ const checkRole = (roles) => {
         if (!roles.includes(req.user.role)) {
             return res.status(403).json({ message: 'Access forbidden: insufficient rights' });
         }
+
+        if(req.user.role !== 'ADMIN') {
+            return res.status(403).json({ message: 'Access forbidden: insufficient rights' });
+        }
         next();
     };
 };

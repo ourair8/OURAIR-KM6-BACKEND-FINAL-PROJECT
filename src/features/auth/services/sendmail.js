@@ -3,6 +3,7 @@
 const prisma = require("../../../config/prisma.config")
 const { transporter, getHTML } = require("../../../libs/nodemailer.lib")
 const SERVER_EMAIL = String(process.env.SERVER_EMAIL);
+const{ ErrorWithStatusCode } = require("../../../middleware/errorHandler")
 
 const sendEmail = async function(name, email, otp) {
 

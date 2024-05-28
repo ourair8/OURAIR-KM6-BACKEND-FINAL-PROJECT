@@ -8,6 +8,7 @@ const { ticketRoutes } = require('../routes/ticketRoutes');
 
 const { flightRoutes } = require('../routes/flightRoutes');
 const { transactionRoutes } = require('../routes/transactionRoutes');
+const { seeder } =  require('../routes/admin/seederRoute');
 
 // const { planeRoutes } = require('../routes/planeRoutes');
 // const { airportRoutes } = require('../routes/airportRoutes');
@@ -18,7 +19,6 @@ const v1 = require("express").Router()
     .use('/tickets', ticketRoutes)
     .use('/flights', flightRoutes)
     .use('/transactions', transactionRoutes)
-
-
+    .use('/seeder', seeder)
 
 module.exports = { v1 };
