@@ -19,10 +19,6 @@ const app = express()
         const data = { otp: '247824', name: 'Our Air wow' };
         res.render('email', data);
       })
-      .get('/test', (req, res) => {
-        const data = { verification_url: '247824', name: 'Our Air wow' };
-        res.render('test', data);
-      })
     .get("/", (req, res) => {
         return res.json({
             status : true,
