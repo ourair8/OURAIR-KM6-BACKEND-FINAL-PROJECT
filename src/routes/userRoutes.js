@@ -1,6 +1,6 @@
 'use strict'
 
-import { checkRole, verifyToken } from '../features/auth/controllers/whoAmI';
+const { checkRole, verifyToken } = require('../features/auth/controllers/whoAmI');
 
 const express = require('express');
 const {

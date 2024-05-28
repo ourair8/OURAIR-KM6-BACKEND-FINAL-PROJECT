@@ -8,10 +8,13 @@ CREATE TYPE "FlightType" AS ENUM ('DOMESTIC', 'INTERNATIONAL');
 CREATE TABLE "users" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
-    "username" TEXT NOT NULL,
+    "username" TEXT,
     "password" TEXT NOT NULL,
-    "is_Verified" BOOLEAN NOT NULL,
+    "email" TEXT NOT NULL,
+    "is_Verified" BOOLEAN NOT NULL DEFAULT false,
     "role" "Role" NOT NULL DEFAULT 'USER',
+    "created_at" TIMESTAMP(3) NOT NULL,
+    "avatar_link" TEXT,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
@@ -19,7 +22,7 @@ CREATE TABLE "users" (
 -- CreateTable
 CREATE TABLE "otp" (
     "id" SERIAL NOT NULL,
-    "user_id" INTEGER NOT NULL,
+    "user_id" INTEGER,
     "otp_code" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL,
     "expired_at" TIMESTAMP(3) NOT NULL,
@@ -35,7 +38,6 @@ CREATE TABLE "notifications" (
     "message" TEXT NOT NULL,
     "is_read" BOOLEAN NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL,
-    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "notifications_pkey" PRIMARY KEY ("id")
 );
@@ -56,7 +58,7 @@ CREATE TABLE "airplanes" (
     "airplane_code" VARCHAR(150) NOT NULL,
     "baggage" INTEGER NOT NULL,
     "cabin_baggage" INTEGER NOT NULL,
-    "facility" VARCHAR(255) NOT NULL,
+    "description" VARCHAR(255) NOT NULL,
     "seat_economy" INTEGER NOT NULL,
     "seat_economy_premium" INTEGER NOT NULL,
     "seat_business" INTEGER NOT NULL,
@@ -68,10 +70,15 @@ CREATE TABLE "airplanes" (
 -- CreateTable
 CREATE TABLE "airports" (
     "id" SERIAL NOT NULL,
+    "code" TEXT NOT NULL,
     "name" VARCHAR(150) NOT NULL,
-    "city" VARCHAR(100) NOT NULL,
-    "total_visited" INTEGER NOT NULL,
-    "thumbnail" TEXT NOT NULL,
+    "cityCode" VARCHAR(20) NOT NULL,
+    "cityName" VARCHAR(150) NOT NULL,
+    "countryCode" VARCHAR(150) NOT NULL,
+    "countryName" VARCHAR(150) NOT NULL,
+    "city" BOOLEAN NOT NULL,
+    "total_visited" INTEGER,
+    "thumbnail" TEXT,
 
     CONSTRAINT "airports_pkey" PRIMARY KEY ("id")
 );
@@ -144,13 +151,16 @@ CREATE TABLE "payments" (
 CREATE UNIQUE INDEX "users_username_key" ON "users"("username");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "tickets_passanger_id_key" ON "tickets"("passanger_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "payments_transaction_id_key" ON "payments"("transaction_id");
 
 -- AddForeignKey
-ALTER TABLE "otp" ADD CONSTRAINT "otp_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "otp" ADD CONSTRAINT "otp_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "notifications" ADD CONSTRAINT "notifications_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

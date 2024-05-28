@@ -16,11 +16,13 @@ datasource db {
 model Users {
   id          Int     @id @default(autoincrement())
   name        String
-  username    String  @unique
+  username    String?  @unique
   password    String
-  is_Verified Boolean
+  email       String @unique
+  is_Verified Boolean @default(false)
   role        Role    @default(USER)
-  avatar_link String
+  created_at DateTime
+  avatar_link String? 
 
   otps          Otps[]
   tickets       Tickets[]
@@ -31,12 +33,12 @@ model Users {
 
 model Otps {
   id         Int      @id @default(autoincrement())
-  user_id    Int
+  user_id    Int?
   otp_code   String
   created_at DateTime
   expired_at DateTime
 
-  whomUserVerify Users @relation(fields: [user_id], references: [id])
+  whomUserVerify Users? @relation(fields: [user_id], references: [id], onDelete: SetNull)
 
   @@map("otp")
 }
@@ -84,11 +86,16 @@ model Airplanes {
 }
 
 model Airports {
-  id            Int    @id @default(autoincrement())
-  name          String @db.VarChar(150)
-  city          String @db.VarChar(100)
-  total_visited Int
-  thumbnail     String
+  id            Int      @id @default(autoincrement())
+  code          String
+  name          String   @db.VarChar(150)
+  cityCode      String    @db.VarChar(20)
+  cityName      String   @db.VarChar(150)
+  countryCode   String    @db.VarChar(150)
+  countryName   String    @db.VarChar(150)
+  city          Boolean
+  total_visited Int?
+  thumbnail     String?
 
   fromFlights Flights[] @relation("fromFlights")
   toFlights   Flights[] @relation("toFlights")

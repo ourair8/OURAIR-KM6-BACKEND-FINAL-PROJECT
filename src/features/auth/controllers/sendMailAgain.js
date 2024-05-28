@@ -1,14 +1,14 @@
 'use strict'
 
-const{ ErrorWithStatusCode } = require("../../../middleware/errorHandler")
 const { sendEmailAgain } = require("../services/sendmail")
+const{ handleError } = require("../../../middleware/errorHandler")
 
 const sendEmailAgainController = async function(req, res) {
 
     const email = await req.body.email
 
     try {
-        const result = sendEmailAgain(email)
+        const result = await sendEmailAgain(email)
 
         if(!result){
             return res.json({
@@ -24,10 +24,7 @@ const sendEmailAgainController = async function(req, res) {
 
 
     } catch (err) {
-        if(err instanceof ErrorWithStatusCode) {
-            handleError(err, res);
-        }
-        throw err
+        handleError(err, res);
     }
 }
 
