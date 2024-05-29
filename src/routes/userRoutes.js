@@ -12,10 +12,10 @@ const {
 } = require('../features/crud/controllers/userController');
 
 const userRoutes = express.Router()
-    .get('/', verifyToken, checkRole(['admin']), getAllUsersController)
-    .get('/:id', verifyToken, checkRole(['admin']), getUserByIdController)
-    .post('/', verifyToken, checkRole(['admin']), createUserController)
+    .get('/', verifyToken, checkRole(['ADMIN']), getAllUsersController)
+    .get('/:id', verifyToken, checkRole(['ADMIN']), getUserByIdController)
+    .post('/', verifyToken, checkRole(['ADMIN']), createUserController)
     .put('/:id', verifyToken, checkRole(['user']), updateUserController)
-    .delete('/:id', verifyToken, checkRole(['admin']), deleteUserController)
+    .delete('/:id', verifyToken, checkRole(['ADMIN']), deleteUserController)
 
 module.exports = { userRoutes };

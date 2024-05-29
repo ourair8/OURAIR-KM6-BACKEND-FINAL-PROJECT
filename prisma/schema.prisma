@@ -111,6 +111,7 @@ model Flights {
   departure_time DateTime
   arrival_time   DateTime
   flight_type    FlightType @default(DOMESTIC)
+  ticket_price   Int
 
   fromAirport         Airports  @relation("fromFlights", fields: [from_id], references: [id])
   toAirport           Airports  @relation("toFlights", fields: [to_id], references: [id])
@@ -123,7 +124,6 @@ model Flights {
 
 model Passengers {
   id                  Int      @id @default(autoincrement())
-  title               String
   fullname            String
   surname             String
   birth_date          DateTime
