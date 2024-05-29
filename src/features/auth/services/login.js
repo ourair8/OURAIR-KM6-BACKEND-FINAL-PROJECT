@@ -1,3 +1,5 @@
+'use strict'
+
 const prisma = require("../../../config/prisma.config")
 const bcrypt = require("bcrypt")
 

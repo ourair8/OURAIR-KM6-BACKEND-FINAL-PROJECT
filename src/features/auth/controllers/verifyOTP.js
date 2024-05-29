@@ -1,3 +1,5 @@
+'use strict'
+
 const { ErrorWithStatusCode, handleError } = require('./../../../middleware/errorHandler');
 const { verifyOTP } = require("../services/verifyOTP")
 

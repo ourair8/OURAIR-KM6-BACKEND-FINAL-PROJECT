@@ -1,45 +1,47 @@
+'use strict'
+
 const prisma = require('../../../config/prisma.config');
 const { ErrorWithStatusCode } = require('../../../middleware/errorHandler');
 
-const getAllTicketsService = async() => {
-    return await prisma.ticket.findMany();
+const getAllticketssService = async() => {
+    return await prisma.tickets.findMany();
 };
 
-const getTicketByIdService = async(id) => {
-    const ticket = await prisma.ticket.findUnique({ where: { id } });
-    if (!ticket) {
-        throw new ErrorWithStatusCode('Ticket not found', 404);
+const getticketsByIdService = async(id) => {
+    const tickets = await prisma.tickets.findUnique({ where: { id } });
+    if (!tickets) {
+        throw new ErrorWithStatusCode('tickets not found', 404);
     }
-    return ticket;
+    return tickets;
 };
 
-const createTicketService = async(data) => {
-    return await prisma.ticket.create({ data });
+const createticketsService = async(data) => {
+    return await prisma.tickets.create({ data });
 };
 
-const updateTicketService = async(id, data) => {
+const updateticketsService = async(id, data) => {
     try {
-        return await prisma.ticket.update({
+        return await prisma.tickets.update({
             where: { id },
             data,
         });
     } catch (err) {
-        throw new ErrorWithStatusCode('Ticket not found', 404);
+        throw new ErrorWithStatusCode('tickets not found', 404);
     }
 };
 
-const deleteTicketService = async(id) => {
+const deleteticketsService = async(id) => {
     try {
-        await prisma.ticket.delete({ where: { id } });
+        await prisma.tickets.delete({ where: { id } });
     } catch (err) {
-        throw new ErrorWithStatusCode('Ticket not found', 404);
+        throw new ErrorWithStatusCode('tickets not found', 404);
     }
 };
 
 module.exports = {
-    getAllTicketsService,
-    getTicketByIdService,
-    createTicketService,
-    updateTicketService,
-    deleteTicketService,
+    getAllticketssService,
+    getticketsByIdService,
+    createticketsService,
+    updateticketsService,
+    deleteticketsService,
 };

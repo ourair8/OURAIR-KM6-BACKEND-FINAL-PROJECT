@@ -1,3 +1,5 @@
+'use strict'
+
 class ErrorWithStatusCode extends Error {
     constructor(message, statusCode) {
         super(message);

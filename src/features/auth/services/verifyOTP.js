@@ -1,3 +1,5 @@
+'use strict'
+
 
 const prisma = require("../../../config/prisma.config")
 const { ErrorWithStatusCode } = require('./../../../middleware/errorHandler');
@@ -9,8 +11,8 @@ const verifyOTP = async (email, otp) => {
             include: {
                 otps: {
                     where: {
-                        OTP: Number(otp),
-                        expiredAt: {
+                        otp_code: otp,
+                        expired_at: {
                             gte: new Date(),
                         },
                     },
@@ -23,7 +25,7 @@ const verifyOTP = async (email, otp) => {
 
             await prisma.users.update({
                 where: { id: user.id },
-                data: { isVerified: true },
+                data: { is_Verified: true },
             });
 
             return true
