@@ -1,3 +1,5 @@
+'use strict'
+
 const express = require("express")
 const bodyparser = require("body-parser")
 const logger = require("morgan")
@@ -6,8 +8,8 @@ const path = require("path")
 require('dotenv').config();
 
 const app = express()
-    .use(logger("dev"))
     .set('views', path.join(__dirname, './views'))
+    .use(logger('dev'))
     .set('view engine', 'ejs')
     .use(express.json())
     .use(express.urlencoded({extended : false}))
@@ -16,10 +18,6 @@ const app = express()
     .get('/email', (req, res) => {
         const data = { otp: '247824', name: 'Our Air wow' };
         res.render('email', data);
-      })
-      .get('/test', (req, res) => {
-        const data = { verification_url: '247824', name: 'Our Air wow' };
-        res.render('test', data);
       })
     .get("/", (req, res) => {
         return res.json({
@@ -49,7 +47,7 @@ const app = express()
         });
     })
 
-const PORT = 3000
+const PORT = 3001
 
 app.listen(PORT, () => {
     console.log(`listening on port ${PORT}`)

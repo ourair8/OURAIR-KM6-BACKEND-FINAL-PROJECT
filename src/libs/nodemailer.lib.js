@@ -1,3 +1,5 @@
+'use strict'
+
 const nodemailer = require('nodemailer');
 const ejs = require('ejs');
 
@@ -8,7 +10,8 @@ const SERVER_PASSWORD = String(process.env.SERVER_PASS);
 
 const transporter = nodemailer.createTransport({
     host: SERVER_HOST,
-    port: 587,
+    port: 465,
+    secure: true,
     auth: {
         user: SERVER_EMAIL,
         pass: SERVER_PASSWORD

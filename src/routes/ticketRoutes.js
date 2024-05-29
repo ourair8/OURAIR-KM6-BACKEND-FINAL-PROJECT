@@ -1,3 +1,5 @@
+'use strict'
+
 const express = require('express');
 const {
     getAllTicketsController,
@@ -7,12 +9,11 @@ const {
     deleteTicketController,
 } = require('../features/crud/controllers/ticketController');
 
-const ticketRoutes = express.Router();
-
-ticketRoutes.get('/', getAllTicketsController);
-ticketRoutes.get('/:id', getTicketByIdController);
-ticketRoutes.post('/', createTicketController);
-ticketRoutes.put('/:id', updateTicketController);
-ticketRoutes.delete('/:id', deleteTicketController);
+const ticketRoutes = express.Router()
+    .get('/', getAllTicketsController)
+    .get('/:id', getTicketByIdController)
+    .post('/', createTicketController)
+    .put('/:id', updateTicketController)
+    .delete('/:id', deleteTicketController);
 
 module.exports = { ticketRoutes };
