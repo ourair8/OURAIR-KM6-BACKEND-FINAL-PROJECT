@@ -16,7 +16,7 @@ const testConnection = async () => {
 
 testConnection();
 
-const main = async function (req, res) {
+const AirlineSeeder = async function (req, res) {
   try {
     // Baca file JSON
     const rawData = fs.readFileSync(`${__dirname}/airline.json`);
@@ -46,5 +46,5 @@ const main = async function (req, res) {
 };
 
 module.exports = {
-  main,
+  AirlineSeeder,
 };
