@@ -148,7 +148,7 @@ model Tickets {
   whomPassangerTicket Passengers    @relation(fields: [passanger_id], references: [id])
   whomFlightTicket    Flights       @relation(fields: [flight_id], references: [id])
   whomUserTicket      Users         @relation(fields: [user_id], references: [id])
-  transaction         Transactions? @relation(fields: [transaction_id], references: [id]) // Relasi ke Transactions
+  transaction         Transactions? @relation(fields: [transaction_id], references: [id])
 
   @@map("tickets")
 }
