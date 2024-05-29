@@ -1,22 +1,29 @@
-// prisma/seed.js
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
-const airline = require("./airline");
+const prisma = require("../src/config/prisma.config");
+const fs = require("fs");
 
 async function main() {
-  for (const a of airline) {
-    await prisma.airlines.create({
-      data: a,
-    });
+  try {
+    const rawData = fs.readFileSync(`${__dirname}/airline.json`);
+    const airlinesData = JSON.parse(rawData.toString());
+
+    for (const airline of airlinesData) {
+      await prisma.airlines.create({
+        data: {
+          name: airline.name,
+          airline_code: airline.airline_code,
+        },
+      });
+    }
+
+    console.log("Data seeded successfully.");
+  } catch (error) {
+    console.error("Error seeding data:", error);
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
-main()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (e) => {
-    console.error(e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });
+main().catch((e) => {
+  console.error("Unexpected error:", e);
+  process.exit(1);
+});

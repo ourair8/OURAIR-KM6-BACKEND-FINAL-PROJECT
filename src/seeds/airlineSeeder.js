@@ -19,30 +19,20 @@ testConnection();
 const main = async function (req, res) {
   try {
     // Baca file JSON
-    const rawData = fs.readFileSync(`${__dirname}/airports.json`);
-    const airportsData = JSON.parse(rawData.toString());
+    const rawData = fs.readFileSync(`${__dirname}/airline.json`);
+    const airlinesData = JSON.parse(rawData.toString());
     console.log("cek"); //berhasil
-    for (const airportData of airportsData) {
-      if (typeof airportData.city !== "boolean") {
-        airportData.city = false;
-      }
+    for (const airportData of airlinesData) {
       const wow = await prisma.airports.create({
         data: {
-          code: airportData.code,
           name: airportData.name,
-          cityCode: airportData.alias,
-          cityName: airportData.city_name,
-          countryCode: airportData.country_code,
-          countryName: airportData.country,
-          city: airportData.city,
-          total_visited: 0,
-          thumbnail: " ",
+          airline_code: airportData.airline_code,
         },
       });
     }
     console.log("cek1");
 
-    console.log("Data bandara telah dimasukkan ke dalam tabel Airport.");
+    console.log("Data Maskapai telah dimasukkan ke dalam tabel Airline.");
   } catch (error) {
     console.error("Terjadi kesalahan:", error);
   } finally {
