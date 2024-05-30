@@ -2,6 +2,7 @@
 
 const { main } = require("../../seeds/airportSeeder");
 const { AirlineSeeder } = require("../../seeds/airlineSeeder");
+const { AirplaneSeeder } = require("../../seeds/airplaneSeeder");
 
 const {
   checkRole,
@@ -16,6 +17,12 @@ const seeder = require("express")
     verifyToken,
     checkRole(["ADMIN"]),
     AirlineSeeder
+  )
+  .get(
+    "/trigger-seed-airplanes",
+    verifyToken,
+    checkRole(["ADMIN"]),
+    AirplaneSeeder
   );
 
 module.exports = {
