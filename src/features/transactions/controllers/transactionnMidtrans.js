@@ -1,3 +1,6 @@
+'use strict'
+
+
 const { createTransaction, saveTransactionToDB } = require('../services/transactionsMidtrans');
 
 const handleCreateTransaction = async(req, res) => {
