@@ -1,3 +1,5 @@
+'use strict'
+
 const snap = require('../../../config/midtrans');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
