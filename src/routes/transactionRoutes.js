@@ -1,4 +1,5 @@
-// src/route/transactionRoutes.js
+'use strict'
+
 const express = require('express');
 const { verifyToken, checkRole } = require('../features/auth/controllers/whoAmI');
 const { getTransactionHistoryController } = require('../features/transactions/controllers/transactionHistoryController');
