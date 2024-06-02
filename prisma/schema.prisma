@@ -15,16 +15,15 @@ datasource db {
 
 model Users {
   id          Int     @id @default(autoincrement())
-  googleId    String @unique
   name        String
   username    String?  @unique
   phone_number String @unique
   password    String
-  email       String @unique
-  is_Verified Boolean @default(false)
-  role        Role    @default(USER)
-  created_at DateTime
-  avatar_link String? 
+  email       String   @unique
+  is_Verified Boolean  @default(false)
+  role        Role     @default(USER)
+  created_at  DateTime
+  avatar_link String?
 
   otps          Otps[]
   tickets       Tickets[]
@@ -74,7 +73,7 @@ model Airplanes {
   airplane_code        String @db.VarChar(150)
   baggage              Int
   cabin_baggage        Int
-  description             String @db.VarChar(255)
+  description          String @db.VarChar(255)
   seat_economy         Int
   seat_economy_premium Int
   seat_business        Int
@@ -88,13 +87,13 @@ model Airplanes {
 }
 
 model Airports {
-  id            Int      @id @default(autoincrement())
+  id            Int     @id @default(autoincrement())
   code          String
-  name          String   @db.VarChar(150)
-  cityCode      String    @db.VarChar(20)
-  cityName      String   @db.VarChar(150)
-  countryCode   String    @db.VarChar(150)
-  countryName   String    @db.VarChar(150)
+  name          String  @db.VarChar(150)
+  cityCode      String  @db.VarChar(20)
+  cityName      String  @db.VarChar(150)
+  countryCode   String  @db.VarChar(150)
+  countryName   String  @db.VarChar(150)
   city          Boolean
   total_visited Int?
   thumbnail     String?
@@ -150,20 +149,21 @@ model Tickets {
   whomPassangerTicket Passengers    @relation(fields: [passanger_id], references: [id])
   whomFlightTicket    Flights       @relation(fields: [flight_id], references: [id])
   whomUserTicket      Users         @relation(fields: [user_id], references: [id])
-  transaction         Transactions? @relation(fields: [transaction_id], references: [id]) // Relasi ke Transactions
+  transaction         Transactions? @relation(fields: [transaction_id], references: [id])
 
   @@map("tickets")
 }
 
 model Transactions {
-  id          Int       @id @default(autoincrement())
-  adult_price Int
-  baby_price  Int
-  tax_price   Int
-  total_price Int
-  created_at  DateTime
-  status      Boolean
-  Payments    Payments?
+  id                Int       @id @default(autoincrement())
+  midtrans_order_id String    @unique
+  adult_price       Int
+  baby_price        Int
+  tax_price         Int
+  total_price       Int
+  created_at        DateTime
+  status            Boolean
+  Payments          Payments?
 
   tickets Tickets[]
 

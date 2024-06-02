@@ -1,4 +1,6 @@
-'use strict'
+"use strict";
+const WebSocket = require("ws");
+const wss = new WebSocket.Server({ port: 8080 });
 
 const {
     getAllTicketsService,
@@ -6,8 +8,16 @@ const {
     createTicketService,
     updateTicketService,
     deleteTicketService,
-} = require('../services/ticketService');
-const { handleError } = require('../../../middleware/errorHandler');
+} = require("../services/ticketService");
+const { handleError } = require("../../../middleware/errorHandler");
+
+const sendNotification = (message) => {
+    wss.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify({ type: "notification", message }));
+        }
+    });
+};
 
 const getAllTicketsController = async(req, res) => {
     try {
@@ -31,6 +41,7 @@ const createTicketController = async(req, res) => {
     try {
         const ticket = await createTicketService(req.body);
         res.status(201).json(ticket);
+        sendNotification("Ticket berhasil dibuat!");
     } catch (err) {
         handleError(err, res);
     }
@@ -48,7 +59,7 @@ const updateTicketController = async(req, res) => {
 const deleteTicketController = async(req, res) => {
     try {
         await deleteTicketService(parseInt(req.params.id));
-        res.status(200).json({ message: 'Ticket deleted' });
+        res.status(200).json({ message: "Ticket deleted" });
     } catch (err) {
         handleError(err, res);
     }

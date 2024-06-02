@@ -16,17 +16,24 @@ const testConnection = async () => {
 
 testConnection();
 
-const AirlineSeeder = async function (req, res) {
+const AirplaneSeeder = async function (req, res) {
   try {
     // Baca file JSON
-    const rawData = fs.readFileSync(`${__dirname}/airline.json`);
-    const airlinesData = JSON.parse(rawData.toString());
+    const rawData = fs.readFileSync(`${__dirname}/airplane.json`);
+    const airplanesData = JSON.parse(rawData.toString());
     console.log("cek"); //berhasil
-    for (const airportData of airlinesData) {
-      const wow = await prisma.airports.create({
+    for (const airplaneData of airplanesData) {
+      const wow = await prisma.airplanes.create({
         data: {
-          name: airportData.name,
-          airline_code: airportData.airline_code,
+          airline_id: airplaneData.airline_id,
+          airplane_code: airplaneData.airplane_code,
+          baggage: airplaneData.baggage,
+          cabin_baggage: airplaneData.cabin_baggage,
+          description: airplaneData.description,
+          seat_economy: airplaneData.seat_economy,
+          seat_economy_premium: airplaneData.seat_economy_premium,
+          seat_business: airplaneData.seat_business,
+          seat_first_class: airplaneData.seat_first_class,
         },
       });
     }
@@ -46,6 +53,5 @@ const AirlineSeeder = async function (req, res) {
 };
 
 module.exports = {
-  AirlineSeeder,
+  AirplaneSeeder,
 };
-

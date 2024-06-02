@@ -8,9 +8,10 @@ const { ticketRoutes } = require('../routes/ticketRoutes');
 
 const { flightRoutes } = require('../routes/flightRoutes');
 const { transactionRoutes } = require('../routes/transactionRoutes');
-const { seeder } =  require('../routes/admin/seederRoute');
+const { seeder } = require('../routes/admin/seederRoute');
 const { booking } = require('../routes/boookingRoute')
 const { airports } = require('../routes/airportsRoute')
+
 
 // const { planeRoutes } = require('../routes/planeRoutes');
 // const { airportRoutes } = require('../routes/airportRoutes');
