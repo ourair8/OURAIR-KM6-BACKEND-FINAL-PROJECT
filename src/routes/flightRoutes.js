@@ -7,7 +7,7 @@ const {
 } = require('../features/flights/controllers/flight.controller');
 
 const flightRoutes = express.Router()
-    .get("/search-location-by-date", getFlightsByCityOrCountryName)
-    .get("/search-date", getFlightsByDate)
+    .get("/search-city-or-country", getFlightsByCityOrCountryName)
+    .get("/search-city-or-country-by-date", getFlightsByDate)
 
 module.exports = { flightRoutes };
