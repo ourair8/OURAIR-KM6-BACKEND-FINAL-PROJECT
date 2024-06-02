@@ -1,40 +1,50 @@
-'use strict'
+"use strict";
 
 const prisma = require("../config/prisma.config");
 const fs = require("fs");
 
+const testConnection = async () => {
+  try {
+    await prisma.$connect();
+    console.log("Koneksi ke database berhasil");
+  } catch (error) {
+    console.error("Koneksi ke database gagal", error);
+  } finally {
+    await prisma.$disconnect();
+  }
+};
+
+testConnection();
+
 const AirlineSeeder = async function (req, res) {
   try {
-    const rawData = fs.readFileSync(`${__dirname}/airlines.json`);
+    // Baca file JSON
+    const rawData = fs.readFileSync(`${__dirname}/airline.json`);
     const airlinesData = JSON.parse(rawData.toString());
-
-    for (const airline of airlinesData) {
-      await prisma.airlines.create({
+    console.log("cek"); //berhasil
+    for (const airportData of airlinesData) {
+      const wow = await prisma.airports.create({
         data: {
-          name: airline.name,
-          airline_code: airline.airline_code,
+          name: airportData.name,
+          airline_code: airportData.airline_code,
         },
       });
     }
+    console.log("cek1");
 
-    ;
+    console.log("Data Maskapai telah dimasukkan ke dalam tabel Airline.");
   } catch (error) {
-    console.error("Error seeding data:", error);
+    console.error("Terjadi kesalahan:", error);
   } finally {
     await prisma.$disconnect();
 
     return res.json({
-        status : true,
-        message : `berhasil memasukan data airline!`
-    })
+      status: true,
+      message: "success",
+    });
   }
-}
+};
 
 module.exports = {
-    AirlineSeeder
-}
-
-// main().catch((e) => {
-//   console.error("Unexpected error:", e);
-//   process.exit(1);
-// });
+  AirlineSeeder,
+};
