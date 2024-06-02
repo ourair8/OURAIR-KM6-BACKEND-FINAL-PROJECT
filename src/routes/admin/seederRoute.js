@@ -26,5 +26,5 @@ const seeder = require("express")
   );
 
 module.exports = {
-  seeder,
-};
+    seeder
+}

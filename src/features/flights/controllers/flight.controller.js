@@ -27,7 +27,7 @@ const getFlightById = async function(req, res) {
             data : user
         })
     } catch (err) {
-        console.log(err)
+        
         return res.status(500).json({
             status: false,
             message: 'Error searching flights'
@@ -78,7 +78,7 @@ const getFlightsByCityOrCountryName = async function(){
             },
         });
 
-        return res.json({
+        return res.status(201).json({
             status: true,
             message: 'success',
             totalItems: totalFlights,
@@ -90,7 +90,7 @@ const getFlightsByCityOrCountryName = async function(){
             },
         });
     } catch (err) {
-        console.log(err)
+        
         return res.status(500).json({
             status: false,
             message: 'Error searching flights'
@@ -167,7 +167,7 @@ const getFlightsByDate = async function(req, res){
             },
         });
     } catch (err) {
-        console.log(err)
+        
         return res.status(500).json({
             status: false,
             message: 'Error searching flights'

@@ -7,7 +7,7 @@ const verifyOTPController = async function(req, res){
 
     try {
 
-    console.log("Checkpoint")
+    
 
     const {email, otp } = req.body
 
@@ -17,10 +17,10 @@ const verifyOTPController = async function(req, res){
         throw new ErrorWithStatusCode("error Verifying OTP unexpected", 401)
     }
 
-    return res.json({
+    return res.status(201).json({
         status : true,
         message : `email verification is success`
-    }).status(201)
+    })
 
     } catch (err) {
         handleError(err, res);

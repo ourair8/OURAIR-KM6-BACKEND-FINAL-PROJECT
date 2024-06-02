@@ -64,8 +64,39 @@ const createPassangerController = async function(req, res) {
   
         return createdPassenger;
       }));
-  
-      res.status(201).json({
+
+      /*
+
+
+      
+      prisma, masukan notifikasi 
+
+      const notifikasi =  await prisma ......................... 
+
+        user_id    Int
+        title      String
+        message    String
+        is_read    Boolean
+        created_at DateTime
+
+      Buatkan websocket io.emit berdasarkan user_id
+
+          io.on('User-${req.user.id}', (socket) => {
+          ;
+
+          // Broadcast a message to logged user
+          io.emit(`notifikasi-${req.user.id}`, `${notifikasi}`);
+
+          socket.on('disconnect', () => {
+              ;
+          });
+      });
+
+
+
+      */
+
+      return res.status(201).json({
         status : true,
         message : "success",
         data : {
@@ -73,8 +104,8 @@ const createPassangerController = async function(req, res) {
             passengers: createdPassengers
         }
       });
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
         handleError(err, res);
     }
 }

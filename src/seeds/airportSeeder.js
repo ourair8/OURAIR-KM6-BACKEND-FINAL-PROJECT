@@ -56,5 +56,5 @@ const main = async function (req, res) {
 };
 
 module.exports = {
-  main,
-};
+    main
+}

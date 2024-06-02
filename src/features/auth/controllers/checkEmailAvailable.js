@@ -5,9 +5,6 @@ const{ ErrorWithStatusCode, handleError } = require("../../../middleware/errorHa
 
 const isEmailAvailable = async function(req, res) {
     const email = req.body.email
-
-    console.log(email)
-
     try {
         const isEmail = await prisma.users.findUnique({
             where : {
@@ -19,7 +16,7 @@ const isEmailAvailable = async function(req, res) {
             throw new ErrorWithStatusCode(`user with email ${email} is not exist`, 404)
         }
 
-        return res.json({
+        return res.status(200).json({
             status: true,
             message : `success`
         })

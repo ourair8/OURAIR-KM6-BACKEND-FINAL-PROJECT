@@ -8,13 +8,17 @@ const registerUserController = async function(req, res){
 
     try {
 
-    console.log("Checkpoint")
+    
 
-    const {name, email, password} = req.body
+    let { name, phone_number, email, password } = req.body
 
-    const otp = await registerUser(name, email, password)
+    
 
-    console.log("otp", otp)
+    phone_number = String(phone_number)
+    
+    const otp = await registerUser(name, phone_number, email, password)
+
+    
 
     if (!otp) {
         throw new ErrorWithStatusCode("Error unexpected", 401)
@@ -26,13 +30,13 @@ const registerUserController = async function(req, res){
         throw new ErrorWithStatusCode("Error unexpected", 401)
     }
 
-    return res.json({
+    return res.status(201).json({
         status : true,
         message : `OTP code is sent to ${email}`
-    }).status(201)
+    })
 
     } catch (err) {
-        console.log(err)
+        
         handleError(err, res);
     } 
 

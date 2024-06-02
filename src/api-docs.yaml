@@ -1,0 +1,891 @@
+openapi: 3.0.1
+info:
+  title: Ourair developer API
+  description: Full documentation API for Ourair Project
+  version: 1.0.0
+servers:
+  - url: http://localhost:3001/api/v1
+    description: Local development server
+  - url: https://bw2nj1xt-3001.asse.devtunnels.ms/api/v1
+    description: staging development server
+  - url: https://ourair.my.id/api/v1
+    description: production development server
+tags:
+  - name: Authentication
+  - name: Features
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+paths:
+  /auth/signup:
+    post:
+      tags:
+        - Authentication
+      description: Register a new user in the system and send otp to email verify their email
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Naufal Andya Faiz
+                email:
+                  type: string
+                  example: andyakuliah@gmail.com
+                password:
+                  type: string
+                  example: waduh12345
+      responses:
+        '201':
+          description: user successfully registered
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: OTP code is sent to andyakuliah@gmail.com
+        '409':
+          description: check email or phone number if already used
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: email is already used
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: An error occurred during login
+  /auth/signin:
+    post:
+      tags:
+        - Authentication
+      description: Login and give session token to user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: wowowow@gmail.com
+                password:
+                  type: string
+                  example: password12345
+      responses:
+        '201':
+          description: User login and get session token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: 12345
+                      name:
+                        type: string
+                        example: John Doe
+                      username:
+                        type: string
+                        example: johndoe
+                      email:
+                        type: string
+                        example: wowowow@gmail.com
+                      phone_number:
+                        type: string
+                        example: +1234567890
+                      isVerified:
+                        type: boolean
+                        example: true
+                      role:
+                        type: string
+                        example: user
+                      token:
+                        type: string
+                        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Invalid email or password
+        '404':
+          description: email is not registered
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: email is not registered
+        '409':
+          description: password is not match
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: password is not match
+
+
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: internal server error
+  /auth/verify-email-token:
+    post:
+      tags:
+        - Authentication
+      description: Validate OTP being sent to email and verify user's email
+      requestBody:
+        content:
+          application/json:
+            schema:
+             type: object
+             properties:
+              email:
+                type: string
+                example : andyakuliah@gmail.com
+              otp:
+                type: string
+                minLength: 6
+                maxLength: 6
+                example: 894819
+      responses:
+        '201':
+          description: verify otp that was sent to email
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: email verification is success
+        '200':
+          description: otp invalid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Invalid or expired OTP
+        '401':
+          description: error unexpected
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  status: 
+                    type: boolean
+                    example: false error 
+                  message: 
+                    type: string
+                    example: error verifying email unexpected
+        '500':
+          description: service error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: internal server error
+  /auth/check-email:
+    post:
+      tags:
+        - Authentication
+      description: Search user by email to search forgotten user's password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: andyakuliah@gmail.com
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: success
+        '404':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: 
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: user with email andyakuliah@gmail.com is not exist
+        '500':
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: internal server error       
+  /auth/try-send-email-again:
+    post:
+      tags:
+        - Authentication
+      description: Send new OTP verification again if it not being sent
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: andyakuliah@gmail.com
+      responses:
+        '201':
+          description: send email again send otp
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message: 
+                     type: string
+                     example: new OTP already sent to andyakuliah@gmail.com
+        '404':
+          description: not found email
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Email is not exist
+  /auth/forgot-password-send-email:
+    post:
+      tags: 
+        - Authentication
+      description: Send link with token to redirect user to reset-password page
+      requestBody:
+        required:
+        content: 
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: andyakuliah@gmail.com
+              required:
+                - email
+      responses:
+        '200':
+          description: Email sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true                
+                  message:
+                    type: string
+                    example: link for reset password already sent
+        '400':
+          description: Invalid email address
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: Invalid email address
+        '401':
+          description: Invalid email address
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: Please enter email
+        '404':
+          description: Invalid email address
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: email is not exist
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: Internal server error
+  /booking/create:
+    post:
+      tags:
+        - Features
+      description: Create booking by adding passengers and choosing flights. Requires JWT authentication.
+      summary: User create booking for passangers
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                passengers:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      fullname:
+                        type: string
+                        example: "John Doe"
+                      surname:
+                        type: string
+                        example: "Doe"
+                      birth_date:
+                        type: string
+                        format: date
+                        example: "1990-01-01"
+                      nationality:
+                        type: string
+                        example: "USA"
+                      document:
+                        type: string
+                        example: "123456789"
+                      country_publication:
+                        type: string
+                        example: "USA"
+                      document_expired:
+                        type: string
+                        format: date
+                        example: "2030-01-01"
+                      seat_number:
+                        type: string
+                        example: "12A"
+                      ticket:
+                        type: object
+                        properties:
+                          flight_id:
+                            type: integer
+                            example: 1
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  message:
+                    type: string
+                    example: "Passenger records created successfully."
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "error"
+                  message:
+                    type: string
+                    example: "Invalid request format."
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "error"
+                  message:
+                    type: string
+                    example: "Flight with the given ID not found."
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "error"
+                  message:
+                    type: string
+                    example: "An internal server error occurred."
+  /flights/search-location-by-date:
+    get:
+      tags:
+        - Features
+      summary: Get Flights by Date
+      description: Retrieve flights departing or arriving at a specified city within a date range.
+      parameters:
+        - in: query
+          name: city
+          required: true
+          schema:
+            type: string
+          description: The name of the city to search for flights.
+        - in: query
+          name: startDate
+          required: false
+          schema:
+            type: string
+            format: date
+          description: The start date for the search range (defaults to today's date if not provided).
+        - in: query
+          name: endDate
+          required: false
+          schema:
+            type: string
+            format: date
+          description: The end date for the search range (defaults to 30 days from today's date if not provided).
+        - in: query
+          name: page
+          required: false
+          schema:
+            type: integer
+          description: The page number for pagination (defaults to 1).
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+          description: The number of results per page for pagination (defaults to 10).
+      responses:
+        '200':
+          description: A list of flights matching the search criteria.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: success
+                  totalItems:
+                    type: integer
+                    example: 50
+                  totalPages:
+                    type: integer
+                    example: 5
+                  currentPage:
+                    type: integer
+                    example: 1
+                  length:
+                    type: integer
+                    example: 10
+                  data:
+                    type: object
+                    properties:
+                      flights:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            fromAirport:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  example: 1
+                                cityName:
+                                  type: string
+                                  example: "New York"
+                            toAirport:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  example: 2
+                                cityName:
+                                  type: string
+                                  example: "Los Angeles"
+                            departure_time:
+                              type: string
+                              format: date-time
+                              example: "2024-06-03T12:00:00Z"
+        '400':
+          description: Invalid request parameters.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Invalid request parameters."
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Error searching flights."
+  /flights/search-location:
+    get:
+      tags:
+        - Features
+      summary: Get Flights by City or Country Name
+      description: Retrieve flights departing or arriving at a specified city or country.
+      parameters:
+        - in: query
+          name: city
+          required: false
+          schema:
+            type: string
+          description: The name of the city to search for flights.
+        - in: query
+          name: country
+          required: false
+          schema:
+            type: string
+          description: The name of the country to search for flights.
+        - in: query
+          name: page
+          required: false
+          schema:
+            type: integer
+          description: The page number for pagination (defaults to 1).
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+          description: The number of results per page for pagination (defaults to 10).
+      responses:
+        '200':
+          description: A list of flights matching the search criteria.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: success
+                  totalItems:
+                    type: integer
+                    example: 50
+                  totalPages:
+                    type: integer
+                    example: 5
+                  currentPage:
+                    type: integer
+                    example: 1
+                  length:
+                    type: integer
+                    example: 10
+                  data:
+                    type: object
+                    properties:
+                      flights:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            fromAirport:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  example: 1
+                                cityName:
+                                  type: string
+                                  example: "New York"
+                                countryName:
+                                  type: string
+                                  example: "USA"
+                            toAirport:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  example: 2
+                                cityName:
+                                  type: string
+                                  example: "Los Angeles"
+                                countryName:
+                                  type: string
+                                  example: "USA"
+                            departure_time:
+                              type: string
+                              format: date-time
+                              example: "2024-06-03T12:00:00Z"
+        '400':
+          description: Invalid request parameters.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Invalid request parameters."
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Error searching flights."
+  /transactions/history:
+    get:
+      tags:
+        - Features
+      summary: Get Transaction History
+      description: Retrieve the transaction history for the authenticated user.
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: Successfully retrieved the transaction history.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      bookingView:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            tickets:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  passanger_name:
+                                    type: string
+                                    example: John Doe
+                                  fromAirport:
+                                    type: string
+                                    example: New York
+                                  toAirport:
+                                    type: string
+                                    example: Los Angeles
+                                  seat_number:
+                                    type: string
+                                    example: 12A
+                                  departure_time:
+                                    type: string
+                                    format: date-time
+                                    example: 2024-06-03T12:00:00Z
+                                  arrival_time:
+                                    type: string
+                                    format: date-time
+                                    example: 2024-06-03T15:00:00Z
+                                  price:
+                                    type: number
+                                    example: 250.00
+                            total_price:
+                              type: number
+                              example: 500.00
+                            created_at:
+                              type: string
+                              format: date-time
+                              example: 2024-06-01T10:00:00Z
+                            status:
+                              type: string
+                              example: paid
+        '401':
+          description: Unauthorized. Token is missing or invalid.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Unauthorized access
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: An error occurred while fetching bookings.
+
+

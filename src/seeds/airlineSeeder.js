@@ -48,3 +48,4 @@ const AirlineSeeder = async function (req, res) {
 module.exports = {
   AirlineSeeder,
 };
+

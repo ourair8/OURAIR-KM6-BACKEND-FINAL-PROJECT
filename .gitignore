@@ -177,6 +177,7 @@ dist
 .vercel
 
 #deploy
+package-lock.json
 bun.lockb
 ystemd-resolve)
 "ystemd-resolved.service - Network Name Resolution"

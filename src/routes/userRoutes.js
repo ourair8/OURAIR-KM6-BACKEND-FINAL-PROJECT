@@ -9,6 +9,7 @@ const {
     createUserController,
     updateUserController,
     deleteUserController,
+    getUserData
 } = require('../features/crud/controllers/userController');
 
 const userRoutes = express.Router()
@@ -17,5 +18,6 @@ const userRoutes = express.Router()
     .post('/', verifyToken, checkRole(['ADMIN']), createUserController)
     .put('/:id', verifyToken, checkRole(['user']), updateUserController)
     .delete('/:id', verifyToken, checkRole(['ADMIN']), deleteUserController)
+    // .get('/profile', verifyToken, checkRole(['user']), getUserData)
 
 module.exports = { userRoutes };
