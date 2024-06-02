@@ -7,7 +7,7 @@ const verifyToken = (req, res, next) => {
 
     const { authorization } = req.headers
 
-    console.log(authorization)
+    
 
     if (!authorization || !authorization.split(' ')[1]) {
         return res.json({
@@ -64,8 +64,44 @@ const whoAmIController = (req, res) => {
     }
 };
 
+const whoIAm = (req, res) => {
+
+    try {
+    const { authorization } = req.headers
+
+    
+
+    if (!authorization || !authorization.split(' ')[1]) {
+        return res.json({
+            status: false,
+            message: 'token not provided!',
+            data: null
+        }).status(401);
+    }
+
+    let token = authorization.split(' ')[1];
+
+    jwt.verify(token, SECRET_KEY, (err, decoded) => {
+        if (err) {
+            return res.status(401).json({ message: 'Failed to authenticate token' });
+        }
+
+        return res.json({
+            status : true,
+            message : 'success',
+            data : decoded
+        })
+    })
+
+
+    } catch(err) {
+        throw err
+    }
+}
+
 module.exports = {
     verifyToken,
     checkRole,
-    whoAmIController
+    whoAmIController,
+    whoIAm
 };

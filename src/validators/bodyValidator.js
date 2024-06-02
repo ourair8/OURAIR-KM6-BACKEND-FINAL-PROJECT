@@ -11,6 +11,10 @@ const registerUserInput = [
     .isEmail().withMessage('Must be a valid email address'),
   check('password')
     .isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
+  check('phone_number')
+    .trim()
+    .notEmpty().withMessage('Phone number is required')
+    .isLength({ min: 10, max: 15 }).withMessage('Phone number must be between 10 and 15 characters long')
 ];
 
 const loginUserInput = [

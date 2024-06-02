@@ -5,7 +5,7 @@ const { ErrorWithStatusCode, handleError } = require('./../../../middleware/erro
 const jwt = require('jsonwebtoken');
 const SECRET_KEY = process.env.JWT_SECRET_KEY
 
-console.log(SECRET_KEY)
+
 
 const loginByEmailController = async function(req, res){
     try {
@@ -24,19 +24,20 @@ const loginByEmailController = async function(req, res){
             username : result.username,
             email : result.email,
             phone_number : result.phone_number,
-            isVerified : result.isVerified,
+            isVerified : result.is_Verified,
             role : result.role
         }
 
         const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '1h' });
 
-        return res.json({
+        return res.status(201).json({
             status : true,
             message : 'success',
             data : {...payload, token}
-        }).status(201)
+        })
 
     } catch (err) {
+        
         handleError(err, res);
     }
 }

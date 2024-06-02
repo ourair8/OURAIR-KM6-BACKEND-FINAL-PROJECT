@@ -5,8 +5,8 @@ const bcrypt = require("bcrypt")
 
 const { ErrorWithStatusCode } = require('./../../../middleware/errorHandler');
 
-const registerUser = async function(name, email, password){
-    console.log(email)
+const registerUser = async function(name, phoneNumber, email, password){
+    
    try {
 
      const isEmailAlreadyExist = await prisma.users.findUnique({
@@ -16,19 +16,19 @@ const registerUser = async function(name, email, password){
      })
 
      if(isEmailAlreadyExist) {
-        throw new ErrorWithStatusCode("Email is already used", 409)
+        throw new ErrorWithStatusCode("Alamat email sudah digunakan", 409)
      }
 
 
-   //   const isPhoneNumberAlreadyExist = await prisma.users.findFirst({
-   //      where : {
-   //          phone_number : phoneNumber
-   //      }
-   //   })
+     const isPhoneNumberAlreadyExist = await prisma.users.findFirst({
+        where : {
+            phone_number : phoneNumber
+        }
+     })
 
-   //   if(isPhoneNumberAlreadyExist) {
-   //      throw new ErrorWithStatusCode("Phone Number is already used", 409)
-   //   }
+     if(isPhoneNumberAlreadyExist) {
+        throw new ErrorWithStatusCode("Nomor telepon sudah digunakan", 409)
+     }
 
      const hashedPassword = await bcrypt.hash(password, 10)
 
@@ -37,6 +37,7 @@ const registerUser = async function(name, email, password){
             name : name,
             email : email,
             password : hashedPassword,
+            phone_number : phoneNumber,
             created_at : new Date()
         }
      })
@@ -54,7 +55,7 @@ const registerUser = async function(name, email, password){
         }
      })
    
-     console.log(result)
+     
 
      return result.otp_code
 

@@ -45,14 +45,14 @@ const sendEmailAgain = async function(email) {
    
         await prisma.otps.create({
            data : {
-               OTP : Number(otp),
-               createdAt : new Date(),
-               expiredAt : expiredAt,
-               userId : user.id
+               otp_code : String(otp),
+               created_at : new Date(),
+               expired_at : expiredAt,
+               user_id : user.id
            }
         })
 
-        let html = await getHTML("email.ejs", {name : name, otp : otp})
+        let html = await getHTML("email.ejs", {name : user.name, otp : otp})
     
         await transporter.sendMail({
             from: SERVER_EMAIL,

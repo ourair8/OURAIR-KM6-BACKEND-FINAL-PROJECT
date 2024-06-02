@@ -9,6 +9,7 @@ CREATE TABLE "users" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "username" TEXT,
+    "phone_number" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "is_Verified" BOOLEAN NOT NULL DEFAULT false,
@@ -92,6 +93,7 @@ CREATE TABLE "flights" (
     "departure_time" TIMESTAMP(3) NOT NULL,
     "arrival_time" TIMESTAMP(3) NOT NULL,
     "flight_type" "FlightType" NOT NULL DEFAULT 'DOMESTIC',
+    "ticket_price" INTEGER NOT NULL,
 
     CONSTRAINT "flights_pkey" PRIMARY KEY ("id")
 );
@@ -99,7 +101,6 @@ CREATE TABLE "flights" (
 -- CreateTable
 CREATE TABLE "passengers" (
     "id" SERIAL NOT NULL,
-    "title" TEXT NOT NULL,
     "fullname" TEXT NOT NULL,
     "surname" TEXT NOT NULL,
     "birth_date" TIMESTAMP(3) NOT NULL,
@@ -149,6 +150,9 @@ CREATE TABLE "payments" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_username_key" ON "users"("username");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "users_phone_number_key" ON "users"("phone_number");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");

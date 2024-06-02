@@ -50,13 +50,32 @@ const updateUserController = async(req, res) => {
 const deleteUserController = async(req, res) => {
     try {
         // const id = req.params.id
-        // console.log(id)
+        // 
         await deleteUserService(parseInt(req.params.id));
         res.status(200).json({ message: 'User deleted' });
     } catch (err) {
         handleError(err, res);
     }
 };
+
+const prisma = require('../../../config/prisma.config');
+const { ErrorWithStatusCode } = require('../../../middleware/errorHandler');
+
+const getUserData = async(req, res) => {
+    try {   
+        return res.json({
+            status: true,
+            message : "success",
+            data : await prisma.users.findUnique({
+                where : {
+                    id : 1
+                }
+            })
+        })
+    } catch(err){
+        handleError(err, res);
+    }
+}
 
 
 

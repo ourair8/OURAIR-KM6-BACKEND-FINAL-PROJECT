@@ -7,7 +7,7 @@ const fs = require("fs")
 const testConnection = async () => {
     try {
       await prisma.$connect();
-      console.log("Koneksi ke database berhasil");
+      ;
     } catch (error) {
       console.error("Koneksi ke database gagal", error);
     } finally {
@@ -22,7 +22,7 @@ const main = async function(req, res) {
     // Baca file JSON
     const rawData = fs.readFileSync(`${__dirname}/airports.json`);
     const airportsData = JSON.parse(rawData.toString());
-    console.log("cek") //berhasil
+     //berhasil
     for (const airportData of airportsData) {
         if (typeof airportData.city !== "boolean") {
             airportData.city = false;
@@ -44,9 +44,9 @@ const main = async function(req, res) {
     
 
     }
-    console.log("cek1")
+    
 
-    console.log('Data bandara telah dimasukkan ke dalam tabel Airport.');
+    ;
 
   } catch (error) {
     console.error('Terjadi kesalahan:', error);

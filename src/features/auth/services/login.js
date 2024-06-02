@@ -27,6 +27,7 @@ const loginByEmailService = async function(email, password){
         return isEmail
 
     } catch (err) {
+        
         throw err
     }
 }

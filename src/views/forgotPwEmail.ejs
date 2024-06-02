@@ -1,0 +1,70 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Kode OTP OurAir</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      
+    </style>
+  </head>
+  <body style="margin: 0; font-family: 'Open sans', sans-serif; font-size: 14px; color: #555555">
+    <table cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width: 700px; margin: 0 auto; background-position: left; background: url('https://raw.githubusercontent.com/DadangHawari/assets/main/cloud_background.webp') no-repeat; background-position: right;">
+      <tr>
+        <td>
+          <table cellpadding="0" cellspacing="0" border="0" width="100%">
+            <tr>
+              <td style="padding: 40px ; text-align: center">
+                <img src="https://raw.githubusercontent.com/DadangHawari/assets/main/ourair_logo.png" height="70" />
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding-inline: 20px;" align="center">
+          <table cellpadding="0" cellspacing="0" border="0" style="">
+            <tr>
+              <td style="text-align: center">
+                <div style="max-width: 500px; width: 95%; padding-top: 20px; padding-bottom: 30px; padding-right: 10px; padding-left: 10px; margin: 0 auto; background: #ffffff; border-radius: 6px">
+                  <p style="margin-top: 10px; font-size: 24px; font-weight: bold; color: #434343; ">
+                    Halo, <%= name %>
+                  </p>
+                  <p style="margin-top: 17px;  font-weight: light; letter-spacing: px  ">
+                    Tekan link dibawah untuk mereset password anda. Link akan kadaluwarsa dalam 5 menit
+                  </p>
+                  <a href="<%= resetPasswordUrl %>" target="_blank" style="text-decoration: none; color: #434343; background-color: #cbe6f4; border-radius: 10px; padding: 10px; display: inline-block; ">
+                   Reset Password
+                  </a>
+                
+                </div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <table cellpadding="0" cellspacing="0" border="0" width="100%">
+            <tr>
+              <td style="padding: 40px; text-align: center">
+                <p style="">Copyright &copy; OurAir Team</p>
+                <a style="text-decoration: none; color: #1177cb; font-size: 8px; " href="https://www.vecteezy.com/free-vector/cloud">
+                  Cloud Vectors by Vecteezy
+                </a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

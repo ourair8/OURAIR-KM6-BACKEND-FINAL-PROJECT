@@ -15,8 +15,10 @@ datasource db {
 
 model Users {
   id          Int     @id @default(autoincrement())
+  googleId    String @unique
   name        String
   username    String?  @unique
+  phone_number String @unique
   password    String
   email       String @unique
   is_Verified Boolean @default(false)

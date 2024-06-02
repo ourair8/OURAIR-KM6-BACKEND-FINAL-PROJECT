@@ -5,25 +5,26 @@ const{ handleError } = require("../../../middleware/errorHandler")
 
 const sendEmailAgainController = async function(req, res) {
 
-    const email = await req.body.email
+    const email = req.body.email
 
     try {
         const result = await sendEmailAgain(email)
 
         if(!result){
-            return res.json({
+            return res.status(401).json({
                 status : false,
                 message : 'bad request'
-            }).status(401)
+            })
         }
 
-        return res.json({
+        return res.status(201).json({
             status : true,
             message : `new OTP already sent to ${email}`
-        }).status(201)
+        })
 
 
     } catch (err) {
+        console.log(err)
         handleError(err, res);
     }
 }

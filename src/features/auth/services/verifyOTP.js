@@ -21,7 +21,7 @@ const verifyOTP = async (email, otp) => {
         });
 
         if (user && user.otps.length > 0) {
-            //console.log('OTP is valid');
+            //;
 
             await prisma.users.update({
                 where: { id: user.id },
@@ -30,10 +30,10 @@ const verifyOTP = async (email, otp) => {
 
             return true
 
-            //console.log('User verified');
+            //;
         } else {
 
-            throw new ErrorWithStatusCode("Invalid or expired OTP", 401)
+            throw new ErrorWithStatusCode("Invalid or expired OTP", 200)
         }
 
     } catch (error) {
