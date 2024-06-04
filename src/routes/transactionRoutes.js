@@ -7,7 +7,7 @@ const { handleCreateTransaction } = require('../features/transactions/controller
 
 const transactionRoutes = express.Router();
 
-transactionRoutes.get('/history', verifyToken, checkRole(['user']), getTransactionHistoryController);
-transactionRoutes.post('/create-transaction-midtrans', verifyToken, checkRole(['user']), handleCreateTransaction);
+transactionRoutes.get('/history', verifyToken, checkRole(['USER']), getTransactionHistoryController);
+transactionRoutes.post('/create-transaction-midtrans', verifyToken, checkRole(['USER']), handleCreateTransaction);
 
 module.exports = { transactionRoutes };
