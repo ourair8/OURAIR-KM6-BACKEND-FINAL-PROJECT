@@ -5,6 +5,8 @@ const {
   verifyToken,
 } = require("../features/auth/controllers/whoAmI");
 
+const { image } = require("../libs/multer");
+
 const express = require("express");
 const {
   getAllUsersController,
@@ -30,7 +32,13 @@ const userRoutes =
     .post("/", verifyToken, checkRole(["ADMIN"]), createUserController)
     .put("/:id", verifyToken, checkRole(["user"]), updateUserController)
     .delete("/:id", verifyToken, checkRole(["ADMIN"]), deleteUserController)
-    .put("/avatar-profile", verifyToken, checkRole(["user"]), updateAvatar)
+    .put(
+      "/avatar-profile",
+      verifyToken,
+      checkRole(["user"]),
+      image.single("avatar"),
+      updateAvatar
+    )
     .put("/profile", verifyToken, checkRole(["user"]), updateProfile);
 
 module.exports = { userRoutes };
