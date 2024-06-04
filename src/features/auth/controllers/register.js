@@ -8,12 +8,8 @@ const registerUserController = async function(req, res){
 
     try {
 
-    
 
     let { name, phone_number, email, password } = req.body
-
-    
-
     phone_number = String(phone_number)
     
     const otp = await registerUser(name, phone_number, email, password)
@@ -36,7 +32,7 @@ const registerUserController = async function(req, res){
     })
 
     } catch (err) {
-        
+        console.log(err)
         handleError(err, res);
     } 
 

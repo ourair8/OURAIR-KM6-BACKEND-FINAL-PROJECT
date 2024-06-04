@@ -24,6 +24,7 @@ model Users {
   role        Role     @default(USER)
   created_at  DateTime
   avatar_link String?
+  googleId    String?
 
   otps          Otps[]
   tickets       Tickets[]

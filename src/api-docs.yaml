@@ -319,7 +319,7 @@ paths:
                   message:
                     type: string
                     example: internal server error       
-  /auth/try-send-email-again:
+  /auth/try-send-email:
     post:
       tags:
         - Authentication

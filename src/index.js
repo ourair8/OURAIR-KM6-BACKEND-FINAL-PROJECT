@@ -15,7 +15,7 @@ const cors = require('cors')
 const swaggerDocument = YAML.parse(file)
 
 var corsOptions = {
-    origin: 'http://localhost:5173',
+    origin: ['http://localhost:5173', 'https://bw2nj1xt-3001.asse.devtunnels.ms', 'bw2nj1xt-3001.asse.devtunnels.ms' ],
     optionsSuccessStatus: 200 
 }
 
@@ -31,6 +31,7 @@ const app = express()
     .use(logger('dev'))
     .set('view engine', 'ejs')
     .use(express.json())
+    .use(bodyparser.json())
     .use(express.urlencoded({extended : false}))
     .use(bodyparser.urlencoded({extended : false}))
     .use("/api/v1", v1)
@@ -49,7 +50,7 @@ const app = express()
 
     //500
     .use((err, req, res, next) => {
-        console.log(err);
+        
         res.status(500).json({
             status: false,
             message: err.message,
