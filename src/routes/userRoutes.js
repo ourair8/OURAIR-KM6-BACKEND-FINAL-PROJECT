@@ -30,7 +30,7 @@ const userRoutes =
     .get("/", verifyToken, checkRole(["ADMIN"]), getAllUsersController)
     .get("/:id", verifyToken, checkRole(["ADMIN"]), getUserByIdController)
     .post("/", verifyToken, checkRole(["ADMIN"]), createUserController)
-    .put("/:id", verifyToken, checkRole(["USER"]), updateUserController)
+    // .put("/:id", verifyToken, checkRole(["USER"]), updateUserController)
     .delete("/:id", verifyToken, checkRole(["ADMIN"]), deleteUserController)
     .put(
       "/avatar-profile",
@@ -39,6 +39,6 @@ const userRoutes =
       image.single("avatar"),
       updateAvatar
     )
-    .put("/profile", verifyToken, checkRole(["user"]), updateProfile);
+    .put("/profile", verifyToken, checkRole(["USER"]), updateProfile);
 
 module.exports = { userRoutes };

@@ -14,12 +14,14 @@ async function updateAvatarService(avatar) {
 
     const fileUrl = response.url;
 
+    console.log(fileUrl)
+
     return prisma.users.update({
       where: {
         id: parseInt(avatar.userId),
       },
       data: {
-        avatar: fileUrl,
+        avatar_link: fileUrl,
       },
     });
   } catch (error) {
@@ -32,11 +34,11 @@ async function updateProfileService(userId, data) {
     if (data.created_at) {
       delete data.created_at;
     }
-    return prisma.user.update({
+    return prisma.users.update({
       where: {
         id: parseInt(userId),
       },
-      data,
+      data ,
     });
   } catch (error) {
     throw new Error(error.message);
