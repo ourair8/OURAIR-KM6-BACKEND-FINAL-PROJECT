@@ -14,7 +14,7 @@ datasource db {
 }
 
 model Users {
-  id          Int     @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   name        String
   username    String?  @unique
   phone_number String @unique
