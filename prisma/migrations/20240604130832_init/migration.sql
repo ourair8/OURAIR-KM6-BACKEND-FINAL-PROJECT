@@ -16,6 +16,7 @@ CREATE TABLE "users" (
     "role" "Role" NOT NULL DEFAULT 'USER',
     "created_at" TIMESTAMP(3) NOT NULL,
     "avatar_link" TEXT,
+    "googleId" TEXT,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
@@ -127,6 +128,7 @@ CREATE TABLE "tickets" (
 -- CreateTable
 CREATE TABLE "transactions" (
     "id" SERIAL NOT NULL,
+    "midtrans_order_id" TEXT NOT NULL,
     "adult_price" INTEGER NOT NULL,
     "baby_price" INTEGER NOT NULL,
     "tax_price" INTEGER NOT NULL,
@@ -159,6 +161,9 @@ CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "tickets_passanger_id_key" ON "tickets"("passanger_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "transactions_midtrans_order_id_key" ON "transactions"("midtrans_order_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "payments_transaction_id_key" ON "payments"("transaction_id");

@@ -3,19 +3,6 @@
 const prisma = require("../config/prisma.config");
 const fs = require("fs");
 
-const testConnection = async () => {
-  try {
-    await prisma.$connect();
-    console.log("Koneksi ke database berhasil");
-  } catch (error) {
-    console.error("Koneksi ke database gagal", error);
-  } finally {
-    await prisma.$disconnect();
-  }
-};
-
-testConnection();
-
 const AirlineSeeder = async function (req, res) {
   try {
     // Baca file JSON
@@ -23,7 +10,7 @@ const AirlineSeeder = async function (req, res) {
     const airlinesData = JSON.parse(rawData.toString());
     console.log("cek"); //berhasil
     for (const airportData of airlinesData) {
-      const wow = await prisma.airports.create({
+      const wow = await prisma.airlines.create({
         data: {
           name: airportData.name,
           airline_code: airportData.airline_code,

@@ -3,19 +3,6 @@
 const prisma = require("../config/prisma.config");
 const fs = require("fs");
 
-const testConnection = async () => {
-  try {
-    await prisma.$connect();
-    console.log("Koneksi ke database berhasil");
-  } catch (error) {
-    console.error("Koneksi ke database gagal", error);
-  } finally {
-    await prisma.$disconnect();
-  }
-};
-
-testConnection();
-
 const main = async function (req, res) {
   try {
     // Baca file JSON

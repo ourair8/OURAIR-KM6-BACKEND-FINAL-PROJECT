@@ -10,6 +10,7 @@ const YAML = require('yaml');
 const fs = require('fs');
 const file = fs.readFileSync(`${__dirname}/api-docs.yaml`, 'utf-8');
 const cors = require('cors')
+const seedFlight = require("./seeds/cron-flight")
 
 
 const swaggerDocument = YAML.parse(file)
