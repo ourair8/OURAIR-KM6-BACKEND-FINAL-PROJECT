@@ -39,6 +39,6 @@ const userRoutes =
       image.single("avatar"),
       updateAvatar
     )
-    .put("/profile", verifyToken, checkRole(["USER"]), updateProfile);
+    .put("/profile", verifyToken, checkRole(["user"]), updateProfile);
 
 module.exports = { userRoutes };

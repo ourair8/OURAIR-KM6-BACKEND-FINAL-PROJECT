@@ -4,24 +4,28 @@ const jwt = require('jsonwebtoken');
 const SECRET_KEY = process.env.JWT_SECRET_KEY
 
 const verifyToken = (req, res, next) => {
-
-    const { authorization } = req.headers
-
-    
+    const { authorization } = req.headers;
 
     if (!authorization || !authorization.split(' ')[1]) {
-        return res.json({
+        return res.status(401).json({
             status: false,
-            message: 'token not provided!',
+            message: 'Token not provided!',
             data: null
-        }).status(401);
+        });
     }
 
     let token = authorization.split(' ')[1];
 
+    console.log(token);
+    console.log(SECRET_KEY)
     jwt.verify(token, SECRET_KEY, (err, decoded) => {
         if (err) {
-            return res.status(401).json({ message: 'Failed to authenticate token' });
+            console.log(err)
+            return res.status(401).json({ 
+                status: false,
+                message: 'Failed to authenticate token',
+                data: null 
+            });
         }
 
         req.user = decoded;
@@ -32,12 +36,13 @@ const verifyToken = (req, res, next) => {
 const checkRole = (roles) => {
     return (req, res, next) => {
         if (!roles.includes(req.user.role)) {
+            console.log(req.user.role)
             return res.status(403).json({ message: 'Access forbidden: insufficient rights' });
         }
 
-        if(req.user.role !== 'ADMIN') {
-            return res.status(403).json({ message: 'Access forbidden: insufficient rights' });
-        }
+        // if(req.user.role !== 'ADMIN') {
+        //     return res.status(403).json({ message: 'Access forbidden: insufficient rights' });
+        // }
         next();
     };
 };
