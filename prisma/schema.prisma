@@ -14,17 +14,17 @@ datasource db {
 }
 
 model Users {
-  id          Int      @id @default(autoincrement())
-  name        String
-  username    String?  @unique
-  phone_number String @unique
-  password    String
-  email       String   @unique
-  is_Verified Boolean  @default(false)
-  role        Role     @default(USER)
-  created_at  DateTime
-  avatar_link String?
-  googleId    String?
+  id           Int      @id @default(autoincrement())
+  name         String
+  username     String?  @unique
+  phone_number String   @unique
+  password     String
+  email        String   @unique
+  is_Verified  Boolean  @default(false)
+  role         Role     @default(USER)
+  created_at   DateTime
+  avatar_link  String?
+  googleId     String?
 
   otps          Otps[]
   tickets       Tickets[]
@@ -157,7 +157,7 @@ model Tickets {
 
 model Transactions {
   id                Int       @id @default(autoincrement())
-  midtrans_order_id String?    @unique
+  midtrans_order_id String?   @unique
   adult_price       Int
   baby_price        Int
   tax_price         Int
