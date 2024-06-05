@@ -1,7 +1,7 @@
 'use strict'
 
 const prisma = require('../../../config/prisma.config');
-// const { sendNotification } = require('../../../libs/nodemailer.lib');
+const { sendNotification } = require('../../../libs/nodemailer.lib');
 const { handleError } = require("../../../middleware/errorHandler");
 const snap = require('../../../config/midtrans');
 const { findAvailableFlights } = require('../services/passangerService');
@@ -82,11 +82,12 @@ const createPassengerController = async (req, res) => {
         const transaction = await snap.createTransaction(orderDetails);
         const transactionToken = transaction.token;
 
-        await prisma.transactions.update({
+        const updatedTransaction = await prisma.transactions.update({
             where: { id: createdTransaction.id },
             data: { midtrans_order_id: orderDetails.transaction_details.order_id }
         });
 
+        //email
         // await sendNotification({
         //     to: req.user.email,
         //     subject: 'Booking Successful',
@@ -103,7 +104,7 @@ const createPassengerController = async (req, res) => {
             status: true,
             message: "success",
             data: {
-                transaction: createdTransaction,
+                transaction: updatedTransaction,
                 passengers: createdPassengers,
                 payment_link: transaction.redirect_url
             }

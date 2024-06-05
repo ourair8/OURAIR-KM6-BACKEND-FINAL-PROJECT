@@ -1,5 +1,8 @@
 'use strict'
 
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+
 const getTransactionHistoryController = async function(req, res){
   const { id } = req.user;
 
