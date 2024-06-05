@@ -1,6 +1,4 @@
 "use strict";
-const WebSocket = require("ws");
-const wss = new WebSocket.Server({ port: 8080 });
 
 const {
   getAllTicketsService,
@@ -10,14 +8,6 @@ const {
   deleteTicketService,
 } = require("../services/ticketService");
 const { handleError } = require("../../../middleware/errorHandler");
-
-const sendNotification = (message) => {
-  wss.clients.forEach((client) => {
-    if (client.readyState === WebSocket.OPEN) {
-      client.send(JSON.stringify({ type: "notification", message }));
-    }
-  });
-};
 
 const getAllTicketsController = async (req, res) => {
   try {
@@ -41,7 +31,6 @@ const createTicketController = async (req, res) => {
   try {
     const ticket = await createTicketService(req.body);
     res.status(201).json(ticket);
-    sendNotification("Ticket berhasil dibuat!");
   } catch (err) {
     handleError(err, res);
   }
