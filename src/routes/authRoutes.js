@@ -8,8 +8,10 @@ const { sendEmailAgainController } = require ("../features/auth/controllers/send
 const { checkEmailSendTokentoEmail } = require("../features/auth/controllers/forgotPassword")
 const { resetPassword } =require("../features/auth/controllers/resetPassword")
 const { whoIAm } =require("../features/auth/controllers/whoAmI")
+const { loginOAuthController } = require("../features/auth/controllers/login")
 
 const { sanitizeBody, handleValidationErrors, validateEmailOtpInput, registerUserInput, loginUserInput, validateEmailInput } = require("../validators/bodyValidator")
+const passport = require("../libs/passport")
 
 const auth = require("express").Router()
     .post("/signin", sanitizeBody(['email', 'password']), loginUserInput, handleValidationErrors, loginByEmailController)
@@ -21,6 +23,14 @@ const auth = require("express").Router()
     .post("/forgot-password-send-email-again", checkEmailSendTokentoEmail)
     .post("/reset-password-do-login", resetPassword)
     .get("/who-am-i", whoIAm)
+    .get("/google", passport.authenticate("google", { scope: ["profile", "email"] }))
+    .get("/google/callback", passport.authenticate("google", {
+        failureRedirect: "/api/v1/auth/google",
+        session: false,
+      }),
+      loginOAuthController
+    );
+
 
 
 module.exports = { auth };
