@@ -3,6 +3,7 @@
 const prisma = require('../../../config/prisma.config');
 const { sanitizeBody, handleValidationErrors } = require('../../../validators/bodyValidator');
 const { verifyToken } = require('../../../features/auth/controllers/whoAmI');
+// const { verifyToken1 } = require('../../../middleware/auth.middleware');
 const { sendNotification } = require('../../../libs/nodemailer.lib');
 const { ErrorWithStatusCode, handleError } = require("../../../middleware/errorHandler");
 const snap = require('../../../config/midtrans');
@@ -17,8 +18,11 @@ const createPassengerController = async function(req, res) {
         sanitizeBody(req.body);
         handleValidationErrors(req);
 
+        // ika pake middleware.auth
+        // verifyToken1(req, res, async() => { 
 
         verifyToken(req, res, async() => {
+
             const { passengers } = req.body;
 
             if (!Array.isArray(passengers) || passengers.length < 1 || passengers.length > 30) {
