@@ -550,7 +550,7 @@ paths:
                   message:
                     type: string
                     example: "An internal server error occurred."
-  /flights/search-location-by-date:
+  /flights/search-city-or-country-by-date:
     get:
       tags:
         - Features
@@ -674,7 +674,7 @@ paths:
                   message:
                     type: string
                     example: "Error searching flights."
-  /flights/search-location:
+  /flights/search-city-or-country:
     get:
       tags:
         - Features
