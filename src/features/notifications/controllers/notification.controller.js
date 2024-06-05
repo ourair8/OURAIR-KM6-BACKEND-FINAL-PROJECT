@@ -25,4 +25,4 @@ const updateNotificationControllerToTrue = async function(req, res) {
     }
 }
 
-module.exports = updateNotificationControllerToTrue;
+module.exports = {updateNotificationControllerToTrue};
