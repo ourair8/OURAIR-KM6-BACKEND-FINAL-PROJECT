@@ -37,6 +37,9 @@ paths:
                 email:
                   type: string
                   example: andyakuliah@gmail.com
+                phone_number:
+                  type: string
+                  example: 089653406790
                 password:
                   type: string
                   example: waduh12345
