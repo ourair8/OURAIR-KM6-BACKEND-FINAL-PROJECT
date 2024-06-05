@@ -19,7 +19,7 @@ pasport.use(new GoogleStrategy({
     },
     async function(accessToken, refreshToken, profile, done) {
         try {
-            let user = await prisma.user.upsert({
+            let user = await prisma.users.upsert({
                 where: { email: profile.emails[0].value },
                 update: { googleid: profile.id },
                 create: {

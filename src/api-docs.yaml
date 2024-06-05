@@ -506,11 +506,80 @@ paths:
                 type: object
                 properties:
                   status:
-                    type: string
-                    example: "success"
+                    type: boolean
+                    example: true
                   message:
                     type: string
-                    example: "Passenger records created successfully."
+                    example: "success"
+                  data:
+                    type: object
+                    properties:
+                      transaction:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 10
+                          midtrans_order_id:
+                            type: string
+                            nullable: true
+                            example: order-id-node-1717589331
+                          adult_price:
+                            type: integer
+                            example: 243986210
+                          baby_price:
+                            type: integer
+                            example: 0
+                          tax_price:
+                            type: integer
+                            example: 24398621
+                          total_price:
+                            type: integer
+                            example: 268384831
+                          created_at:
+                            type: string
+                            format: date-time
+                            example: "2024-06-05T11:14:45.062Z"
+                          status:
+                            type: boolean
+                            example: false
+                      passengers:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 70
+                            fullname:
+                              type: string
+                              example: "John Doe"
+                            surname:
+                              type: string
+                              example: "Doe"
+                            birth_date:
+                              type: string
+                              format: date-time
+                              example: "1990-01-01T00:00:00.000Z"
+                            nationality:
+                              type: string
+                              example: "USA"
+                            document:
+                              type: string
+                              example: "123456789"
+                            country_publication:
+                              type: string
+                              example: "USA"
+                            document_expired:
+                              type: string
+                              format: date-time
+                              example: "2030-01-01T00:00:00.000Z"
+                            seat_number:
+                              type: integer
+                              example: 12
+                      payment_link:
+                        type: string
+                        example: "https://app.sandbox.midtrans.com/snap/v4/redirection/a7644ed2-1e0d-4783-b192-660d36427f85"
         '400':
           description: Bad Request
           content:

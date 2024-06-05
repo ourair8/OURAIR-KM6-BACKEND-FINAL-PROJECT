@@ -35,7 +35,7 @@ const getFlightById = async function(req, res) {
     }
 }
 
-const getFlightsByCityOrCountryName = async function(){
+const getFlightsByCityOrCountryName = async function(req, res){
     let city = String(req.query.city);
     city = city.charAt(0).toUpperCase() + city?.slice(1);
 
