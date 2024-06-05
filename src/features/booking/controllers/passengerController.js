@@ -27,15 +27,14 @@ const createPassengerController = async (req, res) => {
             totalPrice += flight.ticket_price;
         });
 
-        // Create the transaction first
         const createdTransaction = await prisma.transactions.create({
             data: {
                 adult_price: totalPrice,
-                baby_price: 0, // Adjust accordingly
-                tax_price: totalPrice * 0.1, // Example tax calculation
-                total_price: totalPrice + (totalPrice * 0.1), // Total price including tax
+                baby_price: 0, 
+                tax_price: totalPrice * 0.1, 
+                total_price: totalPrice + (totalPrice * 0.1),
                 created_at: new Date(),
-                status: false // Set initial status, adjust if needed
+                status: false
             }
         });
 

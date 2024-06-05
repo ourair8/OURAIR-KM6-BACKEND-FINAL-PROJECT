@@ -54,6 +54,16 @@ const registerUser = async function(name, phoneNumber, email, password){
             user_id : user.id
         }
      })
+
+     await prisma.notifications.create({
+         data : {
+            user_id : user.id,
+            title : "Welcome",
+            message : `Hello ${user.name}, thank you for joining ourair`,
+            is_read : false,
+            created_at : new Date()
+         }
+     })
    
      
 
