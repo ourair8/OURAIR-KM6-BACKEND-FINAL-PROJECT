@@ -11,7 +11,7 @@ const { transactionRoutes } = require('../routes/transactionRoutes');
 const { seeder } = require('../routes/admin/seederRoute');
 const { booking } = require('../routes/boookingRoute')
 const { airports } = require('../routes/airportsRoute')
-
+const { webhook } = require('../routes/webhookRoute')
 
 // const { planeRoutes } = require('../routes/planeRoutes');
 // const { airportRoutes } = require('../routes/airportRoutes');
@@ -25,5 +25,6 @@ const v1 = require("express").Router()
     .use('/seeder', seeder)
     .use('/booking', booking)
     .use('/airports', airports)
+    .use('/webhook', webhook)
 
 module.exports = { v1 };
