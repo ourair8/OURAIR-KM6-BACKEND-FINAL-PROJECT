@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@prisma/client": "^5.14.0",
+    "@sentry/cli": "^2.32.1",
     "@sentry/cli-win32-x64": "^2.32.1",
     "@sentry/node": "^8.8.0",
     "@sentry/profiling-node": "^8.8.0",
