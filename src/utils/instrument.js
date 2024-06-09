@@ -3,7 +3,7 @@ const Sentry = require("@sentry/node");
 const { nodeProfilingIntegration } = require("@sentry/profiling-node");
 
 Sentry.init({
-  dsn: "https://2b4b1cc1f72bef4e6defaf198b23cfb4@o4507399740129280.ingest.de.sentry.io/4507399927955536",
+  dsn: process.env.SENTRY_DSN,
   integrations: [nodeProfilingIntegration()],
   // Performance Monitoring
   tracesSampleRate: 1.0, //  Capture 100% of the transactions

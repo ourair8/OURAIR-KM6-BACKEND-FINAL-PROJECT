@@ -182,3 +182,6 @@ ystemd-resolve)
 "ystemd-resolved.service - Network Name Resolution"
 ystemd-resolved.service - Network Name Resolution
 "ystemd-resolved.service - Network Name Resolution"
+
+# Sentry Config File
+.sentryclirc

@@ -7,7 +7,8 @@
   },
   "scripts": {
     "dev": "nodemon src/index.js",
-    "start": "node src/index.js"
+    "start": "node src/index.js && bun run sentry:sourcemaps",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org someonetan853 --project node-express ./src/index.js && sentry-cli sourcemaps upload --org someonetan853 --project node-express ./src/index.js"
   },
   "devDependencies": {
     "@types/bun": "latest"

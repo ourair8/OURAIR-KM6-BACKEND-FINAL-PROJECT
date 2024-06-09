@@ -8,6 +8,7 @@ const path = require("path");
 require("dotenv").config();
 require("./utils/instrument");
 const Sentry = require("@sentry/node");
+Sentry.init({ dsn: process.env.SENTRY_DSN });
 
 const app = express()
   .set("views", path.join(__dirname, "./views"))
@@ -30,10 +31,12 @@ const app = express()
       .status(200);
   })
 
-  //Taro sentry disini, cek repository mas tatang
-  .use((err, req, res, next) => {
-    Sentry.captureException(err);
-    next(err);
+  // Optional fallthrough error handler
+  .use(function onError(err, req, res, next) {
+    // The error id is attached to `res.sentry` to be returned
+    // and optionally displayed to the user for support.
+    res.statusCode = 500;
+    res.end(res.sentry + "\n");
   })
 
   //500
@@ -55,8 +58,15 @@ const app = express()
     });
   });
 
+// The error handler must be registered before any other error middleware and after all controllers
+Sentry.setupExpressErrorHandler(app);
+
 const PORT = 3001;
 
 app.listen(PORT, () => {
   console.log(`listening on port ${PORT}`);
+});
+
+app.get("/debug-sentry", function mainHandler(req, res) {
+  throw new Error("My first Sentry error!");
 });
