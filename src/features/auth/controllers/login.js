@@ -1,46 +1,54 @@
-'use strict'
+"use strict";
 
-const { loginByEmailService } = require("../services/login")
-const { ErrorWithStatusCode, handleError } = require('./../../../middleware/errorHandler');
-const jwt = require('jsonwebtoken');
-const SECRET_KEY = process.env.JWT_SECRET_KEY
+const { loginByEmailService } = require("../services/login");
+const {
+  ErrorWithStatusCode,
+  handleError,
+} = require("./../../../middleware/errorHandler");
+const jwt = require("jsonwebtoken");
+const SECRET_KEY = process.env.JWT_SECRET_KEY;
 
+const loginByEmailController = async function (req, res) {
+  try {
+    const { email, password } = await req.body;
 
+    const result = await loginByEmailService(email, password);
 
-const loginByEmailController = async function(req, res){
-    try {
-
-        const { email, password } = await req.body
-
-        const result = await loginByEmailService(email, password)
-
-        if(!result) {
-            throw new ErrorWithStatusCode("bad request !", 400)
-        }
-
-        const payload = {
-            id : result.id,
-            name : result.name,
-            username : result.username,
-            email : result.email,
-            phone_number : result.phone_number,
-            isVerified : result.is_Verified,
-            role : result.role
-        }
-
-        const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '1h' });
-
-        return res.status(201).json({
-            status : true,
-            message : 'success',
-            data : {...payload, token}
-        })
-
-    } catch (err) {
-        
-        handleError(err, res);
+    if (!result) {
+      throw new ErrorWithStatusCode("bad request !", 400);
     }
-}
 
+    const payload = {
+      id: result.id,
+      name: result.name,
+      username: result.username,
+      email: result.email,
+      phone_number: result.phone_number,
+      isVerified: result.is_Verified,
+      role: result.role,
+    };
 
-module.exports = { loginByEmailController }
+    const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "1h" });
+
+    return res.status(201).json({
+      status: true,
+      message: "success",
+      data: { ...payload, token },
+    });
+  } catch (err) {
+    handleError(err, res);
+  }
+};
+
+const loginOAuthController = async function (req, res) {
+  let token = jwt.sign({ id: req.user.id }, SECRET_KEY, { expiresIn: "1h" });
+
+  return res.status(200).json({
+    status: true,
+    message: "OK",
+    err: null,
+    data: { user: req.user, token },
+  });
+};
+
+module.exports = { loginByEmailController, loginOAuthController };
