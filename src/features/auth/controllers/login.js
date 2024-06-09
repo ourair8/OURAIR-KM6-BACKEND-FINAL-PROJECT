@@ -49,6 +49,10 @@ const loginOAuthController = async function (req, res) {
     err: null,
     data: { user: req.user, token },
   });
+  // return res.redirect("http://localhost:3001/api/v1/auth/who-am-i");
+
+  // res.cookie("token", token, { httpOnly: true });
+  // return res.redirect("http://localhost:3001/api/v1/auth/who-am-i");
 };
 
 module.exports = { loginByEmailController, loginOAuthController };
