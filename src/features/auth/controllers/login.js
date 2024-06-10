@@ -30,11 +30,13 @@ const loginByEmailController = async function (req, res) {
 
     const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "1h" });
 
-    return res.status(201).json({
-      status: true,
-      message: "success",
-      data: { ...payload, token },
-    });
+    res.cookie("token", token, { httpOnly: true }); // set token to cookies
+    return res.redirect("http://localhost:5173/"); // redirect to client
+    // return res.status(201).json({
+    //   status: true,
+    //   message: "success",
+    //   data: { ...payload, token },
+    // });
   } catch (err) {
     handleError(err, res);
   }
@@ -43,12 +45,15 @@ const loginByEmailController = async function (req, res) {
 const loginOAuthController = async function (req, res) {
   let token = jwt.sign({ id: req.user.id }, SECRET_KEY, { expiresIn: "1h" });
 
-  return res.status(200).json({
-    status: true,
-    message: "OK",
-    err: null,
-    data: { user: req.user, token },
-  });
+  res.cookie("token", token, { httpOnly: true }); // set token to cookies
+  return res.redirect("http://localhost:5173/"); // redirect to client
+
+  // return res.status(200).json({
+  //   status: true,
+  //   message: "OK",
+  //   err: null,
+  //   data: { user: req.user, token },
+  // });
   // return res.redirect("http://localhost:3001/api/v1/auth/who-am-i");
 
   // res.cookie("token", token, { httpOnly: true });
