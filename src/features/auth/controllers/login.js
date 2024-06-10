@@ -30,8 +30,11 @@ const loginByEmailController = async function (req, res) {
 
     const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "1h" });
 
-    res.cookie("token", token, { httpOnly: true }); // set token to cookies
-    return res.redirect("http://localhost:5173/"); // redirect to client
+    // res.cookie("token", token, { httpOnly: true }); // set token to cookies
+    // return res.redirect(`http://localhost:5173?token=${token}`); // redirect to client
+    return res.redirect(
+      `https://ourair-km-6-frontend-final-project.vercel.app/?token=${token}`
+    ); // redirect to client
     // return res.status(201).json({
     //   status: true,
     //   message: "success",
@@ -45,8 +48,11 @@ const loginByEmailController = async function (req, res) {
 const loginOAuthController = async function (req, res) {
   let token = jwt.sign({ id: req.user.id }, SECRET_KEY, { expiresIn: "1h" });
 
-  res.cookie("token", token, { httpOnly: true }); // set token to cookies
-  return res.redirect("http://localhost:5173/"); // redirect to client
+  // res.cookie("token", token, { httpOnly: true }); // set token to cookies
+  // return res.redirect(`http://localhost:5173?token=${token}`); // redirect to client
+  return res.redirect(
+    `https://ourair-km-6-frontend-final-project.vercel.app/?token=${token}`
+  ); // redirect to client
 
   // return res.status(200).json({
   //   status: true,
