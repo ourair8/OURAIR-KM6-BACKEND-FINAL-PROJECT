@@ -47,9 +47,9 @@ passport.deserializeUser((data, done) => {
   done(null, data);
 });
 
-const verifyToken1 = async (req, res, next) => {
-  // const token = req.headers["authorization"];
-  const token = req.console;
+const verifyToken1 = (req, res, next) => {
+  const token = req.headers["authorization"];
+  // const token = req.cookies;
   if (!token) {
     return res.status(401).send("Access Denied");
   }
@@ -57,26 +57,21 @@ const verifyToken1 = async (req, res, next) => {
   try {
     const verified = jwt.verify(token, process.env.JWT_SECRET);
     console.log(verified);
-    req.user = await prisma.users.findUnique({ where: { id: verified.id } });
+    req.user = verified;
     next();
   } catch (err) {
     res.status(400).send("Invalid Token");
   }
 };
 
-// jwt.verify(token, JWT_SECRET_KEY, async (err, decoded) => {
-//             if (err) {
-//                 return res.status(401).json({
-//                     status: false,
-//                     message: 'Unauthorized',
-//                     err: err.message,
-//                     data: null
-//                 });
-//             }
-
-//             req.user = await prisma.user.findUnique({ where: { id: decoded.id } });
-//             next();
-
+// try {
+//   const verified = jwt.verify(token, process.env.JWT_SECRET);
+//   console.log(verified);
+//   req.user = await prisma.users.findUnique({ where: { id: verified.id } });
+//   next();
+// } catch (err) {
+//   res.status(400).send("Invalid Token");
+// }
 module.exports = {
   verifyToken1,
   passport,
