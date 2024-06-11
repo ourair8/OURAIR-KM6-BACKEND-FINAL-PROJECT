@@ -1,11 +1,12 @@
 'use strict'
 
 const prisma = require('../../../config/prisma.config');
-const { sendNotification } = require('../../../libs/nodemailer.lib');
+const { sendNotification } = require('../../../config/websocket');
 const { handleError } = require("../../../middleware/errorHandler");
 const snap = require('../../../config/midtrans');
 const { findAvailableFlights } = require('../services/passangerService');
-const createPassengerController = async (req, res) => {
+
+const createPassengerController = async(req, res) => {
     try {
         const { passengers } = req.body;
 
@@ -30,8 +31,8 @@ const createPassengerController = async (req, res) => {
         const createdTransaction = await prisma.transactions.create({
             data: {
                 adult_price: totalPrice,
-                baby_price: 0, 
-                tax_price: totalPrice * 0.1, 
+                baby_price: 0,
+                tax_price: totalPrice * 0.1,
                 total_price: totalPrice + (totalPrice * 0.1),
                 created_at: new Date(),
                 status: false
@@ -99,6 +100,23 @@ const createPassengerController = async (req, res) => {
         //     transactionId: createdTransaction.id,
         //     status: 'Pending Payment',
         // });
+
+
+        sendNotification(req.user.id, {
+            message: `Your booking was successful. Please complete the payment using the following link: ${transaction.redirect_url}`,
+            transaction: updatedTransaction
+        });
+
+
+        await prisma.notifications.create({
+            data: {
+                user_id: req.user.id,
+                title: 'Booking Successful',
+                message: 'Your booking was successful. Please complete the payment',
+                is_read: false,
+                created_at: new Date()
+            }
+        });
 
         res.status(201).json({
             status: true,
