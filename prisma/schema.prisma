@@ -1,0 +1,195 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  id           Int      @id @default(autoincrement())
+  name         String
+  username     String?
+  phone_number String?
+  password     String
+  email        String   @unique
+  is_Verified  Boolean  @default(false)
+  role         Role     @default(USER)
+  created_at   DateTime
+  avatar_link  String?
+  googleId     String?
+
+  otps          Otps[]
+  tickets       Tickets[]
+  notofications Notifications[]
+
+  @@map("users")
+}
+
+model Otps {
+  id         Int      @id @default(autoincrement())
+  user_id    Int?
+  otp_code   String
+  created_at DateTime
+  expired_at DateTime
+
+  whomUserVerify Users? @relation(fields: [user_id], references: [id], onDelete: SetNull)
+
+  @@map("otp")
+}
+
+model Notifications {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  title      String
+  message    String
+  is_read    Boolean
+  created_at DateTime
+
+  WhomUserNotification Users @relation(fields: [user_id], references: [id])
+
+  @@map("notifications")
+}
+
+model Airlines {
+  id           Int    @id @default(autoincrement())
+  name         String @db.VarChar(255)
+  airline_code String @db.VarChar(255)
+
+  airplanes Airplanes[]
+
+  @@map("airlines")
+}
+
+model Airplanes {
+  id                   Int    @id @default(autoincrement())
+  airline_id           Int
+  airplane_code        String @db.VarChar(150)
+  baggage              Int
+  cabin_baggage        Int
+  description          String @db.VarChar(255)
+  seat_economy         Int
+  seat_economy_premium Int
+  seat_business        Int
+  seat_first_class     Int
+
+  whomAirlinesAirplanes Airlines @relation(fields: [airline_id], references: [id])
+
+  flight Flights[]
+
+  @@map("airplanes")
+}
+
+model Airports {
+  id            Int     @id @default(autoincrement())
+  code          String
+  name          String  @db.VarChar(150)
+  cityCode      String  @db.VarChar(20)
+  cityName      String  @db.VarChar(150)
+  countryCode   String  @db.VarChar(150)
+  countryName   String  @db.VarChar(150)
+  city          Boolean
+  total_visited Int?
+  thumbnail     String?
+
+  fromFlights Flights[] @relation("fromFlights")
+  toFlights   Flights[] @relation("toFlights")
+
+  @@map("airports")
+}
+
+model Flights {
+  id             Int        @id @default(autoincrement())
+  airplane_id    Int
+  from_id        Int
+  to_id          Int
+  departure_time DateTime
+  arrival_time   DateTime
+  flight_type    FlightType @default(DOMESTIC)
+  ticket_price   Int
+
+  fromAirport         Airports  @relation("fromFlights", fields: [from_id], references: [id])
+  toAirport           Airports  @relation("toFlights", fields: [to_id], references: [id])
+  whomAirplaneFlights Airplanes @relation(fields: [airplane_id], references: [id])
+
+  tickets Tickets[]
+
+  @@map("flights")
+}
+
+model Passengers {
+  id                  Int      @id @default(autoincrement())
+  fullname            String
+  surname             String
+  birth_date          DateTime
+  nationality         String
+  document            String
+  country_publication String
+  document_expired    DateTime
+  seat_number         Int
+
+  tickets Tickets[]
+
+  @@map("passengers")
+}
+
+model Tickets {
+  id             Int  @id @default(autoincrement())
+  user_id        Int
+  passanger_id   Int  @unique
+  flight_id      Int
+  transaction_id Int?
+
+  whomPassangerTicket Passengers    @relation(fields: [passanger_id], references: [id])
+  whomFlightTicket    Flights       @relation(fields: [flight_id], references: [id])
+  whomUserTicket      Users         @relation(fields: [user_id], references: [id])
+  transaction         Transactions? @relation(fields: [transaction_id], references: [id])
+
+  @@map("tickets")
+}
+
+model Transactions {
+  id                Int       @id @default(autoincrement())
+  midtrans_order_id String?   @unique
+  adult_price       Int
+  baby_price        Int
+  tax_price         Int
+  total_price       Int
+  created_at        DateTime
+  status            Boolean
+  Payments          Payments?
+
+  tickets Tickets[]
+
+  @@map("transactions")
+}
+
+model Payments {
+  id             Int      @id @default(autoincrement())
+  transaction_id Int      @unique
+  payment_type   String
+  payment_status String
+  created_at     DateTime
+
+  transaction Transactions @relation(fields: [transaction_id], references: [id])
+
+  @@map("payments")
+}
+
+//enum
+enum Role {
+  USER
+  ADMIN
+}
+
+enum FlightType {
+  DOMESTIC
+  INTERNATIONAL
+}
