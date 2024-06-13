@@ -1,6 +1,5 @@
 "use strict";
 const WebSocket = require("ws");
-const wss = new WebSocket.Server({ port: 8080 });
 
 const prisma = require("../../../config/prisma.config");
 
@@ -88,19 +87,37 @@ const createPassangerController = async function (req, res) {
     });
 
     // Emit notification to all connected clients
-    wss.clients.forEach((client) => {
+    req.app.locals.wss.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN && client.userId === req.user.id) {
         client.send(
           JSON.stringify({
             type: "notification",
-            data: notification,
+            data: {
+              user_id: req.user.id,
+              title: "Transaction Created",
+              message: `Your transaction with ID ${createdTransaction.id} has been created.`,
+              is_read: false,
+              created_at: new Date(),
+            },
           })
         );
       }
     });
   } catch (error) {
     console.error(error);
-    handleError(err, res);
+    handleError(error, res);
+    req.app.locals.wss.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(
+          JSON.stringify({
+            type: "notification",
+            data: {
+              error: error.message,
+            },
+          })
+        );
+      }
+    });
   }
 };
 

@@ -9,6 +9,7 @@ require("dotenv").config();
 require("./utils/instrument");
 const Sentry = require("@sentry/node");
 Sentry.init({ dsn: process.env.SENTRY_DSN });
+const WebSocket = require("ws");
 
 const app = express()
   .set("views", path.join(__dirname, "./views"))
@@ -62,6 +63,7 @@ const app = express()
 Sentry.setupExpressErrorHandler(app);
 
 const PORT = 3001;
+const PORT_WS = 8085;
 
 app.listen(PORT, () => {
   console.log(`listening on port ${PORT}`);
@@ -69,4 +71,21 @@ app.listen(PORT, () => {
 
 app.get("/debug-sentry", function mainHandler(req, res) {
   throw new Error("My first Sentry error!");
+});
+
+const server = app.listen(PORT_WS, () => {
+  console.log(`Express server listening on port ${PORT_WS}`);
+});
+
+// Setup server WebSocket
+const wss = new WebSocket.Server({ server });
+app.locals.wss = wss;
+
+wss.on("connection", function connection(ws) {
+  console.log("New WebSocket connection");
+
+  ws.on("message", function incoming(message) {
+    console.log(`Received: ${message}`);
+    ws.send(`Echo: ${message}`);
+  });
 });
