@@ -70,8 +70,9 @@ const loginOAuthController = async function (req, res) {
   // res.cookie("token", token, { httpOnly: true }); // set token to cookies
   // return res.redirect(`http://localhost:5173?token=${token}`); // redirect to client
   return res.redirect(
-    `https://xsj9lz0q-5173.asse.devtunnels.ms/auth-user/${token}`
+    // `https://xsj9lz0q-5173.asse.devtunnels.ms/auth-user/${token}`
     // `https://ourair-km-6-frontend-final-project.vercel.app/?token=${token}`
+    `http://localhost:5173/auth-user/${token}`
   ); // redirect to client
 
   // return res.status(200).json({

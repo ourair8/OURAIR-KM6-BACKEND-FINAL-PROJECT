@@ -9,43 +9,44 @@ require("dotenv").config();
 
 const prisma = new PrismaClient();
 
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "/auth/google/callback",
-    },
-    async (accessToken, refreshToken, profile, done) => {
-      let user = await prisma.users.findUnique({
-        where: { googleId: profile.id },
-      });
+// passport.use(
+//   new GoogleStrategy(
+//     {
+//       clientID: process.env.GOOGLE_CLIENT_ID,
+//       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+//       callbackURL: process.env.GOOGLE_CALLBACK_URL,
+//     },
+//     async (accessToken, refreshToken, profile, done) => {
+//       console.log(profile)
+//       let user = await prisma.users.findUnique({
+//         where: { googleId: profile.id },
+//       });
 
-      if (!user) {
-        user = await prisma.users.create({
-          data: {
-            googleId: profile.id,
-            email: profile.emails[0].value,
-            name: profile.displayName,
-          },
-        });
-      }
+//       if (!user) {
+//         user = await prisma.users.create({
+//           data: {
+//             googleId: profile.id,
+//             email: profile.emails[0].value,
+//             name: profile.displayName,
+//           },
+//         });
+//       }
 
-      const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-        expiresIn: "1h",
-      });
-      return done(null, { user, token });
-    }
-  )
-);
+//       const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+//         expiresIn: "1h",
+//       });
+//       return done(null, { user, token });
+//     }
+//   )
+// );
 
-passport.serializeUser((data, done) => {
-  done(null, data);
-});
+// passport.serializeUser((data, done) => {
+//   done(null, data);
+// });
 
-passport.deserializeUser((data, done) => {
-  done(null, data);
-});
+// passport.deserializeUser((data, done) => {
+//   done(null, data);
+// });
 
 const verifyToken1 = (req, res, next) => {
   const token = req.headers["authorization"];

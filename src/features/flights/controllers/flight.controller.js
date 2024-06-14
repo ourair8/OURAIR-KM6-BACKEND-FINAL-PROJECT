@@ -49,27 +49,71 @@ const getFlightsByCityOrCountryName = async function(req, res){
         const flights = await prisma.flights.findMany({
             where: {
                 OR: [
-                    { fromAirport : { countryName : country }},
-                    { toAirport : { countryName : country }},
-                    { fromAirport: { cityName: city} },
-                    { toAirport: { cityName: city} },
+                    { fromAirport: { countryName: country } },
+                    { toAirport: { countryName: country } },
+                    { fromAirport: { cityName: city } },
+                    { toAirport: { cityName: city } },
                 ],
                 departure_time: {
                     gte: new Date(),
                 },
             },
-            include: {
-                fromAirport: true,
-                toAirport: true,
-                whomAirplaneFlights : {
-                    include : {
-                        whomAirlinesAirplanes : true
+            select: {
+                id: true,
+                airplane_id: true,
+                from_id: true,
+                to_id: true,
+                departure_time: true,
+                arrival_time: true,
+                flight_type: true,
+                ticket_price: true,
+                fromAirport: {
+                    select: {
+                        id: true,
+                        code: true,
+                        name: true,
+                        cityCode: true,
+                        cityName: true,
+                        countryCode: true,
+                        countryName: true,
+                        city: true,
+                        total_visited: true,
+                        thumbnail: true
+                    }
+                },
+                toAirport: {
+                    select: {
+                        id: true,
+                        code: true,
+                        name: true,
+                        cityCode: true,
+                        cityName: true,
+                        countryCode: true,
+                        countryName: true,
+                        city: true,
+                        total_visited: true,
+                        thumbnail: true
+                    }
+                },
+                whomAirplaneFlights: {
+                    select: {
+                        id: true,
+                        airline_id: true,
+                        airplane_code: true,
+                        whomAirlinesAirplanes: {
+                            select: {
+                                id: true,
+                                name: true,
+                                airline_code: true
+                            }
+                        }
                     }
                 }
             },
             skip: (page - 1) * limit,
             take: limit,
         });
+        
 
         const totalFlights = await prisma.flights.count({
             where: {

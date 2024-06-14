@@ -30,10 +30,12 @@ var corsOptions = {
     "http://localhost:3001",
     "http://localhost:3000",
     "https://ourair.my.id",
+    "https://accounts.google.com/o/oauth2/v2",
     "https://bw2nj1xt-3001.asse.devtunnels.ms",
     "bw2nj1xt-3001.asse.devtunnels.ms",
   ],
   optionsSuccessStatus: 200,
+  credentials : true,
 };
 
 require("dotenv").config();

@@ -31,6 +31,4 @@ const auth = require("express").Router()
       loginOAuthController
     );
 
-
-
 module.exports = { auth };

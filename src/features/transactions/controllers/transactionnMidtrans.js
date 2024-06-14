@@ -27,7 +27,16 @@ const handleCreateTransaction = async(req, res) => {
             status: false
         });
 
-        res.status(200).json({ transaction, savedTransaction });
+        const createdPayment = await prisma.payments.create({
+            data: {
+                transaction_id: createdTransaction.id,
+                payment_type: transaction.payment_type,
+                payment_status: transaction.transaction_status,
+                created_at: new Date()
+            }
+        });
+
+        res.status(200).json({ transaction, savedTransaction, createdPayment });
     } catch (error) {
         console.error('Error creating transaction:', error);
         res.status(500).json({ error: 'Internal Server Error' });

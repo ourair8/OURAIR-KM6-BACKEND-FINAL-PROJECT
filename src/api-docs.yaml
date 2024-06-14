@@ -12,7 +12,9 @@ servers:
     description: production development server
 tags:
   - name: Authentication
-  - name: Features
+  - name: Booking & Transaction
+  - name: Notifications
+
 components:
   securitySchemes:
     bearerAuth:
@@ -446,10 +448,179 @@ paths:
                   error:
                     type: string
                     example: Internal server error
+  /auth/reset-password-do-login:
+    post:
+      tags:
+        - Authentication
+      summary: Reset User Password
+      description: Allows a user to reset their password using a provided token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  example: "newpassword123"
+      responses:
+        '200':
+          description: Password reset successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: "John Doe"
+                      username:
+                        type: string
+                        example: "johndoe"
+                      email:
+                        type: string
+                        example: "johndoe@example.com"
+                      phone_number:
+                        type: string
+                        example: "+1234567890"
+                      isVerified:
+                        type: boolean
+                        example: true
+                      role:
+                        type: string
+                        example: "user"
+                      newToken:
+                        type: string
+                        example: "new.jwt.token"
+        '401':
+          description: Unauthorized, token not provided or authentication failed.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "token not provided!"
+                  data:
+                    type: string
+                    example: null
+  components:
+    securitySchemes:
+      bearerAuth:
+        type: http
+        scheme: bearer
+        bearerFormat: JWT
+    responses:
+      Unauthorized:
+        description: Authentication failed
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: Unauthorized
+  /auth/google:
+    get:
+      tags:
+        - Authentication
+      summary: Google OAuth Login
+      description: Initiates the Google OAuth login process.
+      responses:
+        '302':
+          description: Redirects to Google OAuth login page.
+          headers:
+            Location:
+              description: URL to redirect the user to the Google OAuth login page.
+              schema:
+                type: string
+                example: "https://accounts.google.com/o/oauth2/v2/auth"
+  /auth/google/callback:
+    get:
+      tags:
+        - Authentication
+      summary: Google OAuth Callback
+      description: Handles the Google OAuth callback and user authentication.
+      responses:
+        '302':
+          description: Redirects to the client application with a JWT token.
+          headers:
+            Location:
+              description: URL to redirect the user to the client application with the JWT token.
+              schema:
+                type: string
+                example: "https://xsj9lz0q-5173.asse.devtunnels.ms/auth-user/{token}"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    components:
+      securitySchemes:
+        googleOAuth:
+          type: oauth2
+          flows:
+            authorizationCode:
+              authorizationUrl: https://accounts.google.com/o/oauth2/v2/auth
+              tokenUrl: https://oauth2.googleapis.com/token
+              scopes:
+                profile: Access to user's profile information
+                email: Access to user's email address
+  responses:
+    Unauthorized:
+      description: Authentication failed
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Unauthorized
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "John Doe"
+        username:
+          type: string
+          example: "johndoe"
+        email:
+          type: string
+          example: "johndoe@example.com"
+        phone_number:
+          type: string
+          example: "+1234567890"
+        isVerified:
+          type: boolean
+          example: true
+        role:
+          type: string
+          example: "user"
   /booking/create:
     post:
       tags:
-        - Features
+        - Booking & Transaction
       description: Create booking by adding passengers and choosing flights. Requires JWT authentication.
       summary: User create booking for passangers
       security:
@@ -622,7 +793,7 @@ paths:
   /flights/search-city-or-country-by-date:
     get:
       tags:
-        - Features
+        - Booking & Transaction
       summary: Get Flights by Date
       description: Retrieve flights departing or arriving at a specified city within a date range.
       parameters:
@@ -746,7 +917,7 @@ paths:
   /flights/search-city-or-country:
     get:
       tags:
-        - Features
+        - Booking & Transaction
       summary: Get Flights by City or Country Name
       description: Retrieve flights departing or arriving at a specified city or country.
       parameters:
@@ -811,34 +982,120 @@ paths:
                             id:
                               type: integer
                               example: 1
+                            airplane_id:
+                              type: integer
+                              example: 84
+                            from_id:
+                              type: integer
+                              example: 3425
+                            to_id:
+                              type: integer
+                              example: 1658
+                            departure_time:
+                              type: string
+                              format: date-time
+                              example: "2024-06-03T12:00:00Z"
+                            arrival_time:
+                              type: string
+                              format: date-time
+                              example: "2024-06-03T16:00:00Z"
+                            flight_type:
+                              type: string
+                              example: "DOMESTIC"
+                            ticket_price:
+                              type: integer
+                              example: 4649110
                             fromAirport:
                               type: object
                               properties:
                                 id:
                                   type: integer
-                                  example: 1
+                                  example: 3425
+                                code:
+                                  type: string
+                                  example: "SYD"
+                                name:
+                                  type: string
+                                  example: "Sydney Kingsford Smith Arpt"
+                                cityCode:
+                                  type: string
+                                  example: "SYD"
                                 cityName:
                                   type: string
-                                  example: "New York"
+                                  example: "Sydney"
+                                countryCode:
+                                  type: string
+                                  example: "AU"
                                 countryName:
                                   type: string
-                                  example: "USA"
+                                  example: "Australia"
+                                city:
+                                  type: boolean
+                                  example: true
+                                total_visited:
+                                  type: integer
+                                  example: 0
+                                thumbnail:
+                                  type: string
+                                  example: "https://example.com/sydney.webp"
                             toAirport:
                               type: object
                               properties:
                                 id:
                                   type: integer
-                                  example: 2
+                                  example: 1658
+                                code:
+                                  type: string
+                                  example: "HLP"
+                                name:
+                                  type: string
+                                  example: "Halim Perdana Kusuma Arpt"
+                                cityCode:
+                                  type: string
+                                  example: "JKT"
                                 cityName:
                                   type: string
-                                  example: "Los Angeles"
+                                  example: "Jakarta"
+                                countryCode:
+                                  type: string
+                                  example: "ID"
                                 countryName:
                                   type: string
-                                  example: "USA"
-                            departure_time:
-                              type: string
-                              format: date-time
-                              example: "2024-06-03T12:00:00Z"
+                                  example: "Indonesia"
+                                city:
+                                  type: boolean
+                                  example: false
+                                total_visited:
+                                  type: integer
+                                  example: 0
+                                thumbnail:
+                                  type: string
+                                  example: "https://example.com/jakarta.webp"
+                            whomAirplaneFlights:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  example: 84
+                                airline_id:
+                                  type: integer
+                                  example: 34
+                                airplane_code:
+                                  type: string
+                                  example: "AI636"
+                                whomAirlinesAirplanes:
+                                  type: object
+                                  properties:
+                                    id:
+                                      type: integer
+                                      example: 34
+                                    name:
+                                      type: string
+                                      example: "Malaysia Airlines"
+                                    airline_code:
+                                      type: string
+                                      example: "MH"
+
         '400':
           description: Invalid request parameters.
           content:
@@ -868,7 +1125,7 @@ paths:
   /transactions/history:
     get:
       tags:
-        - Features
+        - Booking & Transaction
       summary: Get Transaction History
       description: Retrieve the transaction history for the authenticated user.
       security:
@@ -959,5 +1216,405 @@ paths:
                   message:
                     type: string
                     example: An error occurred while fetching bookings.
-
+  /notification/notifications:
+    get:
+      tags:
+        - Notifications
+      summary: Get User Notifications
+      description: Retrieve a list of notifications for the authenticated user.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: The page number for pagination (defaults to 1).
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+            default: 5
+          description: The number of results per page for pagination (defaults to 5).
+      responses:
+        '200':
+          description: A list of user notifications.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  notifications:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        user_id:
+                          type: integer
+                          example: 123
+                        message:
+                          type: string
+                          example: "Your order has been shipped."
+                        created_at:
+                          type: string
+                          format: date-time
+                          example: "2023-12-01T10:00:00Z"
+                  total:
+                    type: integer
+                    example: 10
+                  page:
+                    type: integer
+                    example: 1
+                  limit:
+                    type: integer
+                    example: 5
+        '401':
+          description: Unauthorized, user not authenticated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized"
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "An error occurred while fetching notifications."
+    components:
+      securitySchemes:
+        bearerAuth:
+          type: http
+          scheme: bearer
+          bearerFormat: JWT
+      responses:
+        Unauthorized:
+          description: Authentication failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Unauthorized
+  /notification/notifications/{id}/read:
+    patch:
+      tags:
+        - Notifications
+      summary: Mark Notification as Read
+      description: Mark a specific notification as read by its ID.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: The ID of the notification to mark as read.
+      responses:
+        '200':
+          description: Notification marked as read successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  notification:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      user_id:
+                        type: integer
+                        example: 123
+                      message:
+                        type: string
+                        example: "Your order has been shipped."
+                      is_read:
+                        type: boolean
+                        example: true
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: "2023-12-01T10:00:00Z"
+        '401':
+          description: Unauthorized, user not authenticated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized"
+        '404':
+          description: Notification not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Notification not found"
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "An error occurred while marking the notification as read."
+    components:
+      securitySchemes:
+        bearerAuth:
+          type: http
+          scheme: bearer
+          bearerFormat: JWT
+      responses:
+        Unauthorized:
+          description: Authentication failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Unauthorized
+        NotFound:
+          description: The specified resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Not Found"
+  /users/avatar-profile:
+    put:
+      tags:
+        - Profile
+      summary: Update User Avatar
+      description: Update the avatar of the authenticated user.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                avatar:
+                  type: string
+                  format: binary
+                  description: The avatar image file to upload.
+      responses:
+        '200':
+          description: Avatar updated successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success updated avatar"
+                  data:
+                    type: object
+                    properties:
+                      avatar:
+                        type: string
+                        example: "https://ik.imagekit.io/5zwoz8nkr/ourair/12345.jpg"
+        '400':
+          description: Bad request due to missing avatar file or user ID.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "error"
+                  message:
+                    type: string
+                    example: "Avatar file is missing."
+        '401':
+          description: Unauthorized, user not authenticated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "error"
+                  message:
+                    type: string
+                    example: "Unauthorized"
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "error"
+                  message:
+                    type: string
+                    example: "An error occurred while updating avatar."
+    components:
+      securitySchemes:
+        bearerAuth:
+          type: http
+          scheme: bearer
+          bearerFormat: JWT
+  /users/profile:
+    put:
+      tags:
+        - Profile
+      summary: Update User Profile
+      description: Update the profile of the authenticated user.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "John Doe"
+                username:
+                  type: string
+                  example: "johndoe123"
+                phone_number:
+                  type: string
+                  example: "+1234567890"
+                email:
+                  type: string
+                  example: "john.doe@example.com"
+                avatar_link:
+                  type: string
+                  example: "https://ik.imagekit.io/5zwoz8nkr/ourair/avatar.jpg"
+              required:
+                - name
+                - email
+      responses:
+        '200':
+          description: Profile updated successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  message:
+                    type: string
+                    example: "Profile updated successfully"
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: "John Doe"
+                      username:
+                        type: string
+                        example: "johndoe123"
+                      phone_number:
+                        type: string
+                        example: "+1234567890"
+                      email:
+                        type: string
+                        example: "john.doe@example.com"
+                      is_Verified:
+                        type: boolean
+                        example: true
+                      role:
+                        type: string
+                        example: "USER"
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: "2023-06-14T09:00:00Z"
+                      avatar_link:
+                        type: string
+                        example: "https://ik.imagekit.io/5zwoz8nkr/ourair/avatar.jpg"
+                      googleId:
+                        type: string
+                        example: "google12345"
+        '400':
+          description: Bad request if the request body is missing required fields.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "error"
+                  message:
+                    type: string
+                    example: "Invalid request data."
+        '401':
+          description: Unauthorized, user not authenticated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "error"
+                  message:
+                    type: string
+                    example: "Unauthorized"
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "error"
+                  message:
+                    type: string
+                    example: "An error occurred while updating profile."
+    components:
+      securitySchemes:
+        bearerAuth:
+          type: http
+          scheme: bearer
+          bearerFormat: JWT
 

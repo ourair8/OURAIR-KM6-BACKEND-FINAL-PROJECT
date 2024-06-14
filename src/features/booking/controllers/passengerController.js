@@ -1,6 +1,6 @@
 'use strict'
 
-const WebSocket = require("ws");
+// const WebSocket = require("ws");
 
 const prisma = require('../../../config/prisma.config');
 const { handleError } = require("../../../middleware/errorHandler");
@@ -11,7 +11,7 @@ const { findAvailableFlights } = require('../services/passangerService');
 
 const { sendNotification } = require('../../../config/websocket');
 
-const createPassengerController = async (req, res) => {
+const createPassengerController = async(req, res) => {
     try {
         const { passengers } = req.body;
 
@@ -36,8 +36,8 @@ const createPassengerController = async (req, res) => {
         const createdTransaction = await prisma.transactions.create({
             data: {
                 adult_price: totalPrice,
-                baby_price: 0, 
-                tax_price: totalPrice * 0.1, 
+                baby_price: 0,
+                tax_price: totalPrice * 0.1,
                 total_price: totalPrice + (totalPrice * 0.1),
                 created_at: new Date(),
                 status: false
@@ -92,6 +92,17 @@ const createPassengerController = async (req, res) => {
             data: { midtrans_order_id: orderDetails.transaction_details.order_id }
         });
 
+        //logika payment yang ini, lebih baik di webhook atau di booking?
+        // const createdPayment = await prisma.payments.create({
+        //     data: {
+        //         transaction_id: createdTransaction.id,
+        //         payment_type: transaction.payment_type,
+        //         payment_status: transaction.transaction_status,
+        //         created_at: new Date()
+        //     }
+        // });
+
+
         //email
         // await sendNotification({
         //     to: req.user.email,
@@ -105,43 +116,13 @@ const createPassengerController = async (req, res) => {
         //     status: 'Pending Payment',
         // });
 
-        //masukin notif samuel
-        const notification = await prisma.notifications.create({
-            data: {
-              user_id: req.user.id,
-              title: "Transaction Created",
-              message: `Your transaction with ID ${createdTransaction.id} has been created.`,
-              is_read: false,
-              created_at: new Date(),
-            },
-          });
 
-          console.log(req.app.locals.wss.clients)
-
-          //web socket samuel
-          req.app.locals.wss.clients.forEach((client) => {
-            if (client.readyState === WebSocket.OPEN && client.userId === req.user.id) {
-              client.send(
-                JSON.stringify({
-                  type: "notification",
-                  data: {
-                    user_id: req.user.id,
-                    title: "Transaction Created",
-                    message: `Your transaction with ID ${createdTransaction.id} has been created.`,
-                    is_read: false,
-                    created_at: new Date(),
-                  },
-                })
-              );
-            }
-          });
-
-          //web socket huzi
-          sendNotification(req.user.id, {
+        //web socket huzi
+        sendNotification(req.user.id, {
             message: `Your booking was successful. Please complete the payment using the following link: ${transaction.redirect_url}`,
             transaction: updatedTransaction
         });
-        
+
         //masukin notif huzi 
         await prisma.notifications.create({
             data: {
@@ -152,13 +133,46 @@ const createPassengerController = async (req, res) => {
                 created_at: new Date()
             }
         });
-      
+
+
+        // //masukin notif samuel
+        // const notification = await prisma.notifications.create({
+        //     data: {
+        //         user_id: req.user.id,
+        //         title: "Transaction Created",
+        //         message: `Your transaction with ID ${createdTransaction.id} has been created.`,
+        //         is_read: false,
+        //         created_at: new Date(),
+        //     },
+        // });
+
+        console.log(req.app.locals.wss.clients)
+
+        //web socket samuel
+        req.app.locals.wss.clients.forEach((client) => {
+            if (client.readyState === WebSocket.OPEN && client.userId === req.user.id) {
+                client.send(
+                    JSON.stringify({
+                        type: "notification",
+                        data: {
+                            user_id: req.user.id,
+                            title: "Transaction Created",
+                            message: `Your transaction with ID ${createdTransaction.id} has been created.`,
+                            is_read: false,
+                            created_at: new Date(),
+                        },
+                    })
+                );
+            }
+        });
+
         return res.status(201).json({
             status: true,
             message: "success",
             data: {
                 transaction: updatedTransaction,
                 passengers: createdPassengers,
+                // payment: createdPayment,
                 payment_link: transaction.redirect_url
             }
         });

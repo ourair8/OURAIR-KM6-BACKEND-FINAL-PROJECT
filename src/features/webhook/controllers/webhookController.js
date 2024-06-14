@@ -5,11 +5,11 @@ const { handleError } = require("../../../middleware/errorHandler");
 
 const handleWebhook = async(req, res) => {
     try {
-        const { order_id, transaction_status } = req.body;
+        const { order_id, transaction_status, payment_type } = req.body;
 
-        const status = await updateTransactionStatus(order_id, transaction_status);
+        const status = await updateTransactionStatus(order_id, transaction_status, payment_type);
 
-        res.status(200).json({ message: 'Transaction status updated successfully.', status });
+        res.status(200).json({ message: 'Transaction status and payment information updated successfully.', status });
     } catch (error) {
         console.error(error);
         handleError(error, res);
