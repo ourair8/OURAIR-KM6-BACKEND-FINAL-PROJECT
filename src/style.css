@@ -477,6 +477,20 @@
         background-size: 200% 100%;
         transition: background-position 0.3s ease-in-out;
     }
+
+    .swagger-ui div.opblock-summary.opblock-summary-patch button {
+        background: linear-gradient(90deg, var(--patch-method-background-color) 0%, var(--patch-method-background-color) 50%, transparent 50%);
+        border-color: var(--get-method-color);
+        background-size: 200% 100%;
+        transition: background-position 0.3s ease-in-out;
+    }
+
+    .swagger-ui div.opblock-summary.opblock-summary-put button {
+        background: linear-gradient(90deg, var(--put-method-background-color) 0%, var(--put-method-background-color) 50%, transparent 50%);
+        border-color: var(--get-method-color);
+        background-size: 200% 100%;
+        transition: background-position 0.3s ease-in-out;
+    }
     
     .swagger-ui div.opblock-summary.opblock-summary-post button:hover {
         background-position: -100% 0;
@@ -485,6 +499,15 @@
     .swagger-ui div.opblock-summary.opblock-summary-get button:hover {
         background-position: -100% 0;
     }
+
+    .swagger-ui div.opblock-summary.opblock-summary-patch button:hover {
+        background-position: -100% 0;
+    }
+
+    .swagger-ui div.opblock-summary.opblock-summary-put button:hover {
+        background-position: -100% 0;
+    }
+
 
     .swagger-ui .opblock-summary-description {
         color: rgba(255, 255, 255, 0.8) !important;

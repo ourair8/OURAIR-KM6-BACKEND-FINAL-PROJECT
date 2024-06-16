@@ -5,6 +5,7 @@ const { AirlineSeeder } = require("../../seeds/airlineSeeder");
 const { AirplaneSeeder } = require("../../seeds/airplaneSeeder");
 const { seedFlights } = require("../../seeds/flights");
 const { updateThumbnails } = require("../../seeds/thumbnailseed");
+const { insertDataMongo, updateFlightSeats } = require("../../db/mongo_seed")
 
 
 const {
@@ -14,6 +15,8 @@ const {
 
 const seeder = require("express")
   .Router()
+  .get("/trigger-update-seed-seat", updateFlightSeats)
+  .get("/trigger-seed-seat", insertDataMongo)
   .get("/trigger-seed-airports", main)
   // verifyToken, checkRole(["ADMIN"]),
   .get(

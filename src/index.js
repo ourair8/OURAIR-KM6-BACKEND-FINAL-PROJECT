@@ -13,6 +13,7 @@ const fs = require("fs");
 const file = fs.readFileSync(`${__dirname}/api-docs.yaml`, "utf-8");
 const cors = require("cors");
 const seedFlight = require("./seeds/cron-flight");
+const compression = require('compression');
 
 require("dotenv").config();
 require("./utils/instrument");
@@ -43,6 +44,7 @@ require("dotenv").config();
 const app = express()
   .use(cors(corsOptions))
   .use(cookieParser())
+  .use(compression())
   .set("views", path.join(__dirname, "./views"))
   .use("/custom.css", express.static(path.join(__dirname, "./style.css")))
   .use(

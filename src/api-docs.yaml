@@ -622,10 +622,11 @@ paths:
       tags:
         - Booking & Transaction
       description: Create booking by adding passengers and choosing flights. Requires JWT authentication.
-      summary: User create booking for passangers
+      summary: User creates booking for passengers
       security:
         - bearerAuth: []
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -661,13 +662,16 @@ paths:
                         example: "2030-01-01"
                       seat_number:
                         type: string
-                        example: "12A"
+                        example: "A1"
                       ticket:
                         type: object
                         properties:
                           flight_id:
                             type: integer
-                            example: 1
+                            example: 1604
+                      category:
+                        type: string
+                        example: "adult"
       responses:
         '201':
           description: Created
@@ -790,48 +794,86 @@ paths:
                   message:
                     type: string
                     example: "An internal server error occurred."
-  /flights/search-city-or-country-by-date:
+  /flights/search-city-or-country-airport-and-from-to-by-date:
     get:
+      summary: Search flights by city or country, airport, and date
       tags:
-        - Booking & Transaction
-      summary: Get Flights by Date
-      description: Retrieve flights departing or arriving at a specified city within a date range.
+        - Search
       parameters:
         - in: query
-          name: city
-          required: true
-          schema:
-            type: string
-          description: The name of the city to search for flights.
-        - in: query
           name: startDate
-          required: false
           schema:
             type: string
             format: date
-          description: The start date for the search range (defaults to today's date if not provided).
+          required: false
+          description: Start date for flight search
         - in: query
           name: endDate
-          required: false
           schema:
             type: string
             format: date
-          description: The end date for the search range (defaults to 30 days from today's date if not provided).
+          required: false
+          description: End date for flight search
+        - in: query
+          name: fromcity
+          schema:
+            type: string
+          required: false
+          description: Departure city
+        - in: query
+          name: tocity
+          schema:
+            type: string
+          required: false
+          description: Destination city
+        - in: query
+          name: fromairport
+          schema:
+            type: string
+          required: false
+          description: Departure airport
+        - in: query
+          name: toairport
+          schema:
+            type: string
+          required: false
+          description: Destination airport
+        - in: query
+          name: fromcountry
+          schema:
+            type: string
+          required: false
+          description: Departure country
+        - in: query
+          name: tocountry
+          schema:
+            type: string
+          required: false
+          description: Destination country
         - in: query
           name: page
-          required: false
           schema:
             type: integer
-          description: The page number for pagination (defaults to 1).
+            default: 1
+          required: false
+          description: Page number for pagination
         - in: query
           name: limit
-          required: false
           schema:
             type: integer
-          description: The number of results per page for pagination (defaults to 10).
+            default: 10
+          required: false
+          description: Number of items per page
+        - in: query
+          name: class
+          schema:
+            type: string
+          required: false
+          description: Flight class
+
       responses:
-        '200':
-          description: A list of flights matching the search criteria.
+        200:
+          description: Successfully retrieved flight data
           content:
             application/json:
               schema:
@@ -845,16 +887,12 @@ paths:
                     example: success
                   totalItems:
                     type: integer
-                    example: 50
                   totalPages:
                     type: integer
-                    example: 5
                   currentPage:
                     type: integer
-                    example: 1
                   length:
                     type: integer
-                    example: 10
                   data:
                     type: object
                     properties:
@@ -865,29 +903,88 @@ paths:
                           properties:
                             id:
                               type: integer
-                              example: 1
+                            airplane_id:
+                              type: integer
+                            from_id:
+                              type: integer
+                            to_id:
+                              type: integer
+                            class:
+                              type: string
+                            departure_time:
+                              type: string
+                              format: date-time
+                            arrival_time:
+                              type: string
+                              format: date-time
+                            flight_type:
+                              type: string
+                            ticket_price:
+                              type: number
                             fromAirport:
                               type: object
                               properties:
                                 id:
                                   type: integer
-                                  example: 1
+                                code:
+                                  type: string
+                                name:
+                                  type: string
+                                cityCode:
+                                  type: string
                                 cityName:
                                   type: string
-                                  example: "New York"
+                                countryCode:
+                                  type: string
+                                countryName:
+                                  type: string
+                                city:
+                                  type: string
+                                total_visited:
+                                  type: integer
+                                thumbnail:
+                                  type: string
                             toAirport:
                               type: object
                               properties:
                                 id:
                                   type: integer
-                                  example: 2
+                                code:
+                                  type: string
+                                name:
+                                  type: string
+                                cityCode:
+                                  type: string
                                 cityName:
                                   type: string
-                                  example: "Los Angeles"
-                            departure_time:
-                              type: string
-                              format: date-time
-                              example: "2024-06-03T12:00:00Z"
+                                countryCode:
+                                  type: string
+                                countryName:
+                                  type: string
+                                city:
+                                  type: string
+                                total_visited:
+                                  type: integer
+                                thumbnail:
+                                  type: string
+                            whomAirplaneFlights:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                airline_id:
+                                  type: integer
+                                airplane_code:
+                                  type: string
+                                whomAirlinesAirplanes:
+                                  type: object
+                                  properties:
+                                    id:
+                                      type: integer
+                                    name:
+                                      type: string
+                                    airline_code:
+                                      type: string
         '400':
           description: Invalid request parameters.
           content:
@@ -917,7 +1014,7 @@ paths:
   /flights/search-city-or-country:
     get:
       tags:
-        - Booking & Transaction
+        - Search
       summary: Get Flights by City or Country Name
       description: Retrieve flights departing or arriving at a specified city or country.
       parameters:
@@ -1122,6 +1219,639 @@ paths:
                   message:
                     type: string
                     example: "Error searching flights."
+  /flight/recommendation:
+    get:
+      tags:
+        - Search
+      summary: Get flight recommendations based on specified criteria.
+      description: |
+        Returns flight recommendations based on optional parameters such as `tocountry` (destination country) and `fromcountry` (origin country). If both parameters are omitted, returns all available flights.
+      parameters:
+        - name: page
+          in: query
+          description: Page number for pagination (default = 1)
+          required: false
+          schema:
+            type: integer
+            example: 1
+        - name: limit
+          in: query
+          description: Number of items per page (default = 10)
+          required: false
+          schema:
+            type: integer
+            example: 10
+        - name: tocountry
+          in: query
+          description: Destination country code (uppercase)
+          required: false
+          schema:
+            type: string
+            example: "USA"
+        - name: fromcountry
+          in: query
+          description: Origin country code (uppercase)
+          required: false
+          schema:
+            type: string
+            example: "UK"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    departure_time:
+                      type: string
+                      format: date-time
+                      example: "2024-06-16T08:00:00.000Z"
+                    class:
+                      type: string
+                      example: "Economy"
+                    arrival_time:
+                      type: string
+                      format: date-time
+                      example: "2024-06-16T10:30:00.000Z"
+                    ticket_price:
+                      type: integer
+                      example: 500000
+                    fromAirport:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          example: "Heathrow Airport"
+                        cityName:
+                          type: string
+                          example: "London"
+                        countryName:
+                          type: string
+                          example: "United Kingdom"
+                        rating:
+                          type: integer
+                          example: 4
+                    toAirport:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          example: "JFK Airport"
+                        cityName:
+                          type: string
+                          example: "New York"
+                        countryName:
+                          type: string
+                          example: "USA"
+                        rating:
+                          type: integer
+                          example: 4
+                    whomAirplaneFlights:
+                      type: object
+                      properties:
+                        whomAirlinesAirplanes:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: "British Airways"
+        '500':
+          description: Error response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Error searching flights"
+                  error:
+                    type: string
+                    example: "Internal server error"
+  /flights/search:
+    get:
+      summary: Retrieve flights based on date and optional filters
+      tags:
+        - Search
+      parameters:
+        - name: startDate
+          in: query
+          description: Start date for flights (format YYYY-MM-DD)
+          required: false
+          type: string
+        - name: endDate
+          in: query
+          description: End date for flights (format YYYY-MM-DD)
+          required: false
+          type: string
+        - name: page
+          in: query
+          description: Page number for pagination (default 1)
+          required: false
+          type: integer
+        - name: limit
+          in: query
+          description: Number of items per page (default 10)
+          required: false
+          type: integer
+        - name: fromcity
+          in: query
+          description: City name of departure airport
+          required: false
+          type: string
+        - name: tocity
+          in: query
+          description: City name of destination airport
+          required: false
+          type: string
+        - name: fromairport
+          in: query
+          description: Name of departure airport
+          required: false
+          type: string
+        - name: toairport
+          in: query
+          description: Name of destination airport
+          required: false
+          type: string
+        - name: fromcountry
+          in: query
+          description: Country name of departure airport
+          required: false
+          type: string
+        - name: tocountry
+          in: query
+          description: Country name of destination airport
+          required: false
+          type: string
+        - name: class
+          in: query
+          description: Flight class (e.g., Economy, Business)
+          required: false
+          type: string
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: boolean
+                description: Indicates if the request was successful
+              message:
+                type: string
+                description: Message indicating the status
+              totalItems:
+                type: integer
+                description: Total number of flights matching the criteria
+              totalPages:
+                type: integer
+                description: Total number of pages based on pagination
+              currentPage:
+                type: integer
+                description: Current page number
+              length:
+                type: integer
+                description: Number of flights returned in the current page
+              data:
+                type: object
+                properties:
+                  flights:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          description: Unique identifier of the flight
+                        airplane_id:
+                          type: integer
+                          description: Identifier of the airplane
+                        from_id:
+                          type: integer
+                          description: Identifier of the departure airport
+                        to_id:
+                          type: integer
+                          description: Identifier of the destination airport
+                        class:
+                          type: string
+                          description: Flight class (e.g., Economy, Business)
+                        departure_time:
+                          type: string
+                          format: date-time
+                          description: Departure time of the flight
+                        arrival_time:
+                          type: string
+                          format: date-time
+                          description: Arrival time of the flight
+                        flight_type:
+                          type: string
+                          description: Type of the flight
+                        ticket_price:
+                          type: number
+                          description: Price of the ticket
+                        fromAirport:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              description: Unique identifier of the departure airport
+                            code:
+                              type: string
+                              description: Airport code
+                            name:
+                              type: string
+                              description: Airport name
+                            cityCode:
+                              type: string
+                              description: City code of the departure airport
+                            cityName:
+                              type: string
+                              description: City name of the departure airport
+                            countryCode:
+                              type: string
+                              description: Country code of the departure airport
+                            countryName:
+                              type: string
+                              description: Country name of the departure airport
+                            city:
+                              type: string
+                              description: City information of the departure airport
+                            total_visited:
+                              type: integer
+                              description: Total number of visits to the departure city
+                            thumbnail:
+                              type: string
+                              description: URL of the thumbnail image of the departure airport
+                        toAirport:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              description: Unique identifier of the destination airport
+                            code:
+                              type: string
+                              description: Airport code
+                            name:
+                              type: string
+                              description: Airport name
+                            cityCode:
+                              type: string
+                              description: City code of the destination airport
+                            cityName:
+                              type: string
+                              description: City name of the destination airport
+                            countryCode:
+                              type: string
+                              description: Country code of the destination airport
+                            countryName:
+                              type: string
+                              description: Country name of the destination airport
+                            city:
+                              type: string
+                              description: City information of the destination airport
+                            total_visited:
+                              type: integer
+                              description: Total number of visits to the destination city
+                            thumbnail:
+                              type: string
+                              description: URL of the thumbnail image of the destination airport
+                        whomAirplaneFlights:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              description: Unique identifier of the airplane flight relation
+                            airline_id:
+                              type: integer
+                              description: Identifier of the airline operating the flight
+                            airplane_code:
+                              type: string
+                              description: Code of the airplane operating the flight
+                            whomAirlinesAirplanes:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  description: Unique identifier of the airline
+                                name:
+                                  type: string
+                                  description: Name of the airline
+                                airline_code:
+                                  type: string
+                                  description: Code of the airline
+        '500':
+          description: Internal server error
+          schema:
+            type: object
+            properties:
+              status:
+                type: boolean
+                description: Indicates if there was an error
+              message:
+                type: string
+                description: Error message
+              error:
+                type: string
+                description: Detailed error message
+  /flights/search-by-id:
+    get:
+      summary: Retrieve flight information by flight ID
+      tags:
+        - Search
+      parameters:
+        - name: id
+          in: query
+          description: Flight ID to retrieve information for
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: boolean
+                description: Indicates if the request was successful
+              message:
+                type: string
+                description: Message indicating the status
+              data:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: Unique identifier of the flight
+                  airplane_id:
+                    type: integer
+                    description: Identifier of the airplane
+                  from_id:
+                    type: integer
+                    description: Identifier of the departure airport
+                  to_id:
+                    type: integer
+                    description: Identifier of the destination airport
+                  departure_time:
+                    type: string
+                    format: date-time
+                    description: Departure time of the flight
+                  arrival_time:
+                    type: string
+                    format: date-time
+                    description: Arrival time of the flight
+                  flight_type:
+                    type: string
+                    description: Type of the flight (e.g., DOMESTIC, INTERNATIONAL)
+                  class:
+                    type: string
+                    description: Class of the flight (e.g., ECONOMY, BUSINESS)
+                  ticket_price:
+                    type: number
+                    description: Price of the ticket
+                  seat_id:
+                    type: integer
+                    description: Identifier of the seat
+                  whomAirplaneFlights:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        description: Unique identifier of the airplane flight relation
+                      airline_id:
+                        type: integer
+                        description: Identifier of the airline
+                      airplane_code:
+                        type: string
+                        description: Code of the airplane operating the flight
+                      total_seat:
+                        type: integer
+                        description: Total number of seats in the airplane
+                      baggage:
+                        type: integer
+                        description: Baggage allowance in kg
+                      cabin_baggage:
+                        type: integer
+                        description: Cabin baggage allowance in kg
+                      description:
+                        type: string
+                        description: Description of the airplane
+                      whomAirlinesAirplanes:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            description: Unique identifier of the airline
+                          name:
+                            type: string
+                            description: Name of the airline
+                          airline_code:
+                            type: string
+                            description: Code of the airline
+                  fromAirport:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        description: Unique identifier of the departure airport
+                      code:
+                        type: string
+                        description: Airport code
+                      name:
+                        type: string
+                        description: Name of the departure airport
+                      cityCode:
+                        type: string
+                        description: City code of the departure airport
+                      cityName:
+                        type: string
+                        description: City name of the departure airport
+                      countryCode:
+                        type: string
+                        description: Country code of the departure airport
+                      countryName:
+                        type: string
+                        description: Country name of the departure airport
+                      city:
+                        type: boolean
+                        description: Indicates if the airport is in a city
+                      total_visited:
+                        type: integer
+                        description: Total number of visits to the departure airport
+                      thumbnail:
+                        type: string
+                        description: URL of the thumbnail image of the departure airport
+                      rating:
+                        type: string
+                        description: Rating of the departure airport
+                  toAirport:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        description: Unique identifier of the destination airport
+                      code:
+                        type: string
+                        description: Airport code
+                      name:
+                        type: string
+                        description: Name of the destination airport
+                      cityCode:
+                        type: string
+                        description: City code of the destination airport
+                      cityName:
+                        type: string
+                        description: City name of the destination airport
+                      countryCode:
+                        type: string
+                        description: Country code of the destination airport
+                      countryName:
+                        type: string
+                        description: Country name of the destination airport
+                      city:
+                        type: boolean
+                        description: Indicates if the airport is in a city
+                      total_visited:
+                        type: integer
+                        description: Total number of visits to the destination airport
+                      thumbnail:
+                        type: string
+                        description: URL of the thumbnail image of the destination airport
+                      rating:
+                        type: string
+                        description: Rating of the destination airport
+        '500':
+          description: Internal server error
+          schema:
+            type: object
+            properties:
+              status:
+                type: boolean
+                description: Indicates if there was an error
+              message:
+                type: string
+                description: Error message
+              error:
+                type: string
+                description: Detailed error message
+  /flights/search-seat-of-flight-id:
+    get:
+      summary: Retrieve seat information for a specific flight
+      tags:
+        - Seats
+      parameters:
+        - name: id
+          in: query
+          description: Flight ID to retrieve seat information for
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              status:
+                type: boolean
+                description: Indicates if the request was successful
+              message:
+                type: string
+                description: Message indicating the status
+              length:
+                type: integer
+                description: Number of seats available on the flight
+              data:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                    description: Unique identifier for the seat information document
+                  flightId:
+                    type: integer
+                    description: Identifier of the flight
+                  __v:
+                    type: integer
+                    description: Version key for the document
+                  seats:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        seatNumber:
+                          type: string
+                          description: Seat number
+                        isBooked:
+                          type: boolean
+                          description: Indicates if the seat is booked
+                        passengerId:
+                          type: integer
+                          description: Identifier of the passenger who booked the seat
+                        _id:
+                          type: string
+                          description: Unique identifier for the seat document
+        '500':
+          description: Internal server error
+          schema:
+            type: object
+            properties:
+              status:
+                type: boolean
+                description: Indicates if there was an error
+              message:
+                type: string
+                description: Error message
+              error:
+                type: string
+                description: Detailed error message
+
+  definitions:
+    ErrorWithStatusCode:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the error
+        statusCode:
+          type: integer
+          description: HTTP status code
+        message:
+          type: string
+          description: Error message
+    FlightSeats:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Unique identifier for the seat information document
+        flightId:
+          type: integer
+          description: Identifier of the flight
+        __v:
+          type: integer
+          description: Version key for the document
+        seats:
+          type: array
+          items:
+            type: object
+            properties:
+              seatNumber:
+                type: string
+                description: Seat number
+              isBooked:
+                type: boolean
+                description: Indicates if the seat is booked
+              passengerId:
+                type: integer
+                description: Identifier of the passenger who booked the seat
+              _id:
+                type: string
+                description: Unique identifier for the seat document
   /transactions/history:
     get:
       tags:

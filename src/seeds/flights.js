@@ -1,6 +1,7 @@
 'use strict'
 
 const { PrismaClient } = require('@prisma/client');
+const { mongoose, FlightSeats } = require('../db/schema')
 
 const prisma = new PrismaClient();
 
@@ -45,7 +46,17 @@ const generateRandomFlight = () => {
     departure_time: departureTime,
     arrival_time: arrivalTime,
     flight_type: Math.random() > 0.5 ? 'DOMESTIC' : 'INTERNATIONAL',
-    ticket_price: Math.floor(Math.random() * (30000000 - 2000000 + 1)) + 2000000,
+    class: (() => {
+      const randomClass = Math.random();
+      if (randomClass < 1/3) {
+          return 'ECONOMY';
+      } else if (randomClass < 2/3) {
+          return 'BUSINESS';
+      } else {
+          return 'FIRSTCLASS';
+      }
+    })(),
+    ticket_price: Math.floor(Math.random() * (24000 - 1000 + 1) + 1000) * 1000,
   };
 };
 
@@ -57,9 +68,22 @@ const seedFlights = async (req, res) => {
     }
 
     for (const flight of flights) {
-      await prisma.flights.create({
-        data: flight,
+      const createdFlight = await prisma.flights.create({
+          data: flight,
       });
+
+      const seats = [];
+      const rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
+      for (const row of rows) {
+          for (let number = 1; number <= 6; number++) {
+              seats.push({ seatNumber: `${row}${number}`, isBooked: false, passengerId: null });
+          }
+      }
+      await FlightSeats.updateOne(
+          { flightId: createdFlight.id }, // Ensure this is unique
+          { $set: { seats: seats } },
+          { upsert: true } // This will create a new document if it doesn't exist
+      );
     }
     
   } catch (err) {

@@ -68,11 +68,11 @@ const validatePassengers = [
   check('passengers.*.document').isString().notEmpty().withMessage('Document harus berupa string dan tidak boleh kosong.'),
   check('passengers.*.country_publication').isString().notEmpty().withMessage('Country of publication harus berupa string dan tidak boleh kosong.'),
   check('passengers.*.document_expired').isISO8601().withMessage('Document expired harus berupa tanggal yang valid.'),
-  check('passengers.*.seat_number').isInt({ min: 1 }).withMessage('Seat number harus berupa angka positif.'),
-  
-  // Validasi untuk objek ticket dalam setiap penumpang
-  // check('passengers.*.ticket.user_id').isInt({ min: 1 }).withMessage('User ID harus berupa angka positif.'),
+  check('passengers.*.category').isIn(['adult', 'baby', 'child']).withMessage('Category tidak valid. Harus berupa adult, baby, atau child.'),
+  check('passengers.*.seat_number').matches(/^[A-L][1-6]$/).withMessage('Seat number harus berupa A1-A6 sampai L1-L6.'),
   check('passengers.*.ticket.flight_id').isInt({ min: 1 }).withMessage('Flight ID harus berupa angka positif.'),
+  
+
   
   // Middleware untuk menangani hasil validasi
   (req, res, next) => {

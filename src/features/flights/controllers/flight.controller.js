@@ -1,11 +1,19 @@
 'use strict'
 
 const prisma = require("../../../config/prisma.config")
+const { handleError, ErrorWithStatusCode } = require("../../../middleware/errorHandler")
 
 const getFlightById = async function(req, res) {
-    const id = parseInt(await req.body.id, 10);
+    let id = req.query.id
 
     try {
+        
+        if(!id){
+            throw new ErrorWithStatusCode('please provide id', 200)
+        }
+
+        id = Number(id)
+
         const user = await prisma.flights.findUnique({
             where : {
                 id : id
@@ -27,11 +35,7 @@ const getFlightById = async function(req, res) {
             data : user
         })
     } catch (err) {
-        
-        return res.status(500).json({
-            status: false,
-            message: 'Error searching flights'
-        });
+        handleError(err, res)
     }
 }
 
@@ -150,11 +154,1230 @@ const getFlightsByCityOrCountryName = async function(req, res){
 //city=Jakarta&startDate=2023-05-01&endDate=2023-05-30
 
 const getFlightsByDate = async function(req, res){
-    let city = String(req.query.city);
-    city = city.charAt(0).toUpperCase() + city.slice(1);
+
+
+    try {
+
+        let startDate = req.query.startDate ? new Date(req.query.startDate) : new Date();
+        let endDate = req.query.endDate ? new Date(req.query.endDate) : new Date(new Date().setDate(new Date().getDate() + 30));
+    
+        let tocity = req.query.tocity
+        let fromcity = req.query.fromcity
+    
+        let toairport = req.query.toairport    
+        let fromairport = req.query.toairport
+        
+    
+        let tocountry = req.query.tocountry
+        let fromcountry = req.query.fromcountry
+    
+        let page = Number(req.query.page) || 1;
+        let limit = Number(req.query.limit) || 10;
+
+        //ada kota dari dan tujuan
+        if(tocity && fromcity) {
+
+            tocity = String(tocity).charAt(0).toUpperCase() + tocity.slice(1);
+            fromcity = String(fromcity).charAt(0).toUpperCase() + fromcity.slice(1);
+            const class_type = req.query.class
+
+            const flights = await prisma.flights.findMany({
+                where: {
+                    AND: [
+                        { fromAirport: { cityName: fromcity } },
+                        { toAirport: { cityName: tocity } },
+                    ],
+
+                    departure_time: {
+                        gte: startDate,
+                        lte: endDate,
+                    },
+                    ...(class_type && { class: class_type })
+                },
+                select: {
+                    id: true,
+                    airplane_id: true,
+                    from_id: true,
+                    to_id: true,
+                    class : true,
+                    departure_time: true,
+                    arrival_time: true,
+                    flight_type: true,
+                    ticket_price: true,
+                    fromAirport: {
+                        select: {
+                            id: true,
+                            code: true,
+                            name: true,
+                            cityCode: true,
+                            cityName: true,
+                            countryCode: true,
+                            countryName: true,
+                            city: true,
+                            total_visited: true,
+                            thumbnail: true
+                        }
+                    },
+                    toAirport: {
+                        select: {
+                            id: true,
+                            code: true,
+                            name: true,
+                            cityCode: true,
+                            cityName: true,
+                            countryCode: true,
+                            countryName: true,
+                            city: true,
+                            total_visited: true,
+                            thumbnail: true
+                        }
+                    },
+                    whomAirplaneFlights: {
+                        select: {
+                            id: true,
+                            airline_id: true,
+                            airplane_code: true,
+                            whomAirlinesAirplanes: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    airline_code: true
+                                }
+                            }
+                        }
+                    }
+                },
+                skip: (page - 1) * limit,
+                take: limit,
+            });
+    
+            const totalFlights = await prisma.flights.count({
+                where: {
+                    AND: [
+                        {
+                            AND: [
+                                { fromAirport: { cityName: fromcity } },
+                                { toAirport: { cityName: tocity } },
+
+                            ],
+                        },
+                        {
+                            departure_time: {
+                                gte: startDate,
+                                lte: endDate,
+                            },
+                        },
+                    ],
+                    ...(class_type && { class: class_type })
+                },
+            });
+    
+            return res.json({
+                status: true,
+                message: 'success',
+                totalItems: totalFlights,
+                totalPages: Math.ceil(totalFlights / limit),
+                currentPage: page,
+                length: flights.length,
+                data: {
+                    flights,
+                },
+            });
+        }
+
+        if(fromcity){
+            fromcity = String(fromcity).charAt(0).toUpperCase() + fromcity.slice(1);
+            const class_type = req.query.class
+
+            const flights = await prisma.flights.findMany({
+                where: {
+                    fromAirport: { cityName: fromcity },
+                    departure_time: {
+                        gte: startDate,
+                        lte: endDate,
+                    },
+                    ...(class_type && { class: class_type })
+                },
+                select: {
+                    id: true,
+                    airplane_id: true,
+                    from_id: true,
+                    to_id: true,
+                    departure_time: true,
+                    arrival_time: true,
+                    class : true,
+                    flight_type: true,
+                    ticket_price: true,
+                    fromAirport: {
+                        select: {
+                            id: true,
+                            code: true,
+                            name: true,
+                            cityCode: true,
+                            cityName: true,
+                            countryCode: true,
+                            countryName: true,
+                            city: true,
+                            total_visited: true,
+                            thumbnail: true
+                        }
+                    },
+                    toAirport: {
+                        select: {
+                            id: true,
+                            code: true,
+                            name: true,
+                            cityCode: true,
+                            cityName: true,
+                            countryCode: true,
+                            countryName: true,
+                            city: true,
+                            total_visited: true,
+                            thumbnail: true
+                        }
+                    },
+                    whomAirplaneFlights: {
+                        select: {
+                            id: true,
+                            airline_id: true,
+                            airplane_code: true,
+                            whomAirlinesAirplanes: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    airline_code: true
+                                }
+                            }
+                        }
+                    }
+                },
+                skip: (page - 1) * limit,
+                take: limit,
+            });
+    
+            const totalFlights = await prisma.flights.count({
+                where: {
+                    AND: [
+                        {
+                            fromAirport: { cityName: fromcity }
+                        },
+                        {
+                            departure_time: {
+                                gte: startDate,
+                                lte: endDate,
+                            },
+                        },
+                    ],
+                    ...(class_type && { class: class_type })
+                },
+            });
+    
+            return res.json({
+                status: true,
+                message: 'success',
+                totalItems: totalFlights,
+                totalPages: Math.ceil(totalFlights / limit),
+                currentPage: page,
+                length: flights.length,
+                data: {
+                    flights,
+                },
+            });
+        }
+
+        if(tocity){
+            tocity = String(tocity).charAt(0).toUpperCase() + tocity.slice(1);
+            const class_type = req.query.class
+
+            const flights = await prisma.flights.findMany({
+                where: {
+                    toAirport: { cityName: tocity },
+                    departure_time: {
+                        gte: startDate,
+                        lte: endDate,
+                    },
+                    ...(class_type && { class: class_type })
+                },
+                select: {
+                    id: true,
+                    airplane_id: true,
+                    from_id: true,
+                    to_id: true,
+                    departure_time: true,
+                    arrival_time: true,
+                    class : true,
+                    flight_type: true,
+                    ticket_price: true,
+                    fromAirport: {
+                        select: {
+                            id: true,
+                            code: true,
+                            name: true,
+                            cityCode: true,
+                            cityName: true,
+                            countryCode: true,
+                            countryName: true,
+                            city: true,
+                            total_visited: true,
+                            thumbnail: true
+                        }
+                    },
+                    toAirport: {
+                        select: {
+                            id: true,
+                            code: true,
+                            name: true,
+                            cityCode: true,
+                            cityName: true,
+                            countryCode: true,
+                            countryName: true,
+                            city: true,
+                            total_visited: true,
+                            thumbnail: true
+                        }
+                    },
+                    whomAirplaneFlights: {
+                        select: {
+                            id: true,
+                            airline_id: true,
+                            airplane_code: true,
+                            whomAirlinesAirplanes: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    airline_code: true
+                                }
+                            }
+                        }
+                    }
+                },
+                skip: (page - 1) * limit,
+                take: limit,
+            });
+    
+            const totalFlights = await prisma.flights.count({
+                where: {
+                    AND: [
+                        {
+                            toAirport: { cityName: tocity }
+                        },
+                        {
+                            departure_time: {
+                                gte: startDate,
+                                lte: endDate,
+                            },
+                        },
+                    ],
+                    ...(class_type && { class: class_type })
+                },
+            });
+    
+            return res.json({
+                status: true,
+                message: 'success',
+                totalItems: totalFlights,
+                totalPages: Math.ceil(totalFlights / limit),
+                currentPage: page,
+                length: flights.length,
+                data: {
+                    flights,
+                },
+            });
+        }
+
+        if(fromcountry && tocountry) {
+
+            tocountry = String(tocountry).charAt(0).toUpperCase() + tocountry.slice(1);
+            fromcountry = String(fromcountry).charAt(0).toUpperCase() + fromcountry.slice(1);
+            const class_type = req.query.class
+
+            const flights = await prisma.flights.findMany({
+                where: {
+                    AND: [
+                        { fromAirport: { countryName: fromcountry } },
+                        { toAirport: { countryName: tocountry } },
+                    ],
+
+                    departure_time: {
+                        gte: startDate,
+                        lte: endDate,
+                    },
+                    ...(class_type && { class: class_type })
+                },
+                select: {
+                    id: true,
+                    airplane_id: true,
+                    from_id: true,
+                    to_id: true,
+                    class : true,
+                    departure_time: true,
+                    arrival_time: true,
+                    flight_type: true,
+                    ticket_price: true,
+                    fromAirport: {
+                        select: {
+                            id: true,
+                            code: true,
+                            name: true,
+                            cityCode: true,
+                            cityName: true,
+                            countryCode: true,
+                            countryName: true,
+                            city: true,
+                            total_visited: true,
+                            thumbnail: true
+                        }
+                    },
+                    toAirport: {
+                        select: {
+                            id: true,
+                            code: true,
+                            name: true,
+                            cityCode: true,
+                            cityName: true,
+                            countryCode: true,
+                            countryName: true,
+                            city: true,
+                            total_visited: true,
+                            thumbnail: true
+                        }
+                    },
+                    whomAirplaneFlights: {
+                        select: {
+                            id: true,
+                            airline_id: true,
+                            airplane_code: true,
+                            whomAirlinesAirplanes: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    airline_code: true
+                                }
+                            }
+                        }
+                    }
+                },
+                skip: (page - 1) * limit,
+                take: limit,
+            });
+    
+            const totalFlights = await prisma.flights.count({
+                where: {
+                    AND: [
+                        {
+                            AND: [
+                                { fromAirport: { countryName: fromcountry } },
+                                { toAirport: { countryName: tocountry } },
+
+                            ],
+                        },
+                        {
+                            departure_time: {
+                                gte: startDate,
+                                lte: endDate,
+                            },
+                        },
+                    ],
+                    ...(class_type && { class: class_type })
+                },
+            });
+    
+            return res.json({
+                status: true,
+                message: 'success',
+                totalItems: totalFlights,
+                totalPages: Math.ceil(totalFlights / limit),
+                currentPage: page,
+                length: flights.length,
+                data: {
+                    flights,
+                },
+            });
+        }
+
+        if(fromcountry){
+            fromcountry = String(fromcountry).toUpperCase()
+            const class_type = req.query.class
+
+            const flights = await prisma.flights.findMany({
+                where: {
+                    fromAirport: { countryName: fromcountry },
+                    departure_time: {
+                        gte: startDate,
+                        lte: endDate,
+                    },
+                    ...(class_type && { class: class_type })
+                },
+                select: {
+                    id: true,
+                    airplane_id: true,
+                    from_id: true,
+                    to_id: true,
+                    departure_time: true,
+                    arrival_time: true,
+                    class : true,
+                    flight_type: true,
+                    ticket_price: true,
+                    fromAirport: {
+                        select: {
+                            id: true,
+                            code: true,
+                            name: true,
+                            cityCode: true,
+                            cityName: true,
+                            countryCode: true,
+                            countryName: true,
+                            city: true,
+                            total_visited: true,
+                            thumbnail: true
+                        }
+                    },
+                    toAirport: {
+                        select: {
+                            id: true,
+                            code: true,
+                            name: true,
+                            cityCode: true,
+                            cityName: true,
+                            countryCode: true,
+                            countryName: true,
+                            city: true,
+                            total_visited: true,
+                            thumbnail: true
+                        }
+                    },
+                    whomAirplaneFlights: {
+                        select: {
+                            id: true,
+                            airline_id: true,
+                            airplane_code: true,
+                            whomAirlinesAirplanes: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    airline_code: true
+                                }
+                            }
+                        }
+                    }
+                },
+                skip: (page - 1) * limit,
+                take: limit,
+            });
+    
+            const totalFlights = await prisma.flights.count({
+                where: {
+                    AND: [
+                        {
+                            fromAirport: { countryName: fromcountry }
+                        },
+                        {
+                            departure_time: {
+                                gte: startDate,
+                                lte: endDate,
+                            },
+                        },
+                    ],
+                    ...(class_type && { class: class_type })
+                },
+            });
+    
+            return res.json({
+                status: true,
+                message: 'success',
+                totalItems: totalFlights,
+                totalPages: Math.ceil(totalFlights / limit),
+                currentPage: page,
+                length: flights.length,
+                data: {
+                    flights,
+                },
+            });
+        }
+        // i am here to country
+        if(tocountry){
+            tocountry = String(tocountry).toUpperCase()
+            const class_type = req.query.class
+
+            const flights = await prisma.flights.findMany({
+                where: {
+                    toAirport: { countryName: tocountry },
+                    departure_time: {
+                        gte: startDate,
+                        lte: endDate,
+                    },
+                    ...(class_type && { class: class_type })
+                },
+                select: {
+                    id: true,
+                    airplane_id: true,
+                    from_id: true,
+                    to_id: true,
+                    departure_time: true,
+                    arrival_time: true,
+                    class : true,
+                    flight_type: true,
+                    ticket_price: true,
+                    fromAirport: {
+                        select: {
+                            id: true,
+                            code: true,
+                            name: true,
+                            cityCode: true,
+                            cityName: true,
+                            countryCode: true,
+                            countryName: true,
+                            city: true,
+                            total_visited: true,
+                            thumbnail: true
+                        }
+                    },
+                    toAirport: {
+                        select: {
+                            id: true,
+                            code: true,
+                            name: true,
+                            cityCode: true,
+                            cityName: true,
+                            countryCode: true,
+                            countryName: true,
+                            city: true,
+                            total_visited: true,
+                            thumbnail: true
+                        }
+                    },
+                    whomAirplaneFlights: {
+                        select: {
+                            id: true,
+                            airline_id: true,
+                            airplane_code: true,
+                            whomAirlinesAirplanes: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    airline_code: true
+                                }
+                            }
+                        }
+                    }
+                },
+                skip: (page - 1) * limit,
+                take: limit,
+            });
+    
+            const totalFlights = await prisma.flights.count({
+                where: {
+                    AND: [
+                        {
+                            toAirport: { countryName: tocountry }
+                        },
+                        {
+                            departure_time: {
+                                gte: startDate,
+                                lte: endDate,
+                            },
+                        },
+                    ],
+                    ...(class_type && { class: class_type })
+                },
+            });
+    
+            return res.json({
+                status: true,
+                message: 'success',
+                totalItems: totalFlights,
+                totalPages: Math.ceil(totalFlights / limit),
+                currentPage: page,
+                length: flights.length,
+                data: {
+                    flights,
+                },
+            });
+        }
+
+        if(fromairport && toairport) {
+
+            toairport = String(toairport)
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join(' ');
+
+
+            fromairport = String(toairport)
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join(' ');
+
+            const class_type = req.query.class
+
+            const flights = await prisma.flights.findMany({
+                where: {
+                    AND: [
+                        { fromAirport: { name: fromairport } },
+                        { toAirport: { name: toairport } },
+                    ],
+
+                    departure_time: {
+                        gte: startDate,
+                        lte: endDate,
+                    },
+                    ...(class_type && { class: class_type })
+                },
+                select: {
+                    id: true,
+                    airplane_id: true,
+                    from_id: true,
+                    to_id: true,
+                    class : true,
+                    departure_time: true,
+                    arrival_time: true,
+                    flight_type: true,
+                    ticket_price: true,
+                    fromAirport: {
+                        select: {
+                            id: true,
+                            code: true,
+                            name: true,
+                            cityCode: true,
+                            cityName: true,
+                            countryCode: true,
+                            countryName: true,
+                            city: true,
+                            total_visited: true,
+                            thumbnail: true
+                        }
+                    },
+                    toAirport: {
+                        select: {
+                            id: true,
+                            code: true,
+                            name: true,
+                            cityCode: true,
+                            cityName: true,
+                            countryCode: true,
+                            countryName: true,
+                            city: true,
+                            total_visited: true,
+                            thumbnail: true
+                        }
+                    },
+                    whomAirplaneFlights: {
+                        select: {
+                            id: true,
+                            airline_id: true,
+                            airplane_code: true,
+                            whomAirlinesAirplanes: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    airline_code: true
+                                }
+                            }
+                        }
+                    }
+                },
+                skip: (page - 1) * limit,
+                take: limit,
+            });
+    
+            const totalFlights = await prisma.flights.count({
+                where: {
+                    AND: [
+                        {
+                            AND: [
+                                { fromAirport: { name: fromairport } },
+                                { toAirport: { name: toairport } },
+
+                            ],
+                        },
+                        {
+                            departure_time: {
+                                gte: startDate,
+                                lte: endDate,
+                            },
+                        },
+                    ],
+                    ...(class_type && { class: class_type })
+                },
+            });
+    
+            return res.json({
+                status: true,
+                message: 'success',
+                totalItems: totalFlights,
+                totalPages: Math.ceil(totalFlights / limit),
+                currentPage: page,
+                length: flights.length,
+                data: {
+                    flights,
+                },
+            });
+        }
+
+        if(fromairport) {
+
+            fromairport = String(fromairport)
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join(' ');
+
+            const class_type = req.query.class
+
+            const flights = await prisma.flights.findMany({
+                where: {
+                    fromAirport: { name: fromairport },
+                    departure_time: {
+                        gte: startDate,
+                        lte: endDate,
+                    },
+                    ...(class_type && { class: class_type })
+                },
+                select: {
+                    id: true,
+                    airplane_id: true,
+                    from_id: true,
+                    to_id: true,
+                    class : true,
+                    departure_time: true,
+                    arrival_time: true,
+                    flight_type: true,
+                    ticket_price: true,
+                    fromAirport: {
+                        select: {
+                            id: true,
+                            code: true,
+                            name: true,
+                            cityCode: true,
+                            cityName: true,
+                            countryCode: true,
+                            countryName: true,
+                            city: true,
+                            total_visited: true,
+                            thumbnail: true
+                        }
+                    },
+                    toAirport: {
+                        select: {
+                            id: true,
+                            code: true,
+                            name: true,
+                            cityCode: true,
+                            cityName: true,
+                            countryCode: true,
+                            countryName: true,
+                            city: true,
+                            total_visited: true,
+                            thumbnail: true
+                        }
+                    },
+                    whomAirplaneFlights: {
+                        select: {
+                            id: true,
+                            airline_id: true,
+                            airplane_code: true,
+                            whomAirlinesAirplanes: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    airline_code: true
+                                }
+                            }
+                        }
+                    }
+                },
+                skip: (page - 1) * limit,
+                take: limit,
+            });
+    
+            const totalFlights = await prisma.flights.count({
+                where: {
+                    AND: [
+                        { fromAirport : { name: fromairport } },
+                        {
+                            departure_time: {
+                                gte: startDate,
+                                lte: endDate,
+                            },
+                        },
+                    ],
+                    ...(class_type && { class: class_type })
+                },
+            });
+    
+            return res.json({
+                status: true,
+                message: 'success',
+                totalItems: totalFlights,
+                totalPages: Math.ceil(totalFlights / limit),
+                currentPage: page,
+                length: flights.length,
+                data: {
+                    flights,
+                },
+            });
+        }
+
+        if(toairport) {
+
+            toairport = String(toairport)
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join(' ');
+
+            const class_type = req.query.class
+
+            const flights = await prisma.flights.findMany({
+                where: {
+                    toAirport: { name: toairport },
+                    departure_time: {
+                        gte: startDate,
+                        lte: endDate,
+                    },
+                    ...(class_type && { class: class_type })
+                },
+                select: {
+                    id: true,
+                    airplane_id: true,
+                    from_id: true,
+                    to_id: true,
+                    class : true,
+                    departure_time: true,
+                    arrival_time: true,
+                    flight_type: true,
+                    ticket_price: true,
+                    fromAirport: {
+                        select: {
+                            id: true,
+                            code: true,
+                            name: true,
+                            cityCode: true,
+                            cityName: true,
+                            countryCode: true,
+                            countryName: true,
+                            city: true,
+                            total_visited: true,
+                            thumbnail: true
+                        }
+                    },
+                    toAirport: {
+                        select: {
+                            id: true,
+                            code: true,
+                            name: true,
+                            cityCode: true,
+                            cityName: true,
+                            countryCode: true,
+                            countryName: true,
+                            city: true,
+                            total_visited: true,
+                            thumbnail: true
+                        }
+                    },
+                    whomAirplaneFlights: {
+                        select: {
+                            id: true,
+                            airline_id: true,
+                            airplane_code: true,
+                            whomAirlinesAirplanes: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    airline_code: true
+                                }
+                            }
+                        }
+                    }
+                },
+                skip: (page - 1) * limit,
+                take: limit,
+            });
+    
+            const totalFlights = await prisma.flights.count({
+                where: {
+                    AND: [
+                        { toAirport : { name: toairport } },
+                        {
+                            departure_time: {
+                                gte: startDate,
+                                lte: endDate,
+                            },
+                        },
+                    ],
+                    ...(class_type && { class: class_type })
+                },
+            });
+    
+            return res.json({
+                status: true,
+                message: 'success',
+                totalItems: totalFlights,
+                totalPages: Math.ceil(totalFlights / limit),
+                currentPage: page,
+                length: flights.length,
+                data: {
+                    flights,
+                },
+            });
+        }
+
+        return res.json({
+            status : true,
+            message : 'success',
+            data : []
+        })
+
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({
+            status: false,
+            message: 'Error searching flights'
+        });
+    }
+};
+
+const getFlightsByDateRevision = async function(req, res) {
+
+    try {
+        let startDate = req.query.startDate ? new Date(req.query.startDate) : new Date();
+        let endDate = req.query.endDate ? new Date(req.query.endDate) : new Date(new Date().setDate(new Date().getDate() + 30));
+    
+        let page = Number(req.query.page) || 1;
+        let limit = Number(req.query.limit) || 10;
+
+        let filters = {};
+    
+        if (req.query.fromcity) {
+            filters = {
+                ...filters,
+                fromAirport: {
+                    cityName: req.query.fromcity.charAt(0).toUpperCase() + req.query.fromcity.slice(1).toLowerCase()
+                }
+            };
+        }
+    
+        if (req.query.tocity) {
+            filters = {
+                ...filters,
+                toAirport: {
+                    cityName: req.query.tocity.charAt(0).toUpperCase() + req.query.tocity.slice(1).toLowerCase()
+                }
+            };
+        }
+    
+        if (req.query.fromairport) {
+            let formattedFromAirportName = req.query.fromairport
+                .split(' ')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                .join(' ');
+    
+            filters = {
+                ...filters,
+                fromAirport: {
+                    name: formattedFromAirportName
+                }
+            };
+        }
+    
+        if (req.query.toairport) {
+            let formattedToAirportName = req.query.toairport
+                .split(' ')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                .join(' ');
+    
+            filters = {
+                ...filters,
+                toAirport: {
+                    name: formattedToAirportName
+                }
+            };
+        }
+    
+        if (req.query.fromcountry) {
+            let formattedFromCountryName = req.query.fromcountry.toUpperCase();
+    
+            filters = {
+                ...filters,
+                fromAirport: {
+                    ...filters.fromAirport,
+                    countryName: formattedFromCountryName
+                }
+            };
+        }
+    
+        if (req.query.tocountry) {
+            let formattedToCountryName = req.query.tocountry.toUpperCase();
+    
+            filters = {
+                ...filters,
+                toAirport: {
+                    ...filters.toAirport,
+                    countryName: formattedToCountryName
+                }
+            };
+        }
+    
+        if (req.query.class) {
+            filters = {
+                ...filters,
+                class: req.query.class
+            };
+        }
+    
+        const flights = await prisma.flights.findMany({
+            where: {
+                AND: [
+                    {
+                        departure_time: {
+                            gte: startDate,
+                            lte: endDate,
+                        },
+                    },
+                    filters 
+                ]
+            },
+            select: {
+                id: true,
+                airplane_id: true,
+                from_id: true,
+                to_id: true,
+                class: true,
+                departure_time: true,
+                arrival_time: true,
+                flight_type: true,
+                ticket_price: true,
+                fromAirport: {
+                    select: {
+                        id: true,
+                        code: true,
+                        name: true,
+                        cityCode: true,
+                        cityName: true,
+                        countryCode: true,
+                        countryName: true,
+                        city: true,
+                        total_visited: true,
+                        thumbnail: true
+                    }
+                },
+                toAirport: {
+                    select: {
+                        id: true,
+                        code: true,
+                        name: true,
+                        cityCode: true,
+                        cityName: true,
+                        countryCode: true,
+                        countryName: true,
+                        city: true,
+                        total_visited: true,
+                        thumbnail: true
+                    }
+                },
+                whomAirplaneFlights: {
+                    select: {
+                        id: true,
+                        airline_id: true,
+                        airplane_code: true,
+                        whomAirlinesAirplanes: {
+                            select: {
+                                id: true,
+                                name: true,
+                                airline_code: true
+                            }
+                        }
+                    }
+                }
+            },
+            skip: (page - 1) * limit,
+            take: limit,
+        });
+    
+        const totalFlights = await prisma.flights.count({
+            where: {
+                AND: [
+                    {
+                        departure_time: {
+                            gte: startDate,
+                            lte: endDate,
+                        },
+                    },
+                    filters 
+                ]
+            },
+        });
+    
+        return res.json({
+            status: true,
+            message: 'success',
+            totalItems: totalFlights,
+            totalPages: Math.ceil(totalFlights / limit),
+            currentPage: page,
+            length: flights.length,
+            data: {
+                flights,
+            },
+        });
+    } catch (err) {
+        console.error('Error fetching flights:', err);
+        return res.status(500).json({
+            status: false,
+            message: 'Failed to fetch flights',
+            error: err.message,
+        });
+    }
+    
+    
+};
+
+function capitalize(str) {
+    return str
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
+}
+
+
+const getFlightsByDateToFrom = async function(req, res){
+    // let city = String(req.query.city)
+    // .split(' ')
+    // .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    // .join(' ');
+
+    let airport = String(req.query.airport)
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
 
     let startDate = req.query.startDate ? new Date(req.query.startDate) : new Date();
     let endDate = req.query.endDate ? new Date(req.query.endDate) : new Date(new Date().setDate(new Date().getDate() + 30));
+
+    let toAirport = String(req.query.toairport)
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+
+    console.log(toAirport)
+
+    let fromAirport = String(req.query.fromairport)
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+
+    console.log(fromAirport)
+
+    let toCity = String(req.query.tocity)
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+
+    console.log(toCity)
+    
+    let fromCity = String(req.query.fromcity)
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+
+    console.log(fromCity)
 
     let page = Number(req.query.page) || 1;
     let limit = Number(req.query.limit) || 10;
@@ -165,8 +1388,10 @@ const getFlightsByDate = async function(req, res){
                 AND: [
                     {
                         OR: [
-                            { fromAirport: { cityName: city } },
-                            { toAirport: { cityName: city } },
+                            { fromAirport: { cityName: fromCity } },
+                            { toAirport: { cityName: toCity } },
+                            { fromAirport : { name : fromAirport }},
+                            { toAirport : { name : toAirport }}
                         ],
                     },
                     {
@@ -180,6 +1405,7 @@ const getFlightsByDate = async function(req, res){
             include: {
                 fromAirport: true,
                 toAirport: true,
+                whomAirplaneFlights:true
             },
             skip: (page - 1) * limit,
             take: limit,
@@ -190,8 +1416,10 @@ const getFlightsByDate = async function(req, res){
                 AND: [
                     {
                         OR: [
-                            { fromAirport: { cityName: city } },
-                            { toAirport: { cityName: city } },
+                            { fromAirport: { cityName: toCity } },
+                            { toAirport: { cityName: fromCity } },
+                            { fromAirport : { name : toAirport }},
+                            { toAirport : { name : fromAirport }}
                         ],
                     },
                     {
@@ -224,6 +1452,8 @@ const getFlightsByDate = async function(req, res){
     }
 };
 
+// const getFlight
+
 const getAllFlightsByCityOrCountryNameFrom = async function(req, res) {
     let city = req.query.city ? req.query.city.charAt(0).toUpperCase() + req.query.city.slice(1) : '';
     let country = req.query.country ? req.query.country.toUpperCase() : '';
@@ -242,6 +1472,7 @@ const getAllFlightsByCityOrCountryNameFrom = async function(req, res) {
                 include: {
                     fromAirport: true,
                     toAirport: true,
+                    whomAirplaneFlights : true
                 },
                 orderBy: {
                     fromAirport: {
@@ -332,7 +1563,6 @@ const getAllFlightsByCityOrCountryNameFrom = async function(req, res) {
     } 
 }
 
-
 const getAllFlightsByCityOrCountryNameTo = async function(req, res) {
     let city = req.query.city ? req.query.city.charAt(0).toUpperCase() + req.query.city.slice(1) : '';
     let country = req.query.country ? req.query.country.toUpperCase() : '';
@@ -351,6 +1581,7 @@ const getAllFlightsByCityOrCountryNameTo = async function(req, res) {
                 include: {
                     fromAirport: true,
                     toAirport: true,
+                    whomAirplaneFlights : true
                 },
                 orderBy: {
                     fromAirport: {
@@ -441,11 +1672,349 @@ const getAllFlightsByCityOrCountryNameTo = async function(req, res) {
     } 
 }
 
+const getFlightRecommendation = async function(req, res) {
+    try {
+
+        let page = Number(req.query.page) || 1;
+        let limit = Number(req.query.limit) || 10;
+    
+        let country = String(req.query.tocountry).toUpperCase()
+        let fcountry = String(req.query.fromcountry).toUpperCase()
+
+        if(!req.query.tocountry && !req.query.fromcountry){
+            console.log("disini")
+            const flight = await prisma.flights.findMany({
+                where : {
+                    departure_time: {
+                        gte: new Date(),
+                    },
+                },
+                select : {
+                    departure_time : true,
+                    class : true,
+                    arrival_time : true,
+                    ticket_price : true,
+                    fromAirport : {
+                        select : {
+                            name : true,
+                            cityName : true,
+                            countryName : true,
+                            rating : true,
+                        }
+                    },
+                    toAirport : {
+                        select : {
+                            name : true,
+                            cityName : true,
+                            countryName : true,
+                            rating : true,
+                        }
+                    },
+                    whomAirplaneFlights : {
+                        select : {
+                            whomAirlinesAirplanes : {
+                                select : {
+                                    name : true
+                                }
+                            }
+                        }
+                    }
+                },
+                skip: (page - 1) * limit,
+                take: limit,
+            })
+            return res.json({
+                status : true,
+                message : 'success',
+                data : flight
+            })
+        }
+
+        console.log("disini 2", fcountry)
+
+        if(req.query.tocountry && req.query.fromcountry){
+
+            const flight = await prisma.flights.findMany({
+                where : {
+                    AND: [
+                        { fromAirport: { countryName : fcountry }},
+                        { toAirport: { countryName: country } },
+                    ],
+                    departure_time: {
+                        gte: new Date(),
+                    },
+                },
+                select : {
+                    departure_time : true,
+                    class : true,
+                    arrival_time : true,
+                    ticket_price : true,
+                    fromAirport : {
+                        select : {
+                            name : true,
+                            cityName : true,
+                            countryName : true,
+                            rating : true,
+                        }
+                    },
+                    toAirport : {
+                        select : {
+                            name : true,
+                            cityName : true,
+                            countryName : true,
+                            rating : true,
+                        }
+                    },
+                    whomAirplaneFlights : {
+                        select : {
+                            whomAirlinesAirplanes : {
+                                select : {
+                                    name : true
+                                }
+                            }
+                        }
+                    },
+                },
+                skip: (page - 1) * limit,
+                take: limit,
+            })
+
+            return res.json({
+                status : true,
+                message : 'success',
+                data : flight
+            })
+    }
+
+    if(req.query.tocountry && !req.query.fromcountry) {
+        
+        const flight = await prisma.flights.findMany({
+            where : {
+                AND: [
+                    { toAirport: { countryName: country } },
+                ],
+                departure_time: {
+                    gte: new Date(),
+                },
+            },
+            select : {
+                departure_time : true,
+                class : true,
+                arrival_time : true,
+                ticket_price : true,
+                fromAirport : {
+                    select : {
+                        name : true,
+                        cityName : true,
+                        countryName : true,
+                        rating : true,
+                    }
+                },
+                toAirport : {
+                    select : {
+                        name : true,
+                        cityName : true,
+                        countryName : true,
+                        rating : true,
+                    }
+                },
+                whomAirplaneFlights : {
+                    select : {
+                        whomAirlinesAirplanes : {
+                            select : {
+                                name : true
+                            }
+                        }
+                    }
+                },
+            },
+            skip: (page - 1) * limit,
+            take: limit,
+        })
+
+        return res.json({
+            status : true,
+            message : 'success',
+            data : flight
+        })
+    }
+
+    if(!req.query.tocountry && req.query.fromcountry) {
+        
+        const flight = await prisma.flights.findMany({
+            where : {
+                AND: [
+                    { fromAirport: { countryName: fcountry } },
+                ],
+                departure_time: {
+                    gte: new Date(),
+                },
+            },
+            select : {
+                departure_time : true,
+                class : true,
+                arrival_time : true,
+                ticket_price : true,
+                fromAirport : {
+                    select : {
+                        name : true,
+                        cityName : true,
+                        countryName : true,
+                        rating : true,
+                    }
+                },
+                toAirport : {
+                    select : {
+                        name : true,
+                        cityName : true,
+                        countryName : true,
+                        rating : true,
+                    }
+                },
+                whomAirplaneFlights : {
+                    select : {
+                        whomAirlinesAirplanes : {
+                            select : {
+                                name : true
+                            }
+                        }
+                    }
+                },
+            },
+            skip: (page - 1) * limit,
+            take: limit,
+        })
+
+        return res.json({
+            status : true,
+            message : 'success',
+            data : flight
+        })
+    }
+
+    } catch(err){
+        return res.status(500).json({
+            status: false,
+            message: 'Error searching flights',
+            error: err.message,
+        });
+    }
+}
+
+const getFlightRecommendationOptimized = async function(req, res) {
+    try {
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 10;
+        const country = req.query.tocountry ? req.query.tocountry.toUpperCase() : null;
+        const fcountry = req.query.fromcountry ? req.query.fromcountry.toUpperCase() : null;
+
+        let whereClause = {
+            departure_time: {
+                gte: new Date(),
+            },
+        };
+
+        if (fcountry && country) {
+            whereClause.AND = [
+                { fromAirport: { countryName: fcountry } },
+                { toAirport: { countryName: country } },
+            ];
+        } else if (fcountry) {
+            whereClause.fromAirport = { countryName: fcountry };
+        } else if (country) {
+            whereClause.toAirport = { countryName: country };
+        }
+
+        const flight = await prisma.flights.findMany({
+            where: whereClause,
+            select: {
+                departure_time: true,
+                class: true,
+                arrival_time: true,
+                ticket_price: true,
+                fromAirport: {
+                    select: {
+                        name: true,
+                        cityName: true,
+                        countryName: true,
+                        rating: true,
+                    },
+                },
+                toAirport: {
+                    select: {
+                        name: true,
+                        cityName: true,
+                        countryName: true,
+                        rating: true,
+                    },
+                },
+                whomAirplaneFlights: {
+                    select: {
+                        whomAirlinesAirplanes: {
+                            select: {
+                                name: true,
+                            },
+                        },
+                    },
+                },
+            },
+            skip: (page - 1) * limit,
+            take: limit,
+        });
+
+        return res.json({
+            status: true,
+            message: 'success',
+            data: flight,
+        });
+    } catch (err) {
+        return res.status(500).json({
+            status: false,
+            message: 'Error searching flights',
+            error: err.message,
+        });
+    }
+};
+
+
+const {Seat, FlightSeats } = require('../../../db/schema')
+
+const getAllSeatFlight = async function(req, res) {
+    const flightid = Number(req.query.id)
+
+    console.log(flightid)
+    try {
+        const seat = await FlightSeats.findOne({ flightId: flightid });
+
+        if(!seat){
+            throw new ErrorWithStatusCode('no flight available', 200)
+        }
+
+
+        return res.json({
+            status : true,
+            message : 'success',
+            length : seat.seats.length,
+            data : seat
+        })
+
+    } catch  (err) {
+        console.log(err)
+        handleError(err, res);
+    }
+}
+
+
+
 
 module.exports = {
     getFlightById,
     getFlightsByCityOrCountryName,
     getFlightsByDate,
     getAllFlightsByCityOrCountryNameFrom,
-    getAllFlightsByCityOrCountryNameTo
+    getAllFlightsByCityOrCountryNameTo,
+    getFlightsByDateToFrom,
+    getFlightRecommendation,
+    getAllSeatFlight,
+    getFlightsByDateRevision
 }

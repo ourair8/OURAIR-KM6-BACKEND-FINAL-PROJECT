@@ -3,9 +3,11 @@
 // const WebSocket = require("ws");
 
 const prisma = require('../../../config/prisma.config');
-const { handleError } = require("../../../middleware/errorHandler");
 const snap = require('../../../config/midtrans');
 const { findAvailableFlights } = require('../services/passangerService');
+const {Seat, FlightSeats } = require('../../../db/schema')
+const { handleError, ErrorWithStatusCode } = require("../../../middleware/errorHandler")
+
 
 //websocket huzi
 
@@ -45,18 +47,36 @@ const createPassengerController = async(req, res) => {
         });
 
         const createdPassengers = await Promise.all(passengers.map(async passenger => {
+            const flight = flights.find(f => f.id === passenger.ticket.flight_id);
+
+            const flightSeatsDoc = await FlightSeats.findOne({ flightId: flight.id });
+            if (!flightSeatsDoc) {
+                throw new ErrorWithStatusCode('no flight available', 200)
+            }
+
+            const seatIndex = flightSeatsDoc.seats.findIndex(seat => seat.seatNumber === passenger.seat_number);
+            if (seatIndex === -1 || flightSeatsDoc.seats[seatIndex].isBooked) {
+                throw new ErrorWithStatusCode(`Seat ${passenger.seat_number} is not available`, 200)
+            }
+
             const createdPassenger = await prisma.passengers.create({
                 data: {
                     fullname: passenger.fullname,
                     surname: passenger.surname,
                     birth_date: new Date(passenger.birth_date),
                     nationality: passenger.nationality,
+                    category: passenger.category,
                     document: passenger.document,
                     country_publication: passenger.country_publication,
                     document_expired: new Date(passenger.document_expired),
                     seat_number: passenger.seat_number,
                 }
             });
+
+            // Update the seat to be booked in MongoDB
+            flightSeatsDoc.seats[seatIndex].isBooked = true;
+            flightSeatsDoc.seats[seatIndex].passengerId = createdPassenger.id;
+            await flightSeatsDoc.save();
 
             await prisma.tickets.create({
                 data: {
@@ -146,25 +166,34 @@ const createPassengerController = async(req, res) => {
         //     },
         // });
 
-        console.log(req.app.locals.wss.clients)
+    //     TypeError: Cannot read properties of undefined (reading 'clients')
+    // at createPassengerController (C:\Users\Owner\OneDrive\Pictures\Ourair\src\features\booking\controllers\passengerController.js:169:40)
+
+        // console.log(req.app.locals.wss.clients)
 
         //web socket samuel
-        req.app.locals.wss.clients.forEach((client) => {
-            if (client.readyState === WebSocket.OPEN && client.userId === req.user.id) {
-                client.send(
-                    JSON.stringify({
-                        type: "notification",
-                        data: {
-                            user_id: req.user.id,
-                            title: "Transaction Created",
-                            message: `Your transaction with ID ${createdTransaction.id} has been created.`,
-                            is_read: false,
-                            created_at: new Date(),
-                        },
-                    })
-                );
-            }
-        });
+
+          // TypeError: Cannot read properties of undefined (reading 'clients')
+                // at createPassengerController 
+                // (C:\Users\Owner\OneDrive\Pictures\Ourair\src\features\booking\controllers\passengerController.js:168:40)
+        // req.app.locals.wss.clients.forEach((client) => {
+        //     if (client.readyState === WebSocket.OPEN && client.userId === req.user.id) {
+
+              
+        //         client.send(
+        //             JSON.stringify({
+        //                 type: "notification",
+        //                 data: {
+        //                     user_id: req.user.id,
+        //                     title: "Transaction Created",
+        //                     message: `Your transaction with ID ${createdTransaction.id} has been created.`,
+        //                     is_read: false,
+        //                     created_at: new Date(),
+        //                 },
+        //             })
+        //         );
+        //     }
+        // });
 
         return res.status(201).json({
             status: true,

@@ -72,13 +72,10 @@ model Airplanes {
   id                   Int    @id @default(autoincrement())
   airline_id           Int
   airplane_code        String @db.VarChar(150)
+  total_seat           Int @default(150)
   baggage              Int
   cabin_baggage        Int
   description          String @db.VarChar(255)
-  seat_economy         Int
-  seat_economy_premium Int
-  seat_business        Int
-  seat_first_class     Int
 
   whomAirlinesAirplanes Airlines @relation(fields: [airline_id], references: [id])
 
@@ -98,6 +95,7 @@ model Airports {
   city          Boolean
   total_visited Int?
   thumbnail     String?
+  rating        Decimal @default(4.5)
 
   fromFlights Flights[] @relation("fromFlights")
   toFlights   Flights[] @relation("toFlights")
@@ -108,15 +106,17 @@ model Airports {
 model Flights {
   id             Int        @id @default(autoincrement())
   airplane_id    Int
-  from_id        Int
-  to_id          Int
+  from_id        Int?
+  to_id          Int?
   departure_time DateTime
   arrival_time   DateTime
   flight_type    FlightType @default(DOMESTIC)
+  class          FlightClass @default(FIRSTCLASS)
   ticket_price   Int
+  seat_id        Int @unique @default(autoincrement())
 
-  fromAirport         Airports  @relation("fromFlights", fields: [from_id], references: [id])
-  toAirport           Airports  @relation("toFlights", fields: [to_id], references: [id])
+  fromAirport         Airports?  @relation("fromFlights", fields: [from_id], references: [id], onDelete: SetNull)
+  toAirport           Airports?  @relation("toFlights", fields: [to_id], references: [id],  onDelete: SetNull)
   whomAirplaneFlights Airplanes @relation(fields: [airplane_id], references: [id])
 
   tickets Tickets[]
@@ -124,16 +124,19 @@ model Flights {
   @@map("flights")
 }
 
+
+
 model Passengers {
   id                  Int      @id @default(autoincrement())
   fullname            String
   surname             String
   birth_date          DateTime
+  category            String @default("adult")
   nationality         String
   document            String
   country_publication String
   document_expired    DateTime
-  seat_number         Int
+  seat_number         String
 
   tickets Tickets[]
 
@@ -144,11 +147,11 @@ model Tickets {
   id             Int  @id @default(autoincrement())
   user_id        Int
   passanger_id   Int  @unique
-  flight_id      Int
+  flight_id      Int?
   transaction_id Int?
 
   whomPassangerTicket Passengers    @relation(fields: [passanger_id], references: [id])
-  whomFlightTicket    Flights       @relation(fields: [flight_id], references: [id])
+  whomFlightTicket    Flights?       @relation(fields: [flight_id], references: [id], onDelete: SetNull)
   whomUserTicket      Users         @relation(fields: [user_id], references: [id])
   transaction         Transactions? @relation(fields: [transaction_id], references: [id])
 
@@ -192,4 +195,10 @@ enum Role {
 enum FlightType {
   DOMESTIC
   INTERNATIONAL
+}
+
+enum FlightClass {
+  FIRSTCLASS
+  BUSINESS
+  ECONOMY
 }

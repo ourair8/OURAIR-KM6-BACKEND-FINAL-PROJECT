@@ -1,7 +1,7 @@
 'use strict';
 
 const { PrismaClient } = require('@prisma/client');
-// const prisma = new PrismaClient();
+const prisma = new PrismaClient();
 const { handleError } = require('../../../middleware/errorHandler');
 
 const checkPaymentStatus = async(req, res) => {
