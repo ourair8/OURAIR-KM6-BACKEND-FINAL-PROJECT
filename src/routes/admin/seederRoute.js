@@ -3,7 +3,7 @@
 const { main } = require("../../seeds/airportSeeder");
 const { AirlineSeeder } = require("../../seeds/airlineSeeder");
 const { AirplaneSeeder } = require("../../seeds/airplaneSeeder");
-const { seedFlights } = require("../../seeds/flights");
+const { seedFlights, updateRatings } = require("../../seeds/flights");
 const { updateThumbnails } = require("../../seeds/thumbnailseed");
 const { insertDataMongo, updateFlightSeats } = require("../../db/mongo_seed")
 
@@ -33,6 +33,7 @@ const seeder = require("express")
   )
   .get("/flight-seed", seedFlights)
   .get('/thumbnail-airport-seed', updateThumbnails)
+  .get('/update-airports-ratings', updateRatings)
 
 module.exports = {
     seeder

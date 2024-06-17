@@ -73,7 +73,6 @@ const createPassengerController = async(req, res) => {
                 }
             });
 
-            // Update the seat to be booked in MongoDB
             flightSeatsDoc.seats[seatIndex].isBooked = true;
             flightSeatsDoc.seats[seatIndex].passengerId = createdPassenger.id;
             await flightSeatsDoc.save();

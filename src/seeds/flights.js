@@ -100,6 +100,38 @@ const seedFlights = async (req, res) => {
   }
 };
 
+
+const updateRatings = async (req, res) => {
+  console.log('mulai')
+  console.time('updateRatings'); // Start the timer
+  try {
+    const airports = await prisma.airports.findMany();
+
+    const possibleRatings = [4.5, 4.6, 4.7, 4.8, 4.9, 5.0];
+
+    // Update each airport's rating
+    for (const airport of airports) {
+      const newRating = possibleRatings[Math.floor(Math.random() * possibleRatings.length)];
+      await prisma.airports.update({
+        where: { id: airport.id },
+        data: { rating: newRating },
+      });
+    }
+
+    console.log('Ratings updated successfully.');
+  } catch (error) {
+    console.error('Error updating ratings:', error);
+  } finally {
+    await prisma.$disconnect();
+    return res.json({
+      status : true,
+      message : 'success'
+    })
+  }
+};
+
+
 module.exports = {
-  seedFlights
+  seedFlights,
+  updateRatings
 };

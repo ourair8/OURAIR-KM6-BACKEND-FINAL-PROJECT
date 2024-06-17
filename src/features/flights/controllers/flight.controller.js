@@ -14,7 +14,7 @@ const getFlightById = async function(req, res) {
 
         id = Number(id)
 
-        const user = await prisma.flights.findUnique({
+        const flight = await prisma.flights.findUnique({
             where : {
                 id : id
             },
@@ -29,10 +29,20 @@ const getFlightById = async function(req, res) {
             }
         })
 
+        if(!flight){
+            throw new ErrorWithStatusCode('no flight available', 200)
+        }
+
+        const seat = await FlightSeats.findOne({ flightId: flight.id });
+
+        if(!seat){
+            throw new ErrorWithStatusCode('no flight available', 200)
+        }
+
         return res.json({
             status : true,
             message : 'success',
-            data : user
+            data : flight, seat
         })
     } catch (err) {
         handleError(err, res)
@@ -1145,6 +1155,9 @@ const getFlightsByDateRevision = async function(req, res) {
         let limit = Number(req.query.limit) || 10;
 
         let filters = {};
+
+
+        console.log(req.query)
     
         if (req.query.fromcity) {
             filters = {
@@ -1219,7 +1232,7 @@ const getFlightsByDateRevision = async function(req, res) {
         if (req.query.class) {
             filters = {
                 ...filters,
-                class: req.query.class
+                class: req.query.class.toUpperCase()
             };
         }
     
@@ -1232,7 +1245,7 @@ const getFlightsByDateRevision = async function(req, res) {
                             lte: endDate,
                         },
                     },
-                    filters 
+                    Object.keys(filters).length ? filters : {}
                 ]
             },
             select: {
@@ -1278,6 +1291,8 @@ const getFlightsByDateRevision = async function(req, res) {
                         id: true,
                         airline_id: true,
                         airplane_code: true,
+                        baggage : true,
+                        cabin_baggage:true,
                         whomAirlinesAirplanes: {
                             select: {
                                 id: true,
@@ -1291,6 +1306,18 @@ const getFlightsByDateRevision = async function(req, res) {
             skip: (page - 1) * limit,
             take: limit,
         });
+
+        const flightIds = flights.map(flight => flight.id);
+        const flightSeats = await FlightSeats.find({ flightId: { $in: flightIds } });
+
+        const flightsWithSeats = flights.map(flight => {
+            const seatsForFlight = flightSeats.find(seat => seat.flightId === flight.id);
+            const availableSeats = seatsForFlight ? seatsForFlight.seats.filter(seat => !seat.isBooked).length : 0;
+            return {
+                ...flight,
+                availableSeats
+            };
+        });
     
         const totalFlights = await prisma.flights.count({
             where: {
@@ -1301,7 +1328,7 @@ const getFlightsByDateRevision = async function(req, res) {
                             lte: endDate,
                         },
                     },
-                    filters 
+                    Object.keys(filters).length ? filters : {}
                 ]
             },
         });
@@ -1314,7 +1341,7 @@ const getFlightsByDateRevision = async function(req, res) {
             currentPage: page,
             length: flights.length,
             data: {
-                flights,
+                flights: flightsWithSeats,
             },
         });
     } catch (err) {
@@ -1869,6 +1896,7 @@ const getFlightRecommendation = async function(req, res) {
                         cityName : true,
                         countryName : true,
                         rating : true,
+                        thumbnail:true,
                     }
                 },
                 whomAirplaneFlights : {
