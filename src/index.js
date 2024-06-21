@@ -60,6 +60,9 @@ const app = express()
   .use(express.urlencoded({ extended: false }))
   .use(bodyparser.urlencoded({ extended: false }))
   .use("/api/v1", v1)
+  .get('/apasih', (req, res) => {
+    res.render("websocket");
+  })
   .get("/email", (req, res) => {
     const data = { otp: "247824", name: "Our Air wow" };
     res.render("email", data);
@@ -109,14 +112,14 @@ Sentry.setupExpressErrorHandler(app);
 const PORT = 3001;
 // const PORT_WS = 8085;
 
-// //kerjaan huzi websocket
-// const server_huzi = http.createServer(app);
+//kerjaan huzi websocket
+const server_huzi = http.createServer(app);
 
-// server_huzi.on('upgrade', (request, socket, head) => {
-//   webSocketServer.handleUpgrade(request, socket, head, (ws) => {
-//       webSocketServer.emit('connection', ws, request);
-//   });
-// });
+server_huzi.on('upgrade', (request, socket, head) => {
+  webSocketServer.handleUpgrade(request, socket, head, (ws) => {
+      webSocketServer.emit('connection', ws, request);
+  });
+});
 
 app.use((req, res, next) => {
   req.io = io;
@@ -138,9 +141,9 @@ server.listen(PORT, () => {
   console.log("app listening on port 3000!");
 });
 
-// app.get("/debug-sentry", function mainHandler(req, res) {
-//   throw new Error("My first Sentry error!");
-// });
+app.get("/debug-sentry", function mainHandler(req, res) {
+  throw new Error("My first Sentry error!");
+});
 
 // //kerjaan samuel websocket
 // // const server_samuel = app.listen(PORT_WS, () => {

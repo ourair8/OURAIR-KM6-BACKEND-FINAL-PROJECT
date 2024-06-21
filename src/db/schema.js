@@ -16,7 +16,6 @@ const seatSchema = new mongoose.Schema({
     passengerId: {
       type: Number,
       default: null,
-      unique: true
     },
   });
   

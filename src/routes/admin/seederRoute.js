@@ -2,10 +2,13 @@
 
 const { main } = require("../../seeds/airportSeeder");
 const { AirlineSeeder } = require("../../seeds/airlineSeeder");
+const { userSeeder } = require("../../seeds/users");
 const { AirplaneSeeder } = require("../../seeds/airplaneSeeder");
-const { seedFlights, updateRatings } = require("../../seeds/flights");
+const { updateRatings } = require("../../seeds/flights");
+const { seedFlights } = require('../../seeds/cron-flight')
 const { updateThumbnails } = require("../../seeds/thumbnailseed");
 const { insertDataMongo, updateFlightSeats } = require("../../db/mongo_seed")
+const { passangerSeeder } = require('../../seeds/passangerseeder')
 
 
 const {
@@ -33,7 +36,9 @@ const seeder = require("express")
   )
   .get("/flight-seed", seedFlights)
   .get('/thumbnail-airport-seed', updateThumbnails)
+  .get('/trigger-user-seeder', userSeeder)
   .get('/update-airports-ratings', updateRatings)
+  .get('/trigger-passanger-seeder', passangerSeeder)
 
 module.exports = {
     seeder

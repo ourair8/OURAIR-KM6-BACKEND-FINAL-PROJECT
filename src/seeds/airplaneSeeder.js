@@ -17,10 +17,6 @@ const AirplaneSeeder = async function (req, res) {
           baggage: airplaneData.baggage,
           cabin_baggage: airplaneData.cabin_baggage,
           description: airplaneData.description,
-          seat_economy: airplaneData.seat_economy,
-          seat_economy_premium: airplaneData.seat_economy_premium,
-          seat_business: airplaneData.seat_business,
-          seat_first_class: airplaneData.seat_first_class,
         },
       });
     }
@@ -34,7 +30,7 @@ const AirplaneSeeder = async function (req, res) {
 
     return res.json({
       status: true,
-      message: "success",
+      message: "success aaa",
     });
   }
 };

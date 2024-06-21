@@ -3,6 +3,17 @@
 const prisma = require("../../../config/prisma.config")
 const { handleError, ErrorWithStatusCode } = require("../../../middleware/errorHandler")
 
+// const groupSeatsByRow = (seats) => {
+//     return seats.reduce((acc, seat) => {
+//       const row = seat.seatNumber[0]; 
+//       if (!acc[row]) {
+//         acc[row] = []; 
+//       }
+//       acc[row].push(seat);
+//       return acc;
+//     }, {});
+//   };
+
 const getFlightById = async function(req, res) {
     let id = req.query.id
 
@@ -33,18 +44,80 @@ const getFlightById = async function(req, res) {
             throw new ErrorWithStatusCode('no flight available', 200)
         }
 
-        const seat = await FlightSeats.findOne({ flightId: flight.id });
+        // const seat = await FlightSeats.findOne({ flightId: flight.id });
+        const result = await FlightSeats.aggregate([
+            { $match: { flightId: flight.id } },
+            { $unwind: "$seats" },
+            { $match: { "seats.isBooked": false } },
+            {
+                $project: {
+                    _id: 0,
+                    seatNumber: "$seats.seatNumber",
+                    seatInfo: {
+                        seatNumber: "$seats.seatNumber",
+                        isBooked: "$seats.isBooked"
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    availableSeats: { $push: "$seatInfo" },
+                    totalAvailableCount: { $sum: 1 } 
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    availableSeats: 1,
+                    totalAvailableSeats: "$totalAvailableCount" 
+                }
+            }
+        ]);
+        
+        if (result.length > 0) {
+            const flightInfo = {
+                flightId: flight.id,
+                flightNumber: flight.number,
+                departureDate: flight.departureDate,
+            };
+        
+            result[0].flightInfo = flightInfo;
+        
+            if (result[0].availableSeats.length > 0) {
+                const groupedSeats = {};
+                result[0].availableSeats.forEach(seat => {
+                    const numberPart = seat.seatNumber.match(/^\d+/)[0]; 
+                    if (!groupedSeats[numberPart]) {
+                        groupedSeats[numberPart] = [];
+                    }
+                    groupedSeats[numberPart].push(seat);
+                });
+        
+                result[0].availableSeats = Object.values(groupedSeats).map(group => group.sort((a, b) => {
+                    const numberA = parseInt(a.seatNumber.match(/\d+/)[0]);
+                    const numberB = parseInt(b.seatNumber.match(/\d+/)[0]);
+                    return numberA - numberB;
+                }));
+            }
+        }
+        
+        
+               
+    
+        // const availableSeats = seat.seats.filter(seat => seat.isBooked === false);
 
-        if(!seat){
+        if(!result){
             throw new ErrorWithStatusCode('no flight available', 200)
         }
 
         return res.json({
             status : true,
             message : 'success',
-            data : flight, seat
+            data : flight, result
         })
     } catch (err) {
+        console.log(err)
         handleError(err, res)
     }
 }
@@ -1149,16 +1222,13 @@ const getFlightsByDateRevision = async function(req, res) {
 
     try {
         let startDate = req.query.startDate ? new Date(req.query.startDate) : new Date();
-        let endDate = req.query.endDate ? new Date(req.query.endDate) : new Date(new Date().setDate(new Date().getDate() + 30));
+        let endDate = req.query.endDate && req.query.endDate.trim() !== "''" ? new Date(req.query.endDate) : null;        
     
         let page = Number(req.query.page) || 1;
         let limit = Number(req.query.limit) || 10;
 
         let filters = {};
 
-
-        console.log(req.query)
-    
         if (req.query.fromcity) {
             filters = {
                 ...filters,
@@ -1189,6 +1259,16 @@ const getFlightsByDateRevision = async function(req, res) {
                     name: formattedFromAirportName
                 }
             };
+        }
+
+        let dateFilter = {
+            departure_time: {
+                gte: startDate,
+            }
+        };
+        
+        if (endDate && !isNaN(endDate.getTime())) {
+            dateFilter.departure_time.lte = endDate;
         }
     
         if (req.query.toairport) {
@@ -1239,12 +1319,7 @@ const getFlightsByDateRevision = async function(req, res) {
         const flights = await prisma.flights.findMany({
             where: {
                 AND: [
-                    {
-                        departure_time: {
-                            gte: startDate,
-                            lte: endDate,
-                        },
-                    },
+                    dateFilter,
                     Object.keys(filters).length ? filters : {}
                 ]
             },
@@ -1322,12 +1397,7 @@ const getFlightsByDateRevision = async function(req, res) {
         const totalFlights = await prisma.flights.count({
             where: {
                 AND: [
-                    {
-                        departure_time: {
-                            gte: startDate,
-                            lte: endDate,
-                        },
-                    },
+                    dateFilter,
                     Object.keys(filters).length ? filters : {}
                 ]
             },
