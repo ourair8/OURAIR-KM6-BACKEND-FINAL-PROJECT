@@ -13,13 +13,13 @@ const fs = require("fs");
 const file = fs.readFileSync(`${__dirname}/api-docs.yaml`, "utf-8");
 const cors = require("cors");
 const seedFlight = require("./seeds/cron-flight");
-const compression = require('compression');
+const compression = require("compression");
 
 require("dotenv").config();
 require("./utils/instrument");
 const Sentry = require("@sentry/node");
 Sentry.init({ dsn: process.env.SENTRY_DSN });
-const WebSocket = require("ws");
+// const WebSocket = require("ws");
 
 const swaggerDocument = YAML.parse(file);
 
@@ -36,11 +36,10 @@ var corsOptions = {
     "bw2nj1xt-3001.asse.devtunnels.ms",
   ],
   optionsSuccessStatus: 200,
-  credentials : true,
+  credentials: true,
 };
 
 require("dotenv").config();
-
 const app = express()
   .use(cors(corsOptions))
   .use(cookieParser())
@@ -101,6 +100,9 @@ const app = express()
     });
   });
 
+const server = http.createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(server);
 // The error handler must be registered before any other error middleware and after all controllers
 Sentry.setupExpressErrorHandler(app);
 
@@ -116,8 +118,24 @@ const PORT = 3001;
 //   });
 // });
 
-app.listen(PORT, () => {
-  console.log(`listening on port ${PORT}`);
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
+
+io.on("connection", (socket) => {
+  console.log("a user connected");
+
+  socket.on("disconnect", () => {
+    console.log("user disconnected");
+  });
+});
+
+// app.listen(PORT, () => {
+//   console.log(`listening on port ${PORT}`);
+// });
+server.listen(PORT, () => {
+  console.log("app listening on port 3000!");
 });
 
 // app.get("/debug-sentry", function mainHandler(req, res) {

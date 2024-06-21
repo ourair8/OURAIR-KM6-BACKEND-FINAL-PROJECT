@@ -49,10 +49,10 @@ const loginByEmailController = async function (req, res) {
 
 const loginOAuthController = async function (req, res) {
   const result = await prisma.users.findUnique({
-    where : {
-      id : req.user.id
-    }
-  })
+    where: {
+      id: req.user.id,
+    },
+  });
 
   const payload = {
     id: result.id,
@@ -65,7 +65,6 @@ const loginOAuthController = async function (req, res) {
   };
 
   let token = jwt.sign(payload, SECRET_KEY, { expiresIn: "1h" });
-
 
   // res.cookie("token", token, { httpOnly: true }); // set token to cookies
   // return res.redirect(`http://localhost:5173?token=${token}`); // redirect to client

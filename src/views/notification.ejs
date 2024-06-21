@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notification Form</title>
+  </head>
+  <body>
+    <h1>Create a Notification</h1>
+    <form action="/notifications" method="post">
+      <label for="user_id">User:</label>
+      <select name="user_id" id="user_id">
+        <% users.forEach(user => { %>
+        <option value="<%= user.id %>"><%= user.username %></option>
+        <% }); %></select
+      ><br /><br />
+      <label for="title">Title:</label>
+      <input type="text" id="title" name="title" required /><br /><br />
+      <label for="message">Message:</label>
+      <textarea id="message" name="message" required></textarea><br /><br />
+      <button type="submit">Send Notification</button>
+    </form>
+
+    <script>
+      const ws = new WebSocket(`ws://${window.location.host}`);
+      ws.onmessage = function (event) {
+        const notification = JSON.parse(event.data);
+        alert(
+          `New Notification:\nTitle: ${notification.title}\nMessage: ${notification.message}`
+        );
+      };
+    </script>
+  </body>
+</html>

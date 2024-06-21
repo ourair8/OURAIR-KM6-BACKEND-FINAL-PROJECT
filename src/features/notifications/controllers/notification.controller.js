@@ -1,44 +1,62 @@
-'use strict';
+"use strict";
 
-const { getUserNotifications, markNotificationAsRead } = require('../services/notification.service');
+const {
+  getUserNotifications,
+  markNotificationAsRead,
+  postNotificationToAll,
+} = require("../services/notification.service");
 const { handleError } = require("../../../middleware/errorHandler");
 
-const getNotifications = async(req, res) => {
-    try {
-        const { page = 1, limit = 5 } = req.query;
-        const { notifications, total } = await getUserNotifications(req.user.id, page, limit);
+const getNotifications = async (req, res) => {
+  try {
+    const { page = 1, limit = 5 } = req.query;
+    const { notifications, total } = await getUserNotifications(
+      req.user.id,
+      page,
+      limit
+    );
 
-        res.status(200).json({
-            notifications,
-            total,
-            page: parseInt(page),
-            limit: parseInt(limit)
-        });
-    } catch (error) {
-        console.error(error);
-        handleError(error, res);
-    }
+    res.status(200).json({
+      notifications,
+      total,
+      page: parseInt(page),
+      limit: parseInt(limit),
+    });
+  } catch (error) {
+    console.error(error);
+    handleError(error, res);
+  }
 };
 
-const markAsRead = async(req, res) => {
-    try {
-        const { id } = req.params;
-        const notification = await markNotificationAsRead(id);
+const markAsRead = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const notification = await markNotificationAsRead(id);
 
-        res.status(200).json({ notification });
-    } catch (error) {
-        console.error(error);
-        handleError(error, res);
-    }
+    res.status(200).json({ notification });
+  } catch (error) {
+    console.error(error);
+    handleError(error, res);
+  }
+};
+
+const notificationToAll = async (req, res) => {
+  try {
+    const { message } = req.body;
+    await postNotificationToAll(req.user.id, message);
+
+    res.status(200).json({ message: "Notification sent to all users" });
+  } catch (error) {
+    console.error(error);
+    handleError(error, res);
+  }
 };
 
 module.exports = {
-    getNotifications,
-    markAsRead
+  getNotifications,
+  markAsRead,
+  notificationToAll,
 };
-
-
-
 
 // 'use strict'
 
