@@ -2,7 +2,7 @@
 
 const { PrismaClient } = require('@prisma/client');
 const cron = require('node-cron');
-const { mongoose, FlightSeats } = require('../db/schema')
+const { mongoose, FlightSeats } = require('../db/schema');
 
 const prisma = new PrismaClient();
 
@@ -49,12 +49,12 @@ const generateRandomFlight = () => {
     flight_type: Math.random() > 0.5 ? 'DOMESTIC' : 'INTERNATIONAL',
     class: (() => {
       const randomClass = Math.random();
-      if (randomClass < 1/3) {
-          return 'ECONOMY';
-      } else if (randomClass < 2/3) {
-          return 'BUSINESS';
+      if (randomClass < 1 / 3) {
+        return 'ECONOMY';
+      } else if (randomClass < 2 / 3) {
+        return 'BUSINESS';
       } else {
-          return 'FIRSTCLASS';
+        return 'FIRSTCLASS';
       }
     })(),
     ticket_price: Math.floor(Math.random() * (24000 - 1000 + 1) + 1000) * 1000,
@@ -62,21 +62,21 @@ const generateRandomFlight = () => {
 };
 
 const testConnection = async () => {
-    console.log(`CRON IS ACTIVE`)
+  console.log(`CRON IS ACTIVE`);
 
-    try {
-      await prisma.$connect();
-      console.log("Koneksi ke database berhasil");
-    } catch (error) {
-      console.error("Koneksi ke database gagal", error);
-    } finally {
-      await prisma.$disconnect();
-    }
-  };
-  
+  try {
+    await prisma.$connect();
+    console.log("Koneksi ke database berhasil");
+  } catch (error) {
+    console.error("Koneksi ke database gagal", error);
+  } finally {
+    await prisma.$disconnect();
+  }
+};
+
 testConnection();
 
-const seedFlights = async () => {
+const seedFlights = async (req, res) => {
   try {
     const flights = [];
     for (let i = 0; i < 100; i++) {
@@ -87,25 +87,35 @@ const seedFlights = async () => {
       const createdFlight = await prisma.flights.create({
           data: flight,
       });
-
+    
       const seats = [];
-      const rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
-      for (const row of rows) {
-          for (let number = 1; number <= 6; number++) {
-              seats.push({ seatNumber: `${row}${number}`, isBooked: false, passengerId: null });
+      const rows = ['A', 'B', 'C', 'D', 'E', 'F'];
+      for (let rowNumber = 1; rowNumber <= 12; rowNumber++) {
+          for (const rowLetter of rows) {
+              seats.push({ seatNumber: `${rowNumber}${rowLetter}`, isBooked: false, passengerId: null });
           }
       }
-      await FlightSeats.updateOne(
-          { flightId: createdFlight.id }, // Ensure this is unique
-          { $set: { seats: seats } },
-          { upsert: true } // This will create a new document if it doesn't exist
-      );
-  }
     
+      await FlightSeats.updateOne(
+          { flightId: createdFlight.id },
+          { $set: { seats: seats } },
+          { upsert: true }
+      );
+    }
+
   } catch (err) {
     console.error(err);
+    return res.status(500).json({
+      status: false,
+      error: err.message,
+    });
   } finally {
+    console.log('done');
     await prisma.$disconnect();
+
+    // return res.json({
+    //   status: true,
+    // });
   }
 };
 
@@ -114,7 +124,6 @@ cron.schedule('0 0 * * *', () => {
   seedFlights();
 });
 
-
 module.exports = {
-    seedFlights
-}
+  seedFlights,
+};

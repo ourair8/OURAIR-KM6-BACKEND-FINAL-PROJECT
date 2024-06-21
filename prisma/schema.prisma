@@ -16,8 +16,8 @@ datasource db {
 model Users {
   id           Int      @id @default(autoincrement())
   name         String
-  username     String?
-  phone_number String?
+  username     String? @unique
+  phone_number String? @unique
   password     String
   email        String   @unique
   is_Verified  Boolean  @default(false)
@@ -47,13 +47,13 @@ model Otps {
 
 model Notifications {
   id         Int      @id @default(autoincrement())
-  user_id    Int
+  user_id    Int?
   title      String
   message    String
   is_read    Boolean
   created_at DateTime
 
-  WhomUserNotification Users @relation(fields: [user_id], references: [id])
+  WhomUserNotification Users? @relation(fields: [user_id], references: [id], onDelete: SetNull)
 
   @@map("notifications")
 }
@@ -145,14 +145,14 @@ model Passengers {
 
 model Tickets {
   id             Int  @id @default(autoincrement())
-  user_id        Int
+  user_id        Int?
   passanger_id   Int  @unique
   flight_id      Int?
   transaction_id Int?
 
   whomPassangerTicket Passengers    @relation(fields: [passanger_id], references: [id])
   whomFlightTicket    Flights?       @relation(fields: [flight_id], references: [id], onDelete: SetNull)
-  whomUserTicket      Users         @relation(fields: [user_id], references: [id])
+  whomUserTicket      Users?         @relation(fields: [user_id], references: [id], onDelete: SetNull)
   transaction         Transactions? @relation(fields: [transaction_id], references: [id])
 
   @@map("tickets")

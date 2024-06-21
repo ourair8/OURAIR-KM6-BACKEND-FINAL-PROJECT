@@ -9,7 +9,8 @@ const {
    getFlightsByDateToFrom,
    getAllSeatFlight,
    getFlightRecommendation,
-   getFlightsByDateRevision
+   getFlightsByDateRevision,
+   getAllFlights
 } = require('../features/flights/controllers/flight.controller');
 
 const flightRoutes = express.Router()

@@ -71,20 +71,22 @@ const seedFlights = async (req, res) => {
       const createdFlight = await prisma.flights.create({
           data: flight,
       });
-
+    
       const seats = [];
-      const rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
-      for (const row of rows) {
-          for (let number = 1; number <= 6; number++) {
-              seats.push({ seatNumber: `${row}${number}`, isBooked: false, passengerId: null });
+      const rows = ['A', 'B', 'C', 'D', 'E', 'F'];
+      for (let rowNumber = 1; rowNumber <= 12; rowNumber++) {
+          for (const rowLetter of rows) {
+              seats.push({ seatNumber: `${rowNumber}${rowLetter}`, isBooked: false, passengerId: null });
           }
       }
+    
       await FlightSeats.updateOne(
-          { flightId: createdFlight.id }, // Ensure this is unique
+          { flightId: createdFlight.id },
           { $set: { seats: seats } },
-          { upsert: true } // This will create a new document if it doesn't exist
+          { upsert: true }
       );
     }
+    
     
   } catch (err) {
     console.error(err);
