@@ -29,6 +29,18 @@ const getTransactionHistoryController = async function(req, res){
           total_baby: true,
           flights : {
             select : {
+              class : true,
+              whomAirplaneFlights : {
+                select : {
+                  airplane_code : true,
+                  whomAirlinesAirplanes : {
+                    select : {
+                      name : true,
+                      airline_code : true,
+                    }
+                  }
+                }
+              },
               departure_time : true,
               arrival_time : true,
                 fromAirport : {

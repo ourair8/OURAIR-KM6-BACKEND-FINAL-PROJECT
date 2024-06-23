@@ -14,6 +14,7 @@ const file = fs.readFileSync(`${__dirname}/api-docs.yaml`, "utf-8");
 const cors = require("cors");
 const seedFlight = require("./seeds/cron-flight");
 const compression = require('compression');
+const {limiterfast} = require('./db/redis')
 
 require("dotenv").config();
 require("./utils/instrument");
@@ -42,7 +43,9 @@ var corsOptions = {
 require("dotenv").config();
 
 const app = express()
+  .set('trust proxy', 1)
   .use(cors(corsOptions))
+  // .use(limiter)
   .use(cookieParser())
   .use(compression())
   .set("views", path.join(__dirname, "./views"))
@@ -68,13 +71,13 @@ const app = express()
     const data = { otp: "247824", name: "Our Air wow" };
     res.render("email", data);
   })
-  .get("/", (req, res) => {
+  .get("/", limiterfast, (req, res) => {
     return res
+     .status(200)
       .json({
         status: true,
         message: "hello world",
       })
-      .status(200);
   })
 
   //Taro sentry disini, cek repository mas tatang
