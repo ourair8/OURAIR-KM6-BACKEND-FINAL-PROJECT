@@ -151,7 +151,7 @@ const createPassengerController = async(req, res) => {
 
         const updatedTransactionMidtrans = await prisma.transactions.update({
             where: { id: createdTransaction.id },
-            data: { midtrans_order_id: orderDetailsMidtrans.transaction_details.order_id }
+            data: { midtrans_order_id: orderDetailsMidtrans.transaction_details.order_id, payment_link : transactionMidtrans.redirect_url  }
         });
 
         await prisma.notifications.create({

@@ -59,7 +59,7 @@ const sanitizeBody = (allowedFields) => {
 const validatePassengers = [
   check('passengers').isArray().withMessage('Passengers harus berupa array.'),
   
-  check('passengers.*.title').isIn(['Mr', 'Ms']).withMessage('Title tidak valid.'),
+  check('passengers.*.title').isIn(['Mr.', 'Ms.', 'Miss', 'Miss.', 'Mrs.', 'Mrs', 'Ms', 'Mr']).withMessage('Title tidak valid.'),
   check('passengers.*.fullname').isString().notEmpty().withMessage('Fullname harus berupa string dan tidak boleh kosong.'),
   check('passengers.*.surname').isString().notEmpty().withMessage('Surname harus berupa string dan tidak boleh kosong.'),
   check('passengers.*.birth_date').isISO8601().withMessage('Birth date harus berupa tanggal yang valid.'),

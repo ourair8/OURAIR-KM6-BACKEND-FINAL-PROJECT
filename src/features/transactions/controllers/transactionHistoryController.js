@@ -24,11 +24,13 @@ const getTransactionHistoryController = async function(req, res){
           total_price: true,
           created_at: true,
           status: true,
-          payment_link: true,
+          payment_link : true,
           booker_id: true,
           total_baby: true,
           flights : {
             select : {
+              departure_time : true,
+              arrival_time : true,
                 fromAirport : {
                     select : {
                         name: true,
