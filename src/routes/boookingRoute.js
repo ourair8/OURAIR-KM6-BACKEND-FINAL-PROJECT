@@ -8,7 +8,7 @@ const { checkRole, verifyToken } = require('../features/auth/controllers/whoAmI'
 const booking = require("express").Router()
     .post("/create",
         verifyToken,
-        sanitizeBody(['passengers']),
+        sanitizeBody(['passengers', 'baby', 'booker']),
         validatePassengers,
         checkRole(['USER']),
         createPassengerController

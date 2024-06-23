@@ -58,8 +58,8 @@ const app = express()
   .set("view engine", "ejs")
   .use(express.json())
   .use(bodyparser.json())
-  .use(express.urlencoded({ extended: false }))
-  .use(bodyparser.urlencoded({ extended: false }))
+  .use(express.urlencoded({ extended: true }))
+  .use(bodyparser.urlencoded({ extended: true }))
   .use("/api/v1", v1)
   .get('/apasih', (req, res) => {
     res.render("websocket");

@@ -120,6 +120,7 @@ model Flights {
   whomAirplaneFlights Airplanes @relation(fields: [airplane_id], references: [id])
 
   tickets Tickets[]
+  transaction Transactions[]
 
   @@map("flights")
 }
@@ -128,6 +129,7 @@ model Flights {
 
 model Passengers {
   id                  Int      @id @default(autoincrement())
+  title               String
   fullname            String
   surname             String
   birth_date          DateTime
@@ -167,8 +169,15 @@ model Transactions {
   total_price       Int
   created_at        DateTime
   status            Boolean
-  Payments          Payments?
+  payment_link      String?
+  booker_id         Int?
+  total_baby        Int?
+  flight_id         Int?
 
+  bookers Bookers? @relation(fields: [booker_id], references: [id], onDelete: SetNull)
+  flights Flights? @relation(fields: [flight_id], references: [id], onDelete: SetNull)
+
+  Payments          Payments?
   tickets Tickets[]
 
   @@map("transactions")
@@ -184,6 +193,18 @@ model Payments {
   transaction Transactions @relation(fields: [transaction_id], references: [id])
 
   @@map("payments")
+}
+
+model Bookers {
+  id           Int           @id @default(autoincrement())
+  fullname     String
+  surname      String
+  phone_number String
+  email        String
+
+  transactions Transactions[]
+
+  @@map("bookers")
 }
 
 //enum
