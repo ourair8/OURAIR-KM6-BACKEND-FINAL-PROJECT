@@ -60,7 +60,7 @@ const app = express()
   .use(express.urlencoded({ extended: false }))
   .use(bodyparser.urlencoded({ extended: false }))
   .use("/api/v1", v1)
-  .get('/apasih', (req, res) => {
+  .get("/apasih", (req, res) => {
     res.render("websocket");
   })
   .get("/email", (req, res) => {
@@ -105,7 +105,14 @@ const app = express()
 
 const server = http.createServer(app);
 const { Server } = require("socket.io");
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173", // Replace with your frontend domain
+    methods: ["GET", "POST"],
+    allowedHeaders: ["token"],
+    credentials: true,
+  },
+});
 // The error handler must be registered before any other error middleware and after all controllers
 Sentry.setupExpressErrorHandler(app);
 
@@ -113,13 +120,13 @@ const PORT = 3001;
 // const PORT_WS = 8085;
 
 //kerjaan huzi websocket
-const server_huzi = http.createServer(app);
+// const server_huzi = http.createServer(app);
 
-server_huzi.on('upgrade', (request, socket, head) => {
-  webSocketServer.handleUpgrade(request, socket, head, (ws) => {
-      webSocketServer.emit('connection', ws, request);
-  });
-});
+// server_huzi.on('upgrade', (request, socket, head) => {
+//   webSocketServer.handleUpgrade(request, socket, head, (ws) => {
+//       webSocketServer.emit('connection', ws, request);
+//   });
+// });
 
 app.use((req, res, next) => {
   req.io = io;
@@ -137,14 +144,14 @@ io.on("connection", (socket) => {
 // app.listen(PORT, () => {
 //   console.log(`listening on port ${PORT}`);
 // });
-server.listen(PORT, () => {
-  console.log("app listening on port 3000!");
-});
 
 app.get("/debug-sentry", function mainHandler(req, res) {
   throw new Error("My first Sentry error!");
 });
 
+server.listen(PORT, () => {
+  console.log("app listening on port 3000!");
+});
 // //kerjaan samuel websocket
 // // const server_samuel = app.listen(PORT_WS, () => {
 // //   console.log(`Express server listening on port ${PORT_WS}`);

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Notification Form</title>
+    <title>Create a Notification</title>
   </head>
   <body>
     <h1>Create a Notification</h1>
@@ -21,14 +21,15 @@
       <button type="submit">Send Notification</button>
     </form>
 
+    <script src="/socket.io/socket.io.js"></script>
     <script>
-      const ws = new WebSocket(`ws://${window.location.host}`);
-      ws.onmessage = function (event) {
-        const notification = JSON.parse(event.data);
+      const socket = io();
+
+      socket.on("notification", function (notification) {
         alert(
           `New Notification:\nTitle: ${notification.title}\nMessage: ${notification.message}`
         );
-      };
+      });
     </script>
   </body>
 </html>

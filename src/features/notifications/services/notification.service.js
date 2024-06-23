@@ -30,19 +30,42 @@ const markNotificationAsRead = async (notificationId) => {
   return notification;
 };
 
-const postNotificationToAll = async (userId, message) => {
+// const postNotificationToAll = async (userId, title, message) => {
+//   const users = await prisma.users.findMany();
+
+//   const notifications = users
+//     .filter((user) => user.id !== userId)
+//     .map((user) => ({
+//       user_id: user.id,
+//       title,
+//       message,
+//       is_read: false,
+//       created_at: new Date(),
+//     }));
+
+//   await prisma.notifications.createMany({
+//     data: notifications,
+//   });
+
+//   return notifications;
+// };
+
+const postNotificationToAll = async (userId, title, message) => {
   const users = await prisma.users.findMany();
 
-  for (const user of users) {
-    if (user.id !== userId) {
-      await prisma.notifications.create({
-        data: {
-          user_id: user.id,
-          message,
-        },
-      });
-    }
-  }
+  const notifications = users.map((user) => ({
+    user_id: user.id !== userId ? user.id : null,
+    title,
+    message,
+    is_read: false,
+    created_at: new Date(),
+  }));
+
+  await prisma.notifications.createMany({
+    data: notifications,
+  });
+
+  return notifications;
 };
 
 module.exports = {

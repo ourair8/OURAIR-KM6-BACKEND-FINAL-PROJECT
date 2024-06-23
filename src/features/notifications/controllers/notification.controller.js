@@ -40,22 +40,51 @@ const markAsRead = async (req, res) => {
   }
 };
 
-const notificationToAll = async (req, res) => {
-  try {
-    const { message } = req.body;
-    await postNotificationToAll(req.user.id, message);
+// const sendNotificationToAll = async (req, res) => {
+//   try {
+//     const { userId, title, message } = req.body;
 
-    res.status(200).json({ message: "Notification sent to all users" });
+//     const notifications = await postNotificationToAll(userId, title, message);
+
+//     req.io.emit("notification-all", notifications);
+
+//     res.status(200).json({
+//       status: true,
+//       message: "Notifications sent to all users.",
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       status: false,
+//       message: error.message,
+//     });
+//   }
+// };
+
+const sendNotificationToAll = async (req, res) => {
+  try {
+    const { userId, title, message } = req.body;
+
+    const notifications = await postNotificationToAll(userId, title, message);
+
+    req.io.emit("notification-all", notifications);
+
+    res.status(200).json({
+      status: true,
+      message: "Notifications sent to all users.",
+    });
   } catch (error) {
-    console.error(error);
-    handleError(error, res);
+    res.status(500).json({
+      status: false,
+      message: error.message,
+    });
   }
 };
 
 module.exports = {
   getNotifications,
   markAsRead,
-  notificationToAll,
+  sendNotificationToAll,
+  // notificationPage,
 };
 
 // 'use strict'
