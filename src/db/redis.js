@@ -8,25 +8,9 @@ const client = createClient({
         host: 'redis-17803.c232.us-east-1-2.ec2.redns.redis-cloud.com',
         port: 17803
     }
-});
+})
 
-async function initialize() {
-    await client.connect()
-}
-
-initialize()
-
-// const limiter = rateLimit({
-// 	windowMs: 15 * 60 * 1000, // 15 minutes
-// 	max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
-// 	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-// 	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-
-// 	store: new RedisStore({
-// 		sendCommand: (...args) => client.sendCommand(args),
-// 	}),
-// })
-
+client.connect();
 
 const limiterfast = rateLimit({
     windowMs: 60 * 1000,
