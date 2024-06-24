@@ -12,9 +12,8 @@ const YAML = require("yaml");
 const fs = require("fs");
 const file = fs.readFileSync(`${__dirname}/api-docs.yaml`, "utf-8");
 const cors = require("cors");
-const seedFlight = require("./seeds/cron-flight");
-const compression = require("compression");
-const { limiterfast } = require("./db/redis");
+const compression = require('compression');
+const {limiterfast, initialize} = require('./db/redis')
 
 require("dotenv").config();
 require("./utils/instrument");
@@ -142,17 +141,25 @@ io.on("connection", (socket) => {
   });
 });
 
-// app.listen(PORT, () => {
-//   console.log(`listening on port ${PORT}`);
-// });
 
 app.get("/debug-sentry", function mainHandler(req, res) {
   throw new Error("My first Sentry error!");
 });
 
-server.listen(PORT, () => {
-  console.log("app listening on port 3000!");
+app.listen(PORT, async () => {
+  console.log(`listening on port ${PORT}`);
 });
+
+// CRON Section
+const seedFlight = require("./seeds/cron-flight");
+const cron = require('node-cron');
+
+cron.schedule('0 0 * * *', () => {
+  seedFlight()
+});
+
+//tesss
+
 // //kerjaan samuel websocket
 // // const server_samuel = app.listen(PORT_WS, () => {
 // //   console.log(`Express server listening on port ${PORT_WS}`);
