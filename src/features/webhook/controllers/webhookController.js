@@ -7,7 +7,11 @@ const handleWebhook = async(req, res) => {
     try {
         const { order_id, transaction_status, payment_type } = req.body;
 
-        const status = await updateTransactionStatus(order_id, transaction_status, payment_type);
+      const status = await updateTransactionStatus(order_id, transaction_status, payment_type);
+
+        // Emit WebSocket event
+        const io = req.app.get('socketio');
+        io.emit('transaction-update', { order_id, transaction_status, payment_type });
 
         res.status(200).json({ message: 'Transaction status and payment information updated successfully.', status });
     } catch (error) {

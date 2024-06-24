@@ -1,7 +1,6 @@
 'use strict';
 
 const { PrismaClient } = require('@prisma/client');
-const cron = require('node-cron');
 const { mongoose, FlightSeats } = require('../db/schema');
 
 const prisma = new PrismaClient();
@@ -78,6 +77,7 @@ testConnection();
 
 const seedFlights = async (req, res) => {
   try {
+    console.log('Running cron job to seed flights');
     const flights = [];
     for (let i = 0; i < 100; i++) {
       flights.push(generateRandomFlight());
@@ -118,11 +118,6 @@ const seedFlights = async (req, res) => {
     // });
   }
 };
-
-cron.schedule('0 0 * * *', () => {
-  console.log('Running cron job to seed flights');
-  seedFlights();
-});
 
 module.exports = {
   seedFlights,
