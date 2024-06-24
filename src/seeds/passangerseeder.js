@@ -45,8 +45,10 @@ try {
     const age = calculateAge(birthDate);
     const category = determineCategory(age);
     const documentExpired = faker.date.future({years : 10});
+    const titles = ['Mr', 'Ms']
 
     passengers.push({
+      title: titles[Math.floor(Math.random() * titles.length)],
       fullname: faker.person.firstName(),
       surname: faker.person.lastName(),
       birth_date: birthDate,

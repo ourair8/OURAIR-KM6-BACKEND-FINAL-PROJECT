@@ -672,6 +672,31 @@ paths:
                       category:
                         type: string
                         example: "adult"
+                baby:
+                  type: integer
+                  example: 2
+                booker:
+                  type: object
+                  properties:
+                    fullname:
+                      type: string
+                      description: "The full name of the booker"
+                    surname:
+                      type: string
+                      description: "The surname of the booker"
+                    phone_number:
+                      type: string
+                      description: "The phone number of the booker"
+                    email:
+                      type: string
+                      format: email
+                      description: "The email address of the booker"
+                  required:
+                    - fullname
+                    - surname
+                    - phone_number
+                    - email
+
       responses:
         '201':
           description: Created
@@ -1219,7 +1244,7 @@ paths:
                   message:
                     type: string
                     example: "Error searching flights."
-  /flight/recommendation:
+  /flights/recommendation:
     get:
       tags:
         - Search

@@ -48,11 +48,11 @@ const getFlightById = async function(req, res) {
         const result = await FlightSeats.aggregate([
             { $match: { flightId: flight.id } },
             { $unwind: "$seats" },
-            { $match: { "seats.isBooked": false } },
             {
                 $project: {
                     _id: 0,
                     seatNumber: "$seats.seatNumber",
+                    isBooked: "$seats.isBooked",
                     seatInfo: {
                         seatNumber: "$seats.seatNumber",
                         isBooked: "$seats.isBooked"
@@ -62,15 +62,15 @@ const getFlightById = async function(req, res) {
             {
                 $group: {
                     _id: null,
-                    availableSeats: { $push: "$seatInfo" },
-                    totalAvailableCount: { $sum: 1 } 
+                    seats: { $push: "$seatInfo" },
+                    totalAvailableCount: { $sum: { $cond: [{ $eq: ["$isBooked", false] }, 1, 0] } }
                 }
             },
             {
                 $project: {
                     _id: 0,
-                    availableSeats: 1,
-                    totalAvailableSeats: "$totalAvailableCount" 
+                    seats: 1,
+                    totalAvailableSeats: "$totalAvailableCount"
                 }
             }
         ]);
@@ -79,27 +79,25 @@ const getFlightById = async function(req, res) {
             const flightInfo = {
                 flightId: flight.id,
                 flightNumber: flight.number,
-                departureDate: flight.departureDate,
+                departureDate: flight.departure_time,
             };
         
             result[0].flightInfo = flightInfo;
         
-            if (result[0].availableSeats.length > 0) {
-                const groupedSeats = {};
-                result[0].availableSeats.forEach(seat => {
-                    const numberPart = seat.seatNumber.match(/^\d+/)[0]; 
-                    if (!groupedSeats[numberPart]) {
-                        groupedSeats[numberPart] = [];
-                    }
-                    groupedSeats[numberPart].push(seat);
-                });
+            const groupedSeats = {};
+            result[0].seats.forEach(seat => {
+                const numberPart = seat.seatNumber.match(/^\d+/)[0]; 
+                if (!groupedSeats[numberPart]) {
+                    groupedSeats[numberPart] = [];
+                }
+                groupedSeats[numberPart].push(seat);
+            });
         
-                result[0].availableSeats = Object.values(groupedSeats).map(group => group.sort((a, b) => {
-                    const numberA = parseInt(a.seatNumber.match(/\d+/)[0]);
-                    const numberB = parseInt(b.seatNumber.match(/\d+/)[0]);
-                    return numberA - numberB;
-                }));
-            }
+            result[0].seats = Object.values(groupedSeats).map(group => group.sort((a, b) => {
+                const numberA = parseInt(a.seatNumber.match(/\d+/)[0]);
+                const numberB = parseInt(b.seatNumber.match(/\d+/)[0]);
+                return numberA - numberB;
+            }));
         }
         
         
@@ -1787,6 +1785,7 @@ const getFlightRecommendation = async function(req, res) {
                     },
                 },
                 select : {
+                    id : true,
                     departure_time : true,
                     class : true,
                     arrival_time : true,
@@ -1842,6 +1841,7 @@ const getFlightRecommendation = async function(req, res) {
                     },
                 },
                 select : {
+                    id : true,
                     departure_time : true,
                     class : true,
                     arrival_time : true,
@@ -1895,6 +1895,7 @@ const getFlightRecommendation = async function(req, res) {
                 },
             },
             select : {
+                id : true,
                 departure_time : true,
                 class : true,
                 arrival_time : true,
@@ -1948,6 +1949,7 @@ const getFlightRecommendation = async function(req, res) {
                 },
             },
             select : {
+                id : true,
                 departure_time : true,
                 class : true,
                 arrival_time : true,

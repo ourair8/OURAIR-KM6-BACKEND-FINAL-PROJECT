@@ -59,8 +59,7 @@ const sanitizeBody = (allowedFields) => {
 const validatePassengers = [
   check('passengers').isArray().withMessage('Passengers harus berupa array.'),
   
-  // Validasi untuk setiap penumpang dalam array
-  // check('passengers.*.title').isIn(['Mr', 'Ms', 'Mrs', 'Dr']).withMessage('Title tidak valid.'),
+  check('passengers.*.title').isIn(['Mr.', 'Ms.', 'Miss', 'Miss.', 'Mrs.', 'Mrs', 'Ms', 'Mr']).withMessage('Title tidak valid.'),
   check('passengers.*.fullname').isString().notEmpty().withMessage('Fullname harus berupa string dan tidak boleh kosong.'),
   check('passengers.*.surname').isString().notEmpty().withMessage('Surname harus berupa string dan tidak boleh kosong.'),
   check('passengers.*.birth_date').isISO8601().withMessage('Birth date harus berupa tanggal yang valid.'),
@@ -69,12 +68,15 @@ const validatePassengers = [
   check('passengers.*.country_publication').isString().notEmpty().withMessage('Country of publication harus berupa string dan tidak boleh kosong.'),
   check('passengers.*.document_expired').isISO8601().withMessage('Document expired harus berupa tanggal yang valid.'),
   check('passengers.*.category').isIn(['adult', 'baby', 'child']).withMessage('Category tidak valid. Harus berupa adult, baby, atau child.'),
-  check('passengers.*.seat_number').matches(/^[A-L][1-6]$/).withMessage('Seat number harus berupa A1-A6 sampai L1-L6.'),
-  check('passengers.*.ticket.flight_id').isInt({ min: 1 }).withMessage('Flight ID harus berupa angka positif.'),
-  
+  check('passengers.*.seat_number').isString(),
 
+  check('baby').isInt({ min: 0 }).withMessage('Baby harus berupa bilangan bulat positif atau nol.'),
   
-  // Middleware untuk menangani hasil validasi
+  check('booker.fullname').isString().notEmpty().withMessage('Fullname harus berupa string dan tidak boleh kosong.'),
+  check('booker.surname').isString().notEmpty().withMessage('Surname harus berupa string dan tidak boleh kosong.'),
+  check('booker.phone_number').isString().notEmpty().withMessage('Phone number harus berupa string dan tidak boleh kosong.'),
+  check('booker.email').isEmail().notEmpty().withMessage('Email harus berupa alamat email yang valid dan tidak boleh kosong.'),
+  
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -83,6 +85,36 @@ const validatePassengers = [
     next();
   }
 ];
+
+
+// const validatePassengers = [
+//   check('passengers').isArray().withMessage('Passengers harus berupa array.'),
+  
+//   // Validasi untuk setiap penumpang dalam array
+//   // check('passengers.*.title').isIn(['Mr', 'Ms', 'Mrs', 'Dr']).withMessage('Title tidak valid.'),
+//   check('passengers.*.fullname').isString().notEmpty().withMessage('Fullname harus berupa string dan tidak boleh kosong.'),
+//   check('passengers.*.surname').isString().notEmpty().withMessage('Surname harus berupa string dan tidak boleh kosong.'),
+//   check('passengers.*.birth_date').isISO8601().withMessage('Birth date harus berupa tanggal yang valid.'),
+//   check('passengers.*.nationality').isString().notEmpty().withMessage('Nationality harus berupa string dan tidak boleh kosong.'),
+//   check('passengers.*.document').isString().notEmpty().withMessage('Document harus berupa string dan tidak boleh kosong.'),
+//   check('passengers.*.country_publication').isString().notEmpty().withMessage('Country of publication harus berupa string dan tidak boleh kosong.'),
+//   check('passengers.*.document_expired').isISO8601().withMessage('Document expired harus berupa tanggal yang valid.'),
+//   check('passengers.*.category').isIn(['adult', 'baby', 'child']).withMessage('Category tidak valid. Harus berupa adult, baby, atau child.'),
+//   // check('passengers.*.seat_number').matches(/^[1-A][12-6]$/).withMessage('Seat number harus berupa A1-A6 sampai L1-L6.'),
+//   check('passengers.*.seat_number').isString(),
+//   check('passengers.*.ticket.flight_id').isInt({ min: 1 }).withMessage('Flight ID harus berupa angka positif.'),
+  
+
+  
+//   // Middleware untuk menangani hasil validasi
+//   (req, res, next) => {
+//     const errors = validationResult(req);
+//     if (!errors.isEmpty()) {
+//       return res.status(400).json({ errors: errors.array() });
+//     }
+//     next();
+//   }
+// ];
 
 module.exports = {
   handleValidationErrors,

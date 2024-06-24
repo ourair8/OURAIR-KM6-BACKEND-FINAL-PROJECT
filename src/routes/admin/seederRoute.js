@@ -16,6 +16,13 @@ const {
   verifyToken,
 } = require("../../features/auth/controllers/whoAmI");
 
+//airport
+//airline
+//airplane
+//thumbnail airport
+//rating update
+//user seeder
+//passanger seeder
 const seeder = require("express")
   .Router()
   .get("/trigger-update-seed-seat", updateFlightSeats)

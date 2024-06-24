@@ -14,7 +14,7 @@ async function userSeeder(req,res) {
     const createdAt = new Date(today.getTime() + Math.random() * (twoMonthsLater.getTime() - today.getTime()));
     users.push({
       name: faker.person.fullName(),
-      username: faker.internet.userName() + i, // Ensuring unique username by appending i
+      username: faker.internet.userName() + i,
       phone_number: faker.phone.number(),
       password: faker.internet.password(),
       email: faker.internet.email(),
@@ -27,7 +27,7 @@ async function userSeeder(req,res) {
 
   await prisma.users.createMany({
     data: users,
-    skipDuplicates: true, // In case there are any duplicates, skip them
+    skipDuplicates: true, 
   });
 
   console.log('Seeding finished.');
