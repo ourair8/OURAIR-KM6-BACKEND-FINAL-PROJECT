@@ -14,7 +14,7 @@ const file = fs.readFileSync(`${__dirname}/api-docs.yaml`, "utf-8");
 const cors = require("cors");
 const seedFlight = require("./seeds/cron-flight");
 const compression = require('compression');
-const {limiterfast} = require('./db/redis')
+const {limiterfast, initialize} = require('./db/redis')
 
 require("dotenv").config();
 require("./utils/instrument");
@@ -122,7 +122,7 @@ server_huzi.on('upgrade', (request, socket, head) => {
   });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`listening on port ${PORT}`);
 });
 

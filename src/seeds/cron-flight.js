@@ -26,7 +26,7 @@ const airportIds = Object.values(airports).flat();
 
 const generateRandomDate = () => {
   const now = new Date();
-  const futureDate = new Date(now.getTime() + Math.floor(Math.random() * 7 * 24 * 60 * 60 * 1000)); // up to 7 days in the future
+  const futureDate = new Date(now.getTime() + Math.floor(Math.random() * 7 * 24 * 60 * 60 * 1000)); 
   return futureDate;
 };
 
