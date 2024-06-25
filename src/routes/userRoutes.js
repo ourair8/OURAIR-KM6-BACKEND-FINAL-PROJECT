@@ -32,13 +32,7 @@ const userRoutes =
     .post("/", verifyToken, checkRole(["ADMIN"]), createUserController)
     // .put("/:id", verifyToken, checkRole(["USER"]), updateUserController)
     .delete("/:id", verifyToken, checkRole(["ADMIN"]), deleteUserController)
-    .put(
-      "/avatar-profile",
-      verifyToken,
-      checkRole(["USER"]),
-      image.single("avatar"),
-      updateAvatar
-    )
-    .put("/profile", verifyToken, checkRole(["USER"]), updateProfile);
+    .put("/avatar-profile", verifyToken, checkRole(["USER"]), image.single("avatar"), updateAvatar)
+    .patch("/profile", verifyToken, checkRole(["USER"]), updateProfile);
 
 module.exports = { userRoutes };

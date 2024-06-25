@@ -2247,7 +2247,7 @@ paths:
           scheme: bearer
           bearerFormat: JWT
   /users/profile:
-    put:
+    patch:
       tags:
         - Profile
       summary: Update User Profile
@@ -2273,12 +2273,12 @@ paths:
                 email:
                   type: string
                   example: "john.doe@example.com"
-                avatar_link:
-                  type: string
-                  example: "https://ik.imagekit.io/5zwoz8nkr/ourair/avatar.jpg"
-              required:
-                - name
-                - email
+                # avatar_link:
+                #   type: string
+                #   example: "https://ik.imagekit.io/5zwoz8nkr/ourair/avatar.jpg"
+              # required:
+              #   - name
+              #   - email
       responses:
         '200':
           description: Profile updated successfully.

@@ -6,7 +6,7 @@ const {
 async function updateAvatar(req, res) {
   try {
     const avatar = req.file;
-    console.log(req.user)
+    console.log(req.user);
     if (!avatar) {
       return res.status(400).json({
         status: "error",
@@ -40,16 +40,45 @@ async function updateAvatar(req, res) {
   }
 }
 
+// async function updateProfile(req, res) {
+//   try {
+//     const userId = req.user.id;
+//     const data = req.body;
+
+//     if (data.created_at) {
+//       delete data.created_at;
+//     }
+
+//     const user = await updateProfileService(userId, data);
+
+//     res.status(200).json({
+//       status: "success",
+//       message: "Profile updated successfully",
+//       data: user,
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       status: "error",
+//       message: error.message,
+//     });
+//   }
+// }
+
 async function updateProfile(req, res) {
   try {
     const userId = req.user.id;
     const data = req.body;
 
-    if (data.created_at) {
-      delete data.created_at;
+    const updatableFields = ["name", "username", "phone_number", "email"];
+    const updateData = {};
+
+    for (const field of updatableFields) {
+      if (data[field] !== undefined) {
+        updateData[field] = data[field];
+      }
     }
 
-    const user = await updateProfileService(userId, data);
+    const user = await updateProfileService(userId, updateData);
 
     res.status(200).json({
       status: "success",
