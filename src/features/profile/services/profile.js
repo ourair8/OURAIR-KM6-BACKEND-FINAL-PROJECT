@@ -14,7 +14,7 @@ async function updateAvatarService(avatar) {
 
     const fileUrl = response.url;
 
-    console.log(fileUrl)
+    console.log(fileUrl);
 
     return prisma.users.update({
       where: {
@@ -29,16 +29,29 @@ async function updateAvatarService(avatar) {
   }
 }
 
+// async function updateProfileService(userId, data) {
+//   try {
+//     // if (data.created_at) {
+//     //   delete data.created_at;
+//     // }
+//     return prisma.users.update({
+//       where: {
+//         id: parseInt(userId),
+//       },
+//       data ,
+//     });
+//   } catch (error) {
+//     throw new Error(error.message);
+//   }
+// }
+
 async function updateProfileService(userId, data) {
   try {
-    if (data.created_at) {
-      delete data.created_at;
-    }
-    return prisma.users.update({
+    return await prisma.users.update({
       where: {
         id: parseInt(userId),
       },
-      data ,
+      data,
     });
   } catch (error) {
     throw new Error(error.message);
