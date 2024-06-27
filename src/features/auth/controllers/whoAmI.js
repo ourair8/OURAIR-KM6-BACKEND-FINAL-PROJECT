@@ -6,6 +6,8 @@ const SECRET_KEY = process.env.JWT_SECRET_KEY
 const verifyToken = (req, res, next) => {
     const { authorization } = req.headers;
 
+    console.log(authorization)
+
     if (!authorization || !authorization.split(' ')[1]) {
         return res.status(401).json({
             status: false,
@@ -28,6 +30,8 @@ const verifyToken = (req, res, next) => {
             });
         }
 
+
+        req.token = token;
         req.user = decoded;
         next();
     });

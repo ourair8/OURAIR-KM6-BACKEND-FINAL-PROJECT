@@ -17,7 +17,7 @@ model Users {
   id           Int      @id @default(autoincrement())
   name         String
   username     String? @unique
-  phone_number String? @unique
+  phone_number String?
   password     String
   email        String   @unique
   is_Verified  Boolean  @default(false)
@@ -166,6 +166,7 @@ model Transactions {
   adult_price       Int
   baby_price        Int
   tax_price         Int
+  donation          Int? @default(0)
   total_price       Int
   created_at        DateTime
   status            Boolean

@@ -48,6 +48,10 @@ const loginByEmailController = async function (req, res) {
 };
 
 const loginOAuthController = async function (req, res) {
+
+  try {
+
+
   const result = await prisma.users.findUnique({
     where: {
       id: req.user.id,
@@ -74,6 +78,10 @@ const loginOAuthController = async function (req, res) {
     `http://localhost:5173/auth-user/${token}`
   ); // redirect to client
 
+  } catch (err) {
+    console.log(err)
+    throw err
+  }
   // return res.status(200).json({
   //   status: true,
   //   message: "OK",

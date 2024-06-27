@@ -1,6 +1,5 @@
 "use strict";
 
-const http = require("http");
 const express = require("express");
 const bodyparser = require("body-parser");
 const cookieParser = require("cookie-parser");
@@ -13,13 +12,15 @@ const fs = require("fs");
 const file = fs.readFileSync(`${__dirname}/api-docs.yaml`, "utf-8");
 const cors = require("cors");
 const compression = require('compression');
-const {limiterfast, initialize} = require('./db/redis')
+const { RedisStore, rateLimit, client } = require('./db/redis')
+
 
 require("dotenv").config();
 require("./utils/instrument");
 const Sentry = require("@sentry/node");
 Sentry.init({ dsn: process.env.SENTRY_DSN });
-// const WebSocket = require("ws");
+
+client.connect();
 
 const swaggerDocument = YAML.parse(file);
 
@@ -38,6 +39,24 @@ var corsOptions = {
   optionsSuccessStatus: 200,
   credentials: true,
 };
+
+
+const limiterfast = rateLimit({
+  windowMs: 60 * 1000,
+max: 20, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  keyGenerator: (req, res) => req.ip, // Use IP address to identify clients
+  handler: (req, res, next, options) => {
+      res.status(options.statusCode).json({
+          message: 'Anda terlalu banyak melakukan permintaan. Silakan coba lagi nanti.'
+      });
+  },
+store: new RedisStore({
+  sendCommand: (...args) => client.sendCommand(args),
+}),
+})
+
 
 require("dotenv").config();
 const app = express()
@@ -76,12 +95,8 @@ const app = express()
     });
   })
 
-  //Taro sentry disini, cek repository mas tatang
-
-  // Optional fallthrough error handler
   .use(function onError(err, req, res, next) {
-    // The error id is attached to `res.sentry` to be returned
-    // and optionally displayed to the user for support.
+
     res.statusCode = 500;
     res.end(res.sentry + "\n");
   })
@@ -103,52 +118,14 @@ const app = express()
     });
   });
 
-const server = http.createServer(app);
-const { Server } = require("socket.io");
-const io = new Server(server, {
-  cors: {
-    origin: "http://localhost:5173", // Replace with your frontend domain
-    methods: ["GET", "POST"],
-    allowedHeaders: ["token"],
-    credentials: true,
-  },
-});
-// The error handler must be registered before any other error middleware and after all controllers
+
 Sentry.setupExpressErrorHandler(app);
-
-const PORT = 3001;
-// const PORT_WS = 8085;
-
-//kerjaan huzi websocket
-// const server_huzi = http.createServer(app);
-
-// server_huzi.on('upgrade', (request, socket, head) => {
-//   webSocketServer.handleUpgrade(request, socket, head, (ws) => {
-//       webSocketServer.emit('connection', ws, request);
-//   });
-// });
-
-app.use((req, res, next) => {
-  req.io = io;
-  next();
-});
-
-io.on("connection", (socket) => {
-  console.log("a user connected");
-
-  socket.on("disconnect", () => {
-    console.log("user disconnected");
-  });
-});
 
 
 app.get("/debug-sentry", function mainHandler(req, res) {
   throw new Error("My first Sentry error!");
 });
 
-server.listen(PORT, async () => {
-  console.log(`listening on port ${PORT}`);
-});
 
 // CRON Section
 const seedFlight = require("./seeds/cron-flight");
@@ -158,21 +135,4 @@ cron.schedule('0 0 * * *', () => {
   seedFlight()
 });
 
-//tesss
-
-// //kerjaan samuel websocket
-// // const server_samuel = app.listen(PORT_WS, () => {
-// //   console.log(`Express server listening on port ${PORT_WS}`);
-// // });
-
-// const wss = new WebSocket.Server({ server_huzi });
-// app.locals.wss = wss;
-
-// wss.on("connection", function connection(ws) {
-//   console.log("New WebSocket connection");
-
-// ws.on("message", function incoming(message) {
-//     console.log(`Received: ${message}`);
-//     ws.send(`Echo: ${message}`);
-//   });
-// });
+module.exports = app

@@ -8,94 +8,100 @@ const getTransactionHistoryController = async function(req, res){
 
   try {
     const bookings = await prisma.transactions.findMany({
-        where: {
-          tickets: {
-            some: {
-              user_id: id
-            }
-          }
-        },
-        select: {
-          id: true,
-          midtrans_order_id: true,
-          adult_price: true,
-          baby_price: true,
-          tax_price: true,
-          total_price: true,
-          created_at: true,
-          status: true,
-          payment_link : true,
-          booker_id: true,
-          total_baby: true,
-          flights : {
-            select : {
-              class : true,
-              whomAirplaneFlights : {
-                select : {
-                  airplane_code : true,
-                  whomAirlinesAirplanes : {
-                    select : {
-                      name : true,
-                      airline_code : true,
-                    }
-                  }
-                }
-              },
-              departure_time : true,
-              arrival_time : true,
-                fromAirport : {
-                    select : {
-                        name: true,
-                        cityCode: true,
-                        cityName: true,
-                        countryCode: true,
-                        countryName: true, 
-                    }
-                },
-                toAirport : {
-                    select : {
-                        name: true,
-                        cityCode: true,
-                        cityName: true,
-                        countryCode: true,
-                        countryName: true,
-                    }
-                },
-            }
-          },
-          bookers: {
-            select: {
-              id: true,
-              fullname: true,
-              surname: true,
-              phone_number: true,
-              email: true
-            }
-          },
-          tickets: {
-            select: {
-              id: true,
-              user_id: true,
-              passanger_id: true,
-              transaction_id: true,
-              whomPassangerTicket: {
-                select: {
-                  id: true,
-                  title: true,
-                  fullname: true,
-                  surname: true,
-                  birth_date: true,
-                  category: true,
-                  nationality: true,
-                  document: true,
-                  country_publication: true,
-                  document_expired: true,
-                  seat_number: true
-                }
-              },
+      where: {
+        tickets: {
+          some: {
+            user_id: id
           }
         }
-  }});
+      },
+      select: {
+        id: true,
+        midtrans_order_id: true,
+        adult_price: true,
+        baby_price: true,
+        tax_price: true,
+        donation : true,
+        total_price: true,
+        created_at: true,
+        status: true,
+        payment_link : true,
+        booker_id: true,
+        total_baby: true,
+        flights : {
+          select : {
+            class : true,
+            whomAirplaneFlights : {
+              select : {
+                airplane_code : true,
+                whomAirlinesAirplanes : {
+                  select : {
+                    name : true,
+                    airline_code : true,
+                  }
+                }
+              }
+            },
+            departure_time : true,
+            arrival_time : true,
+            fromAirport : {
+              select : {
+                name: true,
+                cityCode: true,
+                cityName: true,
+                countryCode: true,
+                countryName: true, 
+              }
+            },
+            toAirport : {
+              select : {
+                name: true,
+                cityCode: true,
+                cityName: true,
+                countryCode: true,
+                countryName: true,
+              }
+            },
+          }
+        },
+        bookers: {
+          select: {
+            id: true,
+            fullname: true,
+            surname: true,
+            phone_number: true,
+            email: true
+          }
+        },
+        tickets: {
+          select: {
+            id: true,
+            user_id: true,
+            passanger_id: true,
+            transaction_id: true,
+            whomPassangerTicket: {
+              select: {
+                id: true,
+                title: true,
+                fullname: true,
+                surname: true,
+                birth_date: true,
+                category: true,
+                nationality: true,
+                document: true,
+                country_publication: true,
+                document_expired: true,
+                seat_number: true
+              }
+            },
+          }
+        }
+      },
+      orderBy: {
+        created_at: 'desc'
+      }
+    });
+    
       
       
     console.log(bookings);

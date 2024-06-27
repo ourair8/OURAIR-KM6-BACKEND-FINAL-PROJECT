@@ -6,8 +6,8 @@
     "seed": "node prisma/seed.js"
   },
   "scripts": {
-    "dev": "nodemon src/index.js",
-    "start": "node src/index.js"
+    "dev": "nodemon  --trace-warnings src/bin/www",
+    "start": "node src/bin/www"
   },
   "devDependencies": {
     "@types/bun": "latest"
