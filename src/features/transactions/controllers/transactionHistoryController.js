@@ -21,6 +21,7 @@ const getTransactionHistoryController = async function(req, res){
           adult_price: true,
           baby_price: true,
           tax_price: true,
+          donation : true,
           total_price: true,
           created_at: true,
           status: true,

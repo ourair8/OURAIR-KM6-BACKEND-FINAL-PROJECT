@@ -10,22 +10,5 @@ const client = createClient({
     }
 })
 
-client.connect();
 
-const limiterfast = rateLimit({
-    windowMs: 60 * 1000,
-	max: 20, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
-	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-    keyGenerator: (req, res) => req.ip, // Use IP address to identify clients
-    handler: (req, res, next, options) => {
-        res.status(options.statusCode).json({
-            message: 'Anda terlalu banyak melakukan permintaan. Silakan coba lagi nanti.'
-        });
-    },
-	store: new RedisStore({
-		sendCommand: (...args) => client.sendCommand(args),
-	}),
-})
-
-module.exports = { limiterfast }
+module.exports = { RedisStore, rateLimit, client }

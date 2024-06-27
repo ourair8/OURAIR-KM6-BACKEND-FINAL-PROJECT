@@ -99,9 +99,8 @@ const getFlightById = async function(req, res) {
                 return numberA - numberB;
             }));
         }
-        
-        
-               
+
+                       
     
         // const availableSeats = seat.seats.filter(seat => seat.isBooked === false);
 

@@ -79,7 +79,7 @@ const seedFlights = async (req, res) => {
   try {
     console.log('Running cron job to seed flights');
     const flights = [];
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 10000; i++) {
       flights.push(generateRandomFlight());
     }
 

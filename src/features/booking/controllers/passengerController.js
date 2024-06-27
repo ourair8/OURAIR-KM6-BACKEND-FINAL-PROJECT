@@ -212,7 +212,11 @@ const { sendNotification } = require("../../../config/websocket");
 
 const createPassengerController = async (req, res) => {
   try {
-    const { passengers, baby, booker } = req.body;
+    const { passengers, baby, booker, donation } = req.body;
+
+    console.log(req.body)
+    console.log(passengers)
+    console.log(donation)
 
     if (
       !Array.isArray(passengers) ||
@@ -227,6 +231,25 @@ const createPassengerController = async (req, res) => {
     if (typeof baby !== "number" || baby < 0) {
       return res.status(400).json({ error: "Invalid baby data" });
     }
+
+    let total_donation = 0
+
+    console.log(total_donation)
+    if (donation) {
+      if (typeof donation !== "number" || donation < 0) {
+        return res.status(400).json({ error: "Invalid donation data" });
+      }
+      total_donation = donation
+      console.log(donation)
+      console.log(total_donation)
+    }
+
+    total_donation = donation
+
+    console.log(donation)
+    console.log(total_donation)
+
+
 
     if (
       !booker ||
@@ -284,7 +307,7 @@ const createPassengerController = async (req, res) => {
     }
 
     const tax = totalPrice * 0.1;
-    const totalWithTax = totalPrice + tax;
+    const totalWithTax = totalPrice + tax + total_donation;
 
     const createdBooker = await prisma.bookers.create({
       data: {
@@ -302,6 +325,7 @@ const createPassengerController = async (req, res) => {
         tax_price: tax,
         total_price: totalWithTax,
         created_at: new Date(),
+        donation : total_donation,
         status: false,
         booker_id: createdBooker.id,
         total_baby: baby,
@@ -375,12 +399,12 @@ const createPassengerController = async (req, res) => {
     });
 
     // Mengirimkan notifikasi menggunakan Socket.IO
-    req.io.emit("notification-booking", {
-      userId: req.user.id,
-      title: "Booking Successful",
-      message: `Your booking was successful. Please complete the payment using the following link: ${transactionMidtrans.redirect_url}`,
-      created_at: new Date(),
-    });
+    // req.io.emit("notification-booking", {
+    //   userId: req.user.id,
+    //   title: "Booking Successful",
+    //   message: `Your booking was successful. Please complete the payment using the following link: ${transactionMidtrans.redirect_url}`,
+    //   created_at: new Date(),
+    // });
 
     await prisma.notifications.create({
       data: {
