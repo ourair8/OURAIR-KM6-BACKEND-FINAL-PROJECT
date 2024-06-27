@@ -398,27 +398,24 @@ const createPassengerController = async (req, res) => {
       },
     });
 
-    // Mengirimkan notifikasi menggunakan Socket.IO
-    // req.io.emit("notification-booking", {
-    //   userId: req.user.id,
-    //   title: "Booking Successful",
-    //   message: `Your booking was successful. Please complete the payment using the following link: ${transactionMidtrans.redirect_url}`,
-    //   created_at: new Date(),
-    // });
-
     await prisma.notifications.create({
       data: {
         user_id: req.user.id,
         title: "Booking Successful",
-        message: "Your booking was successful. Please complete the payment",
+        message: `Your booking was successful. Please complete the payment using the following link: ${transactionMidtrans.redirect_url}`,
         is_read: false,
         created_at: new Date(),
       },
     });
 
     
+    const bookedSeats = flightMongo.seats.filter(seat => seat.isBooked).map(seat => seat.seatNumber);
+    
     const io = req.app.get('io');
-    io.emit(`post-booking-${token}`, "Your booking was successful. Please complete the payment");
+    io.emit(`post-booking-${token}`, `Your booking was successful. Please complete the payment using the following link: ${transactionMidtrans.redirect_url}`);
+    io.emit(`seat-${flight_id}`, {
+      bookedSeats,
+    });
 
     return res.status(201).json({
       status: true,
