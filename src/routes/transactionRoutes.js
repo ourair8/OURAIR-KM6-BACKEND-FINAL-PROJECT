@@ -4,7 +4,7 @@
 
 const express = require('express');
 const { verifyToken, checkRole } = require('../features/auth/controllers/whoAmI');
-const { getTransactionHistoryController } = require('../features/transactions/controllers/transactionHistoryController');
+const { getTransactionHistoryController, getTransactionById } = require('../features/transactions/controllers/transactionHistoryController');
 const {
   handleCreateTransaction,
   handleGetTransaction,
@@ -16,6 +16,7 @@ const { checkPaymentStatus } = require('../features/transactions/controllers/che
 
 const transactionRoutes = express.Router();
 
+transactionRoutes.get('/search-transaction-history', verifyToken, checkRole(['USER']), getTransactionById);
 transactionRoutes.get('/history', verifyToken, checkRole(['USER']), getTransactionHistoryController);
 transactionRoutes.post('/create-transaction-midtrans', verifyToken, checkRole(['USER']), handleCreateTransaction);
 transactionRoutes.get('/get-transaction/:id', verifyToken, checkRole(['ADMIN']), handleGetTransaction);
