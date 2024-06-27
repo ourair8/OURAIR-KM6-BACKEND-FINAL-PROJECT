@@ -2255,7 +2255,7 @@ paths:
       security:
         - bearerAuth: []
       requestBody:
-        required: true
+        required: false
         content:
           application/json:
             schema:
@@ -2273,9 +2273,9 @@ paths:
                 email:
                   type: string
                   example: "john.doe@example.com"
-                # avatar_link:
-                #   type: string
-                #   example: "https://ik.imagekit.io/5zwoz8nkr/ourair/avatar.jpg"
+                avatar_link:
+                  type: string
+                  example: "https://ik.imagekit.io/5zwoz8nkr/ourair/avatar.jpg"
               # required:
               #   - name
               #   - email
