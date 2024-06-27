@@ -416,6 +416,10 @@ const createPassengerController = async (req, res) => {
       },
     });
 
+    
+    const io = req.app.get('io');
+    io.emit(`post-booking-${token}`, "Your booking was successful. Please complete the payment");
+
     return res.status(201).json({
       status: true,
       message: "success",
