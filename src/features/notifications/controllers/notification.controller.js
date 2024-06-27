@@ -60,11 +60,35 @@ const markAsRead = async (req, res) => {
 //   }
 // };
 
+// const sendNotificationToAll = async (req, res) => {
+//   try {
+//     const { userId, title, message } = req.body;
+
+//     const notifications = await postNotificationToAll(userId, title, message);
+
+//     req.io.emit("notification-all", notifications);
+
+//     res.status(200).json({
+//       status: true,
+//       message: "Notifications sent to all users.",
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       status: false,
+//       message: error.message,
+//     });
+//   }
+// };
+
 const sendNotificationToAll = async (req, res) => {
   try {
-    const { userId, title, message } = req.body;
+    const { title, message } = req.body;
 
-    const notifications = await postNotificationToAll(userId, title, message);
+    if (!title || !message) {
+      return res.status(400).json({ error: "Title and message are required" });
+    }
+
+    const notifications = await postNotificationToAll(title, message);
 
     req.io.emit("notification-all", notifications);
 
@@ -73,10 +97,8 @@ const sendNotificationToAll = async (req, res) => {
       message: "Notifications sent to all users.",
     });
   } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: error.message,
-    });
+    console.error("Error sending notifications to all users:", error);
+    handleError(error, res);
   }
 };
 

@@ -146,7 +146,7 @@ app.get("/debug-sentry", function mainHandler(req, res) {
   throw new Error("My first Sentry error!");
 });
 
-app.listen(PORT, async () => {
+server.listen(PORT, async () => {
   console.log(`listening on port ${PORT}`);
 });
 
