@@ -40,6 +40,7 @@ CREATE TABLE "notifications" (
     "id" SERIAL NOT NULL,
     "user_id" INTEGER,
     "title" TEXT NOT NULL,
+    "link" TEXT,
     "message" TEXT NOT NULL,
     "is_read" BOOLEAN NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL,
@@ -137,10 +138,15 @@ CREATE TABLE "transactions" (
     "adult_price" INTEGER NOT NULL,
     "baby_price" INTEGER NOT NULL,
     "tax_price" INTEGER NOT NULL,
+    "donation" INTEGER DEFAULT 0,
     "total_price" INTEGER NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL,
+    "user_id" INTEGER,
     "status" BOOLEAN NOT NULL,
+    "payment_link" TEXT,
     "booker_id" INTEGER,
+    "total_baby" INTEGER,
+    "flight_id" INTEGER,
 
     CONSTRAINT "transactions_pkey" PRIMARY KEY ("id")
 );
@@ -169,9 +175,6 @@ CREATE TABLE "bookers" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_username_key" ON "users"("username");
-
--- CreateIndex
-CREATE UNIQUE INDEX "users_phone_number_key" ON "users"("phone_number");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
@@ -213,13 +216,16 @@ ALTER TABLE "tickets" ADD CONSTRAINT "tickets_passanger_id_fkey" FOREIGN KEY ("p
 ALTER TABLE "tickets" ADD CONSTRAINT "tickets_flight_id_fkey" FOREIGN KEY ("flight_id") REFERENCES "flights"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "tickets" ADD CONSTRAINT "tickets_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "tickets" ADD CONSTRAINT "tickets_transaction_id_fkey" FOREIGN KEY ("transaction_id") REFERENCES "transactions"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "transactions" ADD CONSTRAINT "transactions_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "transactions" ADD CONSTRAINT "transactions_booker_id_fkey" FOREIGN KEY ("booker_id") REFERENCES "bookers"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "transactions" ADD CONSTRAINT "transactions_flight_id_fkey" FOREIGN KEY ("flight_id") REFERENCES "flights"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "payments" ADD CONSTRAINT "payments_transaction_id_fkey" FOREIGN KEY ("transaction_id") REFERENCES "transactions"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

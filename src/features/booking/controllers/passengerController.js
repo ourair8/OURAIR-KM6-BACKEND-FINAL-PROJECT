@@ -156,7 +156,6 @@ const createPassengerController = async (req, res) => {
 
       await prisma.tickets.create({
         data: {
-          user_id: req.user.id,
           passanger_id: createdPassenger.id,
           flight_id: passenger.ticket.flight_id,
           transaction_id: createdTransaction.id,
@@ -188,6 +187,7 @@ const createPassengerController = async (req, res) => {
     const updatedTransactionMidtrans = await prisma.transactions.update({
       where: { id: createdTransaction.id },
       data: {
+        user_id : req.user.id,
         midtrans_order_id: orderDetailsMidtrans.transaction_details.order_id,
         payment_link: transactionMidtrans.redirect_url,
       },
@@ -196,9 +196,9 @@ const createPassengerController = async (req, res) => {
     await prisma.notifications.create({
       data: {
         user_id: req.user.id,
-        title: "Booking Successful",
+        title: "Pemesanan Berhasil",
         message: `Pemesanan sukses, mohon melakukan pembayaran menggunakan link:`,
-        link : `transactionMidtrans.redirect_url`,
+        link : transactionMidtrans.redirect_url,
         is_read: false,
         created_at: new Date(),
       },
@@ -209,6 +209,16 @@ const createPassengerController = async (req, res) => {
     
     const io = req.app.get('io');
     const  token = req.token
+
+    await prisma.users.update({
+      where : {
+        id : req.user.id
+      },
+      data : {
+        session_token : token
+      }
+    })
+    
     io.emit(`post-booking-${token}`, { message : `Pemesanan sukses, mohon melakukan pembayaran menggunakan link`, link :  transactionMidtrans.redirect_url });
     io.emit(`seat-${flight_id}`, {
       bookedSeats,

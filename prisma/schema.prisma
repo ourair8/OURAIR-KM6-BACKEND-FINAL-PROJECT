@@ -25,9 +25,10 @@ model Users {
   created_at   DateTime
   avatar_link  String?
   googleId     String?
+  session_token        String?
 
   otps          Otps[]
-  tickets       Tickets[]
+  transactions       Transactions[]
   notofications Notifications[]
 
   @@map("users")
@@ -148,14 +149,12 @@ model Passengers {
 
 model Tickets {
   id             Int  @id @default(autoincrement())
-  user_id        Int?
   passanger_id   Int  @unique
   flight_id      Int?
   transaction_id Int?
 
   whomPassangerTicket Passengers    @relation(fields: [passanger_id], references: [id])
   whomFlightTicket    Flights?       @relation(fields: [flight_id], references: [id], onDelete: SetNull)
-  whomUserTicket      Users?         @relation(fields: [user_id], references: [id], onDelete: SetNull)
   transaction         Transactions? @relation(fields: [transaction_id], references: [id])
 
   @@map("tickets")
@@ -170,12 +169,14 @@ model Transactions {
   donation          Int? @default(0)
   total_price       Int
   created_at        DateTime
+  user_id           Int?
   status            Boolean
   payment_link      String?
   booker_id         Int?
   total_baby        Int?
   flight_id         Int?
 
+  users      Users?         @relation(fields: [user_id], references: [id], onDelete: SetNull)
   bookers Bookers? @relation(fields: [booker_id], references: [id], onDelete: SetNull)
   flights Flights? @relation(fields: [flight_id], references: [id], onDelete: SetNull)
 

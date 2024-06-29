@@ -1561,7 +1561,7 @@ const getAllFlightsByCityOrCountryNameFrom = async function(req, res) {
                 where: {
                     departure_time: {
                         gte: new Date()
-                    }
+                    },
                 },
                 include: {
                     fromAirport: true,

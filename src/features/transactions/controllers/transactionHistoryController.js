@@ -5,16 +5,13 @@ const prisma = new PrismaClient();
 
 const getTransactionById = async function(req, res) {
   try {
-    const userId = req.user.id;
+    const userId = Number(req.user.id);
+    const transactionId = Number(req.query.id);
 
     const booking = await prisma.transactions.findFirst({
       where: {
-        id: req.query.id,
-        tickets: {
-          some: {
-            user_id: userId
-          }
-        }
+        id: transactionId,
+        user_id : userId
       },
       select: {
         id: true,
@@ -77,7 +74,6 @@ const getTransactionById = async function(req, res) {
         tickets: {
           select: {
             id: true,
-            user_id: true,
             passanger_id: true,
             transaction_id: true,
             whomPassangerTicket: {
@@ -127,18 +123,13 @@ const getTransactionById = async function(req, res) {
   }
 }
 
-
 const getTransactionHistoryController = async function(req, res){
   const { id } = req.user;
 
   try {
     const bookings = await prisma.transactions.findMany({
       where: {
-        tickets: {
-          some: {
-            user_id: id
-          }
-        }
+        user_id : Number(id)
       },
       select: {
         id: true,
@@ -201,7 +192,6 @@ const getTransactionHistoryController = async function(req, res){
         tickets: {
           select: {
             id: true,
-            user_id: true,
             passanger_id: true,
             transaction_id: true,
             whomPassangerTicket: {

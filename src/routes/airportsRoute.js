@@ -1,10 +1,10 @@
 'use strict'
 
-const { getAirportByCityCode} = require("../features/airports/airports.controller")
+const { getAirports } = require("../features/airports/airports.controller")
 
 const airports = require("express").Router()
     .get("/", 
-      getAirportByCityCode
+      getAirports
     )
 
 module.exports = {

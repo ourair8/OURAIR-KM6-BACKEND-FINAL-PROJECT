@@ -49,7 +49,7 @@ const updateTransactionStatus = async(orderId, transactionStatus, paymentType) =
         });
     }
 
-    return status;
+    return {status, user : transaction.user_id};
 };
 
 module.exports = {

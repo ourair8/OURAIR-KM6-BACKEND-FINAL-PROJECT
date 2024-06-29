@@ -27,11 +27,11 @@ const userRoutes =
 
   express
     .Router()
-    .get("/", verifyToken, checkRole(["ADMIN"]), getAllUsersController)
-    .get("/:id", verifyToken, checkRole(["ADMIN"]), getUserByIdController)
-    .post("/", verifyToken, checkRole(["ADMIN"]), createUserController)
-    // .put("/:id", verifyToken, checkRole(["USER"]), updateUserController)
-    .delete("/:id", verifyToken, checkRole(["ADMIN"]), deleteUserController)
+    .get("/", verifyToken, checkRole(["ADMIN", 'USER']), getAllUsersController)
+    .get("/:id", verifyToken, checkRole(["ADMIN", 'USER']), getUserByIdController)
+    .post("/", verifyToken, checkRole(["ADMIN", 'USER']), createUserController)
+    .put("/:id", verifyToken, checkRole(["USER"]), updateUserController)
+    .delete("/:id", verifyToken, checkRole(["ADMIN", 'USER']), deleteUserController)
     .put("/avatar-profile", verifyToken, checkRole(["USER"]), image.single("avatar"), updateAvatar)
     .patch("/profile", verifyToken, checkRole(["USER"]), updateProfile);
 

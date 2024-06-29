@@ -7,7 +7,7 @@ const { handleWebhook } = require('../features/webhook/controllers/webhookContro
 const { testwebsocket } = require('../features/webhook/controllers/testwebsocket')
 
 const webhook = express.Router();
-webhook.post('/midtrans', verifyToken, handleWebhook);
+webhook.post('/midtrans', handleWebhook);
 webhook.get('/ws', verifyToken, testwebsocket);
 
 module.exports = { webhook }
