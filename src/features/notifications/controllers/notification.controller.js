@@ -4,6 +4,7 @@ const {
   getUserNotifications,
   markNotificationAsRead,
   postNotificationToAll,
+  markAllNotificationsAsRead,
 } = require("../services/notification.service");
 const { handleError } = require("../../../middleware/errorHandler");
 
@@ -40,45 +41,16 @@ const markAsRead = async (req, res) => {
   }
 };
 
-// const sendNotificationToAll = async (req, res) => {
-//   try {
-//     const { userId, title, message } = req.body;
+const markAllAsRead = async (req, res) => {
+  try {
+    const notifications = await markAllNotificationsAsRead(req.user.id);
 
-//     const notifications = await postNotificationToAll(userId, title, message);
-
-//     req.io.emit("notification-all", notifications);
-
-//     res.status(200).json({
-//       status: true,
-//       message: "Notifications sent to all users.",
-//     });
-//   } catch (error) {
-//     res.status(500).json({
-//       status: false,
-//       message: error.message,
-//     });
-//   }
-// };
-
-// const sendNotificationToAll = async (req, res) => {
-//   try {
-//     const { userId, title, message } = req.body;
-
-//     const notifications = await postNotificationToAll(userId, title, message);
-
-//     req.io.emit("notification-all", notifications);
-
-//     res.status(200).json({
-//       status: true,
-//       message: "Notifications sent to all users.",
-//     });
-//   } catch (error) {
-//     res.status(500).json({
-//       status: false,
-//       message: error.message,
-//     });
-//   }
-// };
+    res.status(200).json({ notifications });
+  } catch (error) {
+    console.error(error);
+    handleError(error, res);
+  }
+};
 
 const sendNotificationToAll = async (req, res) => {
   try {
@@ -105,35 +77,6 @@ const sendNotificationToAll = async (req, res) => {
 module.exports = {
   getNotifications,
   markAsRead,
+  markAllAsRead,
   sendNotificationToAll,
-  // notificationPage,
 };
-
-// 'use strict'
-
-// const prisma = require('../../../config/prisma.config');
-
-// const updateNotificationControllerToTrue = async function(req, res) {
-//     try {
-//         const id = req.user.id;
-
-//         await prisma.notifications.updateMany({
-//             where: {
-//                 AND: {
-//                     user_id: id,
-//                     is_read: false
-//                 }
-//             },
-//             data: {
-//                 is_read: true
-//             }
-//         });
-
-//         res.status(200).json({ message: 'Notifications updated successfully' });
-//     } catch (err) {
-//         console.error('Error updating notifications:', err);
-//         res.status(500).json({ error: 'An error occurred while updating notifications' });
-//     }
-// }
-
-// module.exports = {updateNotificationControllerToTrue};

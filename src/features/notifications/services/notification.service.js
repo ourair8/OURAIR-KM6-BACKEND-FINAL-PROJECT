@@ -30,43 +30,15 @@ const markNotificationAsRead = async (notificationId) => {
   return notification;
 };
 
-// const postNotificationToAll = async (userId, title, message) => {
-//   const users = await prisma.users.findMany();
+const markAllNotificationsAsRead = async (userId) => {
+  const notifications = await prisma.notifications.updateMany({
+    where: { user_id: parseInt(userId, 10), is_read: false },
+    data: { is_read: true },
+  });
 
-//   const notifications = users
-//     .filter((user) => user.id !== userId)
-//     .map((user) => ({
-//       user_id: user.id,
-//       title,
-//       message,
-//       is_read: false,
-//       created_at: new Date(),
-//     }));
+  return notifications;
+};
 
-//   await prisma.notifications.createMany({
-//     data: notifications,
-//   });
-
-//   return notifications;
-// };
-
-// const postNotificationToAll = async (userId, title, message) => {
-//   const users = await prisma.users.findMany();
-
-//   const notifications = users.map((user) => ({
-//     user_id: user.id !== userId ? user.id : null,
-//     title,
-//     message,
-//     is_read: false,
-//     created_at: new Date(),
-//   }));
-
-//   await prisma.notifications.createMany({
-//     data: notifications,
-//   });
-
-//   return notifications;
-// };
 
 const postNotificationToAll = async (title, message) => {
   try {
@@ -95,5 +67,6 @@ const postNotificationToAll = async (title, message) => {
 module.exports = {
   getUserNotifications,
   markNotificationAsRead,
+  markAllNotificationsAsRead,
   postNotificationToAll,
 };
