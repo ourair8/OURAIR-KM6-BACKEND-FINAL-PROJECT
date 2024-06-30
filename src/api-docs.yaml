@@ -2975,6 +2975,8 @@ paths:
       tags:
         - Tickets
       summary: Get all tickets
+      security:
+        - bearerAuth: []
       description: Retrieve a list of all tickets in the system
       responses:
         "200":
@@ -3047,6 +3049,8 @@ paths:
       tags:
         - Tickets
       summary: Get ticket by ID
+      security:
+        - bearerAuth: []
       description: Retrieve a ticket by its unique ID
       parameters:
         - name: id
@@ -3138,6 +3142,8 @@ paths:
       tags:
         - Tickets
       summary: Create a new ticket
+      security:
+        - bearerAuth: []
       description: Create a new ticket in the system
       requestBody:
         required: true
@@ -3219,6 +3225,8 @@ paths:
       tags:
         - Tickets
       summary: Update ticket by ID
+      security:
+        - bearerAuth: []
       description: Update a ticket by its unique ID
       parameters:
         - name: id
