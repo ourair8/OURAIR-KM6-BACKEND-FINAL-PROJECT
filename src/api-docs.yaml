@@ -2268,7 +2268,7 @@ paths:
                     type: string
                     example: "Not Found"
 
-  GET /users/{id}:
+  /users/{id}:
     get:
       tags:
         - Users
@@ -2390,7 +2390,7 @@ paths:
                     example: "Not Found"
                     
 
-  POST /users:
+  /users:
     post:
       tags:
         - Users
@@ -2529,7 +2529,7 @@ paths:
                     type: string
                     example: "Not Found"
 
-  PUT /users/{id}:
+  /users/{id}:
     put:
       tags:
         - Users
@@ -2685,7 +2685,7 @@ paths:
                     type: string
                     example: "Not Found"
 
-  DELETE /users/{id}:
+  /users/{id}:
     delete:
       tags:
         - Users
@@ -2781,7 +2781,7 @@ paths:
                     type: string
                     example: "Not Found"
 
-  PUT /users/avatar-profile:
+  /users/avatar-profile:
     put:
       tags:
         - Users
@@ -2855,7 +2855,7 @@ paths:
                     type: string
                     example: An error occurred while updating the avatar
 
-  PATCH /users/profile:
+  /users/profile:
     patch:
       tags:
         - Users
@@ -3137,7 +3137,7 @@ paths:
                   message:
                     type: string
                     example: An error occurred while fetching the ticket
-  POST /tickets:
+  /tickets:
     post:
       tags:
         - Tickets
@@ -3220,7 +3220,7 @@ paths:
                   message:
                     type: string
                     example: An error occurred while creating the ticket
-  PUT /tickets/{id}:
+  /tickets/{id}:
     put:
       tags:
         - Tickets
@@ -3311,7 +3311,7 @@ paths:
                   message:
                     type: string
                     example: An error occurred while updating the ticket
-  DELETE /tickets/{id}:
+  /tickets/{id}:
     delete:
       tags:
         - Tickets
