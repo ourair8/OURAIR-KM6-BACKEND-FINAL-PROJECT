@@ -29,7 +29,7 @@ const loginByEmailController = async function (req, res) {
       role: result.role,
     };
 
-    const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "24h" });
+    const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "23h" });
 
     // res.cookie("token", token, { httpOnly: true }); // set token to cookies
     // return res.redirect(`http://localhost:5173?token=${token}`); // redirect to client

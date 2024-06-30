@@ -33,7 +33,7 @@ const prisma = new PrismaClient();
 //       }
 
 //       const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-//         expiresIn: "1h",
+//         expiresIn: "23h",
 //       });
 //       return done(null, { user, token });
 //     }

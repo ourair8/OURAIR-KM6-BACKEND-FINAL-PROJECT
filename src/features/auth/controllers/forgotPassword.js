@@ -41,7 +41,7 @@ const checkEmailSendTokentoEmail = async function(req, res) {
 
         
 
-        const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '1h' });
+        const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '23h' });
 
         
         let link = `http://localhost:5173/ganti-password/${token}`
