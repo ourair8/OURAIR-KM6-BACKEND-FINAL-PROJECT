@@ -3669,8 +3669,8 @@ paths:
                   error:
                     type: string
                     example: Internal Server Error
-  /transactions/get-transaction/{id}:
-    post:
+  /transactions/{id}:
+    get:
       tags:
         - Booking & Transaction
       summary: Get transaction by ID
@@ -3751,7 +3751,6 @@ paths:
                   error:
                     type: string
                     example: Internal Server Error
-  /transactions/update-transaction/{id}:
     put:
       tags:
         - Booking & Transaction
@@ -3848,7 +3847,6 @@ paths:
                   error:
                     type: string
                     example: Internal Server Error
-  /transactions/delete-transaction/{id}:
     delete:
       tags:
         - Booking & Transaction

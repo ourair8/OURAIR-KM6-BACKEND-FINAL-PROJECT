@@ -19,9 +19,9 @@ const transactionRoutes = express.Router();
 transactionRoutes.get('/search-transaction-history', verifyToken, checkRole(['USER']), getTransactionById);
 transactionRoutes.get('/history', verifyToken, checkRole(['USER']), getTransactionHistoryController);
 transactionRoutes.post('/create-transaction-midtrans', verifyToken, checkRole(['USER']), handleCreateTransaction);
-transactionRoutes.get('/get-transaction/:id', verifyToken, checkRole(['ADMIN']), handleGetTransaction);
-transactionRoutes.put('/update-transaction/:id', verifyToken, checkRole(['ADMIN']), handleUpdateTransaction);
-transactionRoutes.delete('/delete-transaction/:id', verifyToken, checkRole(['ADMIN']), handleDeleteTransaction);
+transactionRoutes.get('/:id', verifyToken, checkRole(['ADMIN', 'USER']), handleGetTransaction);
+transactionRoutes.put('/:id', verifyToken, checkRole(['ADMIN', 'USER']), handleUpdateTransaction);
+transactionRoutes.delete('/:id', verifyToken, checkRole(['ADMIN', 'USER']), handleDeleteTransaction);
 transactionRoutes.get('/check-payment-status/:order_id', verifyToken, checkPaymentStatus);
 
 module.exports = { transactionRoutes };
