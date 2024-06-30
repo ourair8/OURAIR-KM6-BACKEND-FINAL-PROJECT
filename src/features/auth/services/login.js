@@ -14,6 +14,10 @@ const loginByEmailService = async function(email, password){
             }
         })
 
+        if(isEmail.googleId) {
+            throw new ErrorWithStatusCode("your account is registered by google !", 401)
+        }
+
         if(!isEmail) {
             throw new ErrorWithStatusCode("email is not registered !", 404)
         }
