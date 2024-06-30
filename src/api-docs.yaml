@@ -2696,6 +2696,8 @@ paths:
       tags:
         - Users
       summary: Update user's avatar
+      security:
+        - bearerAuth: []
       description: Update user's avatar profile picture
       requestBody:
         required: true
@@ -2770,6 +2772,8 @@ paths:
       tags:
         - Users
       summary: Update user profile
+      security:
+        - bearerAuth: []
       description: Update user's profile information
       requestBody:
         required: true
@@ -3223,6 +3227,8 @@ paths:
       tags:
         - Tickets
       summary: Delete ticket by ID
+      security:
+        - bearerAuth: []
       description: Delete a ticket by its unique ID
       parameters:
         - name: id
@@ -4072,11 +4078,13 @@ paths:
                   error:
                     type: string
                     example: Internal Server Error
-  /notifications/read:
+  /notification/notifications/read:
     patch:
       tags:
         - Notifications
       summary: Mark all notifications as read
+      security:
+        - bearerAuth: []
       description: Marks all unread notifications for the authenticated user as read
       requestBody:
         required: false
@@ -4123,11 +4131,13 @@ paths:
                   error:
                     type: string
                     example: Internal Server Error
-  /notifications/all:
+  /notification/all:
     post:
       tags:
         - Notifications
       summary: Send notification to all users
+      security:
+        - bearerAuth: []
       description: Sends a notification with specified title and message to all registered users
       requestBody:
         required: true
