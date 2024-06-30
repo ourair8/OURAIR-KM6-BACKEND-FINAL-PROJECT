@@ -3,8 +3,18 @@
 const prisma = require('../../../config/prisma.config');
 const { ErrorWithStatusCode } = require('../../../middleware/errorHandler');
 
-const getAllUsersService = async() => {
-    return await prisma.users.findMany();
+const getAllUsersService = async(page, limit) => {
+    try {
+
+    
+        return await prisma.users.findMany({
+            skip: (page - 1) * limit,
+            take: limit,
+        });
+    } catch (err) {
+        throw err
+    }
+
 };
 
 const getUserByIdService = async(id) => {
@@ -16,7 +26,18 @@ const getUserByIdService = async(id) => {
 };
 
 const createUserService = async(data) => {
-    return await prisma.users.create({ data });
+        try {
+            const user = await prisma.users.create({
+                data: {
+                    ...data,
+                    created_at: new Date()
+                }
+            });
+            return user;
+       } catch (err) {
+        console.log(err)
+        throw err
+       }
 };
 
 const updateUserService = async(id, data) => {

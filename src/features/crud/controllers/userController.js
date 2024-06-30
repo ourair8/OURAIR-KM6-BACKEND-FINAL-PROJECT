@@ -13,9 +13,14 @@ const { handleError } = require('../../../middleware/errorHandler');
 
 const getAllUsersController = async(req, res) => {
     try {
-        const users = await getAllUsersService();
+
+        let page = Number(req.query.page) || 1;
+        let limit = Number(req.query.limit) || 10;
+
+        const users = await getAllUsersService(page, limit);
         res.status(200).json(users);
     } catch (err) {
+        console.log(err)
         handleError(err, res);
     }
 };
