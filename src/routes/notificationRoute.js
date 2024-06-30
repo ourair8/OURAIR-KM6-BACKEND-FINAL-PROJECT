@@ -17,6 +17,6 @@ const notification = express.Router();
 notification.get("/notifications", verifyToken, getNotifications);
 notification.patch("/notifications/:id/read", verifyToken, markAsRead);
 notification.patch("/notifications/read", verifyToken, markAllAsRead);
-notification.post("/all", sendNotificationToAll);
+notification.post("/all", verifyToken, sendNotificationToAll);
 
 module.exports = { notification };
