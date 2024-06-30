@@ -7,7 +7,7 @@ const {
     updateUser,
     deleteUser
 } = require('../services/userService');
-const { ErrorWithStatusCode } = require('../../../middleware/errorHandler');
+const { ErrorWithStatusCode, handleError } = require('../../../middleware/errorHandler');
 
 const getAllUsersController = async(req, res) => {
     try {
