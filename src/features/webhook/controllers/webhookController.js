@@ -13,8 +13,8 @@ const handleWebhook = async(req, res) => {
         const notification = await prisma.notifications.create({
             data : {
                 user_id : user,
-                title : 'payment',
-                message : 'Your booking payment is success !',
+                title : 'sistem',
+                message : 'Pembayaran tiket sukses !',
                 is_read : false,
                 created_at : new Date()
             }
