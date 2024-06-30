@@ -3382,6 +3382,8 @@ paths:
         - Booking & Transaction
       summary: Search transaction history
       description: Retrieve transaction history for the authenticated user
+      security:
+        - bearerAuth: []
       parameters:
         - name: id
           in: query
@@ -3631,6 +3633,8 @@ paths:
         - Booking & Transaction
       summary: Create transaction with Midtrans
       description: Create a new transaction using Midtrans payment gateway
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -3758,6 +3762,8 @@ paths:
         - Booking & Transaction
       summary: Get transaction by ID
       description: Retrieve a transaction by its ID
+      security:
+        - bearerAuth: []
       parameters:
         - name: id
           in: path
@@ -3838,6 +3844,8 @@ paths:
         - Booking & Transaction
       summary: Update transaction by ID
       description: Update an existing transaction by its ID
+      security:
+        - bearerAuth: []
       parameters:
         - name: id
           in: path
@@ -3933,6 +3941,8 @@ paths:
         - Booking & Transaction
       summary: Delete transaction by ID
       description: Delete an existing transaction by its ID
+      security:
+        - bearerAuth: []
       parameters:
         - name: id
           in: path
@@ -3973,6 +3983,8 @@ paths:
         - Booking & Transaction
       summary: Check payment status by order ID
       description: Retrieve payment status of a transaction by its Midtrans order ID
+      security:
+        - bearerAuth: []
       parameters:
         - name: order_id
           in: path

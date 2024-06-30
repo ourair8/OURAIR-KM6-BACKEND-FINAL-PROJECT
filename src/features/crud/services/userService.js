@@ -1,62 +1,49 @@
-'use strict';
+'use strict'
 
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require('../../../config/prisma.config');
+const { ErrorWithStatusCode } = require('../../../middleware/errorHandler');
 
-const getAllUsers = async() => {
-    try {
-        return await prisma.users.findMany();
-    } catch (error) {
-        throw new Error(`Error getting users: ${error.message}`);
-    }
+const getAllUsersService = async() => {
+    return await prisma.users.findMany();
 };
 
-const getUserById = async(id) => {
-    try {
-        return await prisma.users.findUnique({ where: { id: parseInt(id) } });
-    } catch (error) {
+const getUserByIdService = async(id) => {
+    const user = await prisma.users.findUnique({ where: { id } });
+    if (!user) {
         throw new ErrorWithStatusCode('User not found', 404);
     }
+    return user;
 };
 
-const createUser = async(userData) => {
-    try {
-
-        const user = await prisma.users.create({
-            data: {
-                ...userData,
-                created_at: new Date()
-            }
-        });
-        return user;
-    } catch (error) {
-        throw new Error(`Error creating user: ${error.message}`);
-    }
+const createUserService = async(data) => {
+    return await prisma.users.create({ data });
 };
 
-const updateUser = async(id, userData) => {
+const updateUserService = async(id, data) => {
     try {
         return await prisma.users.update({
-            where: { id: parseInt(id) },
-            data: userData
+            where: { id },
+            data,
         });
-    } catch (error) {
+    } catch (err) {
         throw new ErrorWithStatusCode('User not found', 404);
     }
 };
 
-const deleteUser = async(id) => {
+
+const deleteUserService = async(id) => {
+
     try {
-        return await prisma.users.delete({ where: { id: parseInt(id) } });
-    } catch (error) {
+        await prisma.users.delete({ where: { id } });
+    } catch (err) {
         throw new ErrorWithStatusCode('User not found', 404);
     }
 };
 
 module.exports = {
-    getAllUsers,
-    getUserById,
-    createUser,
-    updateUser,
-    deleteUser
+    getAllUsersService,
+    getUserByIdService,
+    createUserService,
+    updateUserService,
+    deleteUserService,
 };
