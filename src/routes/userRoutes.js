@@ -1,31 +1,31 @@
 "use strict";
 
 const {
-  checkRole,
-  verifyToken,
+    checkRole,
+    verifyToken,
 } = require("../features/auth/controllers/whoAmI");
 
 const { image } = require("../libs/multer");
 
 const express = require("express");
 const {
-  getAllUsersController,
-  getUserByIdController,
-  createUserController,
-  updateUserController,
-  deleteUserController,
-  getUserData,
+    getAllUsersController,
+    getUserByIdController,
+    createUserController,
+    updateUserController,
+    deleteUserController,
+    getUserData,
 } = require("../features/crud/controllers/userController");
 
 const {
-  updateAvatar,
-  updateProfile,
+    updateAvatar,
+    updateProfile,
 } = require("../features/profile/controllers/profile");
 
 const userRoutes =
-  // .get('/profile', verifyToken, checkRole(['user']), getUserData)
+    // .get('/profile', verifyToken, checkRole(['user']), getUserData)
 
-  express
+    express
     .Router()
     .get("/", verifyToken, checkRole(["ADMIN", 'USER']), getAllUsersController)
     .get("/:id", verifyToken, checkRole(["ADMIN", 'USER']), getUserByIdController)

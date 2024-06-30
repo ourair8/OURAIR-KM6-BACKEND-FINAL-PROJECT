@@ -2165,69 +2165,68 @@ paths:
                     type: string
                     example: "Not Found"
 
-  /users:
+  GET /users:
     get:
       tags:
         - Users
-      summary: get all users
-      description: Retrieve a list of all users
+      summary: Get All Users
+      description: Retrieve a list of all users.
+      security:
+        - bearerAuth: []
       responses:
         "200":
-          description: A list of users
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                      example: 1
-                    name:
-                      type: string
-                      example: John Doe
-                    username:
-                      type: string
-                      example: johndoe
-                    phone_number:
-                      type: string
-                      example: 1234567890
-                    email:
-                      type: string
-                      example: johndoe@example.com
-                    is_Verified:
-                      type: boolean
-                      example: true
-                    role:
-                      type: string
-                      example: USER
-                    created_at:
-                      type: string
-                      format: date-time
-                      example: 2023-06-30T12:34:56Z
-                    avatar_link:
-                      type: string
-                      example: https://example.com/avatar.jpg
-                    googleId:
-                      type: string
-                      example: 1234567890abcdef
-                    session_token:
-                      type: string
-                      example: abcd1234efgh5678
-        "401":
-          description: Unauthorized, user not authenticated.
+          description: A list of users.
           content:
             application/json:
               schema:
                 type: object
                 properties:
                   status:
-                    type: string
-                    example: "error"
+                    type: boolean
+                    example: true
                   message:
                     type: string
-                    example: "Unauthorized"
+                    example: Users fetched successfully
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        name:
+                          type: string
+                          example: John Doe
+                        username:
+                          type: string
+                          example: johndoe
+                        email:
+                          type: string
+                          example: johndoe@example.com
+                        phone_number:
+                          type: string
+                          example: "1234567890"
+                        role:
+                          type: string
+                          example: USER
+                        created_at:
+                          type: string
+                          format: date-time
+                          example: "2024-06-30T10:00:00Z"
+        "401":
+          description: Unauthorized. Token is missing or invalid.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Unauthorized access
         "500":
           description: Internal Server Error
           content:
@@ -2240,65 +2239,104 @@ paths:
                     example: false
                   message:
                     type: string
-                    example: An error occurred while retrieving users
-  /users/{id}:
+                    example: An error occurred while fetching users.
+    components:
+      securitySchemes:
+        bearerAuth:
+          type: http
+          scheme: bearer
+          bearerFormat: JWT
+      responses:
+        Unauthorized:
+          description: Authentication failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Unauthorized
+        NotFound:
+          description: The specified resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Not Found"
+
+  GET /users/{id}:
     get:
       tags:
         - Users
-      summary: get user by ID
-      description: Retrieve a user by their ID
+      summary: Get User by ID
+      description: Retrieve a user by their ID.
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: id
           required: true
           schema:
             type: integer
-          description: The user ID
-          example: 1
+          description: The ID of the user to retrieve.
       responses:
         "200":
-          description: A user object
+          description: User fetched successfully.
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  id:
-                    type: integer
-                    example: 1
-                  name:
-                    type: string
-                    example: John Doe
-                  username:
-                    type: string
-                    example: johndoe
-                  phone_number:
-                    type: string
-                    example: 1234567890
-                  email:
-                    type: string
-                    example: johndoe@example.com
-                  is_Verified:
+                  status:
                     type: boolean
                     example: true
-                  role:
+                  message:
                     type: string
-                    example: USER
-                  created_at:
+                    example: User fetched successfully
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: John Doe
+                      username:
+                        type: string
+                        example: johndoe
+                      email:
+                        type: string
+                        example: johndoe@example.com
+                      phone_number:
+                        type: string
+                        example: "1234567890"
+                      role:
+                        type: string
+                        example: USER
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: "2024-06-30T10:00:00Z"
+        "401":
+          description: Unauthorized. Token is missing or invalid.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
                     type: string
-                    format: date-time
-                    example: 2023-06-30T12:34:56Z
-                  avatar_link:
-                    type: string
-                    example: https://example.com/avatar.jpg
-                  googleId:
-                    type: string
-                    example: 1234567890abcdef
-                  session_token:
-                    type: string
-                    example: abcd1234efgh5678
+                    example: Unauthorized access
         "404":
-          description: User not found
+          description: User not found.
           content:
             application/json:
               schema:
@@ -2310,19 +2348,6 @@ paths:
                   message:
                     type: string
                     example: User not found
-        "401":
-          description: Unauthorized, user not authenticated.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: "error"
-                  message:
-                    type: string
-                    example: "Unauthorized"
         "500":
           description: Internal Server Error
           content:
@@ -2335,13 +2360,44 @@ paths:
                     example: false
                   message:
                     type: string
-                    example: An error occurred while retrieving the user
-  /users/:
+                    example: An error occurred while fetching user details.
+    components:
+      securitySchemes:
+        bearerAuth:
+          type: http
+          scheme: bearer
+          bearerFormat: JWT
+      responses:
+        Unauthorized:
+          description: Authentication failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Unauthorized
+        NotFound:
+          description: The specified resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Not Found"
+                    
+
+  POST /users:
     post:
       tags:
         - Users
-      summary: Create a new user
-      description: Create a new user in the system
+      summary: Create User
+      description: Create a new user.
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -2355,74 +2411,59 @@ paths:
                 username:
                   type: string
                   example: johndoe
+                email:
+                  type: string
+                  example: johndoe@example.com
                 phone_number:
                   type: string
                   example: "1234567890"
                 password:
                   type: string
-                  example: password123
-                email:
-                  type: string
-                  example: johndoe@example.com
-                is_Verified:
-                  type: boolean
-                  example: false
+                  example: securepassword
                 role:
                   type: string
                   example: USER
-                avatar_link:
-                  type: string
-                  example: https://example.com/avatar.jpg
-                googleId:
-                  type: string
-                  example: "1234567890abcdef"
-                session_token:
-                  type: string
-                  example: abcd1234efgh5678
       responses:
         "201":
-          description: User successfully created
+          description: User created successfully.
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  id:
-                    type: integer
-                    example: 1
-                  name:
-                    type: string
-                    example: John Doe
-                  username:
-                    type: string
-                    example: johndoe
-                  phone_number:
-                    type: string
-                    example: "1234567890"
-                  email:
-                    type: string
-                    example: johndoe@example.com
-                  is_Verified:
+                  status:
                     type: boolean
                     example: true
-                  role:
+                  message:
                     type: string
-                    example: USER
-                  created_at:
-                    type: string
-                    format: date-time
-                    example: "2023-06-30T12:34:56Z"
-                  avatar_link:
-                    type: string
-                    example: https://example.com/avatar.jpg
-                  googleId:
-                    type: string
-                    example: "1234567890abcdef"
-                  session_token:
-                    type: string
-                    example: abcd1234efgh5678
+                    example: User created successfully
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: John Doe
+                      username:
+                        type: string
+                        example: johndoe
+                      email:
+                        type: string
+                        example: johndoe@example.com
+                      phone_number:
+                        type: string
+                        example: "1234567890"
+                      role:
+                        type: string
+                        example: USER
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: "2024-06-30T10:00:00Z"
         "400":
-          description: Bad Request
+          description: Bad request. Invalid user data provided.
           content:
             application/json:
               schema:
@@ -2433,20 +2474,20 @@ paths:
                     example: false
                   message:
                     type: string
-                    example: Invalid request data
+                    example: Error creating user: Invalid user data
         "401":
-          description: Unauthorized, user not authenticated.
+          description: Unauthorized. Token is missing or invalid.
           content:
             application/json:
               schema:
                 type: object
                 properties:
                   status:
-                    type: string
-                    example: "error"
+                    type: boolean
+                    example: false
                   message:
                     type: string
-                    example: "Unauthorized"
+                    example: Unauthorized access
         "500":
           description: Internal Server Error
           content:
@@ -2459,14 +2500,50 @@ paths:
                     example: false
                   message:
                     type: string
-                    example: An error occurred while creating the user
+                    example: An error occurred while creating user.
+    components:
+      securitySchemes:
+        bearerAuth:
+          type: http
+          scheme: bearer
+          bearerFormat: JWT
+      responses:
+        Unauthorized:
+          description: Authentication failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Unauthorized
+        NotFound:
+          description: The specified resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Not Found"
 
-  PUT /users:
+  PUT /users/{id}:
     put:
       tags:
         - Users
-      summary: Update a user by ID
-      description: Update a user's information by their ID
+      summary: Update User
+      description: Update an existing user by their ID.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: The ID of the user to update.
       requestBody:
         required: true
         content:
@@ -2474,93 +2551,62 @@ paths:
             schema:
               type: object
               properties:
-                id:
-                  type: integer
-                  example: 1
                 name:
                   type: string
                   example: John Doe
                 username:
                   type: string
                   example: johndoe
-                phone_number:
-                  type: string
-                  example: "1234567890"
                 email:
                   type: string
                   example: johndoe@example.com
-                is_Verified:
-                  type: boolean
-                  example: true
+                phone_number:
+                  type: string
+                  example: "1234567890"
                 role:
                   type: string
                   example: USER
-                avatar_link:
-                  type: string
-                  example: https://example.com/avatar.jpg
-                googleId:
-                  type: string
-                  example: "1234567890abcdef"
-                session_token:
-                  type: string
-                  example: abcd1234efgh5678
       responses:
         "200":
-          description: User successfully updated
+          description: User updated successfully.
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  id:
-                    type: integer
-                    example: 1
-                  name:
-                    type: string
-                    example: John Doe
-                  username:
-                    type: string
-                    example: johndoe
-                  phone_number:
-                    type: string
-                    example: "1234567890"
-                  email:
-                    type: string
-                    example: johndoe@example.com
-                  is_Verified:
+                  status:
                     type: boolean
                     example: true
-                  role:
+                  message:
                     type: string
-                    example: USER
-                  created_at:
-                    type: string
-                    format: date-time
-                    example: "2023-06-30T12:34:56Z"
-                  avatar_link:
-                    type: string
-                    example: https://example.com/avatar.jpg
-                  googleId:
-                    type: string
-                    example: "1234567890abcdef"
-                  session_token:
-                    type: string
-                    example: abcd1234efgh5678
-        "401":
-        description: Unauthorized, user not authenticated.
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                status:
-                  type: string
-                  example: "error"
-                message:
-                  type: string
-                  example: "Unauthorized"
+                    example: User updated successfully
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: John Doe
+                      username:
+                        type: string
+                        example: johndoe
+                      email:
+                        type: string
+                        example: johndoe@example.com
+                      phone_number:
+                        type: string
+                        example: "1234567890"
+                      role:
+                        type: string
+                        example: USER
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: "2024-06-30T10:00:00Z"
         "400":
-          description: Bad Request
+          description: Bad request. Invalid user data provided.
           content:
             application/json:
               schema:
@@ -2571,9 +2617,22 @@ paths:
                     example: false
                   message:
                     type: string
-                    example: Invalid request data
+                    example: Error updating user: Invalid user data
+        "401":
+          description: Unauthorized. Token is missing or invalid.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Unauthorized access
         "404":
-          description: User not found
+          description: User not found.
           content:
             application/json:
               schema:
@@ -2597,34 +2656,79 @@ paths:
                     example: false
                   message:
                     type: string
-                    example: An error occurred while updating the user
-  DELETE /users:
+                    example: An error occurred while updating user.
+    components:
+      securitySchemes:
+        bearerAuth:
+          type: http
+          scheme: bearer
+          bearerFormat: JWT
+      responses:
+        Unauthorized:
+          description: Authentication failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Unauthorized
+        NotFound:
+          description: The specified resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Not Found"
+
+  DELETE /users/{id}:
     delete:
       tags:
         - Users
-      summary: Delete a user by ID
-      description: Delete a user from the system by their ID
+      summary: Delete User
+      description: Delete a user by their ID.
+      security:
+        - bearerAuth: []
       parameters:
-        - in: query
+        - in: path
           name: id
           required: true
           schema:
             type: integer
-          description: The ID of the user to delete
-          example: 1
+          description: The ID of the user to delete.
       responses:
         "200":
-          description: User successfully deleted
+          description: User deleted successfully.
           content:
             application/json:
               schema:
                 type: object
                 properties:
+                  status:
+                    type: boolean
+                    example: true
                   message:
                     type: string
-                    example: User deleted
+                    example: User deleted successfully
+        "401":
+          description: Unauthorized. Token is missing or invalid.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Unauthorized access
         "404":
-          description: User not found
+          description: User not found.
           content:
             application/json:
               schema:
@@ -2636,19 +2740,6 @@ paths:
                   message:
                     type: string
                     example: User not found
-        "401":
-          description: Unauthorized, user not authenticated.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: "error"
-                  message:
-                    type: string
-                    example: "Unauthorized"
         "500":
           description: Internal Server Error
           content:
@@ -2661,7 +2752,34 @@ paths:
                     example: false
                   message:
                     type: string
-                    example: An error occurred while deleting the user
+                    example: An error occurred while deleting user.
+    components:
+      securitySchemes:
+        bearerAuth:
+          type: http
+          scheme: bearer
+          bearerFormat: JWT
+      responses:
+        Unauthorized:
+          description: Authentication failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Unauthorized
+        NotFound:
+          description: The specified resource was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Not Found"
 
   PUT /users/avatar-profile:
     put:
