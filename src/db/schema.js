@@ -4,27 +4,27 @@ const mongoose = require("mongoose");
 mongoose.connect(process.env.MONGO_DB, {});
 
 const seatSchema = new mongoose.Schema({
-  seatNumber: {
-    type: String,
-    required: true,
-  },
-  isBooked: {
-    type: Boolean,
-    default: false,
-  },
-  passengerId: {
-    type: Number,
-    default: null,
-  },
+    seatNumber: {
+        type: String,
+        required: true,
+    },
+    isBooked: {
+        type: Boolean,
+        default: false,
+    },
+    passengerId: {
+        type: Number,
+        default: null,
+    },
 });
 
 const flightSchema = new mongoose.Schema({
-  flightId: {
-    type: Number,
-    required: true,
-    unique: true,
-  },
-  seats: [seatSchema],
+    flightId: {
+        type: Number,
+        required: true,
+        unique: true,
+    },
+    seats: [seatSchema],
 });
 
 const FlightSeats = mongoose.model("FlightSeats", flightSchema);

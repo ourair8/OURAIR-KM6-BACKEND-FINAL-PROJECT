@@ -14,21 +14,21 @@ datasource db {
 }
 
 model Users {
-  id           Int      @id @default(autoincrement())
-  name         String
-  username     String? @unique
-  phone_number String?
-  password     String
-  email        String   @unique
-  is_Verified  Boolean  @default(false)
-  role         Role     @default(USER)
-  created_at   DateTime
-  avatar_link  String?
-  googleId     String?
-  session_token        String?
+  id            Int      @id @default(autoincrement())
+  name          String
+  username      String?  @unique
+  phone_number  String?
+  password      String
+  email         String   @unique
+  is_Verified   Boolean  @default(false)
+  role          Role     @default(USER)
+  created_at    DateTime
+  avatar_link   String?
+  googleId      String?
+  session_token String?
 
   otps          Otps[]
-  transactions       Transactions[]
+  transactions  Transactions[]
   notofications Notifications[]
 
   @@map("users")
@@ -71,13 +71,13 @@ model Airlines {
 }
 
 model Airplanes {
-  id                   Int    @id @default(autoincrement())
-  airline_id           Int
-  airplane_code        String @db.VarChar(150)
-  total_seat           Int @default(150)
-  baggage              Int
-  cabin_baggage        Int
-  description          String @db.VarChar(255)
+  id            Int    @id @default(autoincrement())
+  airline_id    Int
+  airplane_code String @db.VarChar(150)
+  total_seat    Int    @default(150)
+  baggage       Int
+  cabin_baggage Int
+  description   String @db.VarChar(255)
 
   whomAirlinesAirplanes Airlines @relation(fields: [airline_id], references: [id])
 
@@ -106,28 +106,26 @@ model Airports {
 }
 
 model Flights {
-  id             Int        @id @default(autoincrement())
+  id             Int         @id @default(autoincrement())
   airplane_id    Int
   from_id        Int?
   to_id          Int?
   departure_time DateTime
   arrival_time   DateTime
-  flight_type    FlightType @default(DOMESTIC)
+  flight_type    FlightType  @default(DOMESTIC)
   class          FlightClass @default(FIRSTCLASS)
   ticket_price   Int
-  seat_id        Int @unique @default(autoincrement())
+  seat_id        Int         @unique @default(autoincrement())
 
-  fromAirport         Airports?  @relation("fromFlights", fields: [from_id], references: [id], onDelete: SetNull)
-  toAirport           Airports?  @relation("toFlights", fields: [to_id], references: [id],  onDelete: SetNull)
+  fromAirport         Airports? @relation("fromFlights", fields: [from_id], references: [id], onDelete: SetNull)
+  toAirport           Airports? @relation("toFlights", fields: [to_id], references: [id], onDelete: SetNull)
   whomAirplaneFlights Airplanes @relation(fields: [airplane_id], references: [id])
 
-  tickets Tickets[]
+  tickets     Tickets[]
   transaction Transactions[]
 
   @@map("flights")
 }
-
-
 
 model Passengers {
   id                  Int      @id @default(autoincrement())
@@ -135,7 +133,7 @@ model Passengers {
   fullname            String
   surname             String
   birth_date          DateTime
-  category            String @default("adult")
+  category            String   @default("adult")
   nationality         String
   document            String
   country_publication String
@@ -154,19 +152,19 @@ model Tickets {
   transaction_id Int?
 
   whomPassangerTicket Passengers    @relation(fields: [passanger_id], references: [id])
-  whomFlightTicket    Flights?       @relation(fields: [flight_id], references: [id], onDelete: SetNull)
+  whomFlightTicket    Flights?      @relation(fields: [flight_id], references: [id], onDelete: SetNull)
   transaction         Transactions? @relation(fields: [transaction_id], references: [id])
 
   @@map("tickets")
 }
 
 model Transactions {
-  id                Int       @id @default(autoincrement())
-  midtrans_order_id String?   @unique
+  id                Int      @id @default(autoincrement())
+  midtrans_order_id String?  @unique
   adult_price       Int
   baby_price        Int
   tax_price         Int
-  donation          Int? @default(0)
+  donation          Int?     @default(0)
   total_price       Int
   created_at        DateTime
   user_id           Int?
@@ -176,12 +174,12 @@ model Transactions {
   total_baby        Int?
   flight_id         Int?
 
-  users      Users?         @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  users   Users?   @relation(fields: [user_id], references: [id], onDelete: SetNull)
   bookers Bookers? @relation(fields: [booker_id], references: [id], onDelete: SetNull)
   flights Flights? @relation(fields: [flight_id], references: [id], onDelete: SetNull)
 
-  Payments          Payments?
-  tickets Tickets[]
+  Payments Payments?
+  tickets  Tickets[]
 
   @@map("transactions")
 }
@@ -199,7 +197,7 @@ model Payments {
 }
 
 model Bookers {
-  id           Int           @id @default(autoincrement())
+  id           Int    @id @default(autoincrement())
   fullname     String
   surname      String
   phone_number String
