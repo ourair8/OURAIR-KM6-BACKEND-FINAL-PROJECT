@@ -15,7 +15,8 @@ const handleWebhook = async(req, res) => {
                 user_id : user,
                 title : 'payment',
                 message : 'Your booking payment is success !',
-                is_read : false
+                is_read : false,
+                created_at : new Date()
             }
         })
 
