@@ -2164,7 +2164,6 @@ paths:
                   message:
                     type: string
                     example: "Not Found"
-
   /users:
     get:
       tags:
@@ -2240,157 +2239,6 @@ paths:
                   message:
                     type: string
                     example: An error occurred while fetching users.
-    components:
-      securitySchemes:
-        bearerAuth:
-          type: http
-          scheme: bearer
-          bearerFormat: JWT
-      responses:
-        Unauthorized:
-          description: Authentication failed
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Unauthorized
-        NotFound:
-          description: The specified resource was not found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Not Found"
-
-  /users/{id}:
-    get:
-      tags:
-        - Users
-      summary: Get User by ID
-      description: Retrieve a user by their ID.
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-          description: The ID of the user to retrieve.
-      responses:
-        "200":
-          description: User fetched successfully.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-                    example: true
-                  message:
-                    type: string
-                    example: User fetched successfully
-                  data:
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                        example: 1
-                      name:
-                        type: string
-                        example: John Doe
-                      username:
-                        type: string
-                        example: johndoe
-                      email:
-                        type: string
-                        example: johndoe@example.com
-                      phone_number:
-                        type: string
-                        example: "1234567890"
-                      role:
-                        type: string
-                        example: USER
-                      created_at:
-                        type: string
-                        format: date-time
-                        example: "2024-06-30T10:00:00Z"
-        "401":
-          description: Unauthorized. Token is missing or invalid.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-                    example: false
-                  message:
-                    type: string
-                    example: Unauthorized access
-        "404":
-          description: User not found.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-                    example: false
-                  message:
-                    type: string
-                    example: User not found
-        "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-                    example: false
-                  message:
-                    type: string
-                    example: An error occurred while fetching user details.
-    components:
-      securitySchemes:
-        bearerAuth:
-          type: http
-          scheme: bearer
-          bearerFormat: JWT
-      responses:
-        Unauthorized:
-          description: Authentication failed
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Unauthorized
-        NotFound:
-          description: The specified resource was not found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Not Found"
-                    
-
-  /users:
     post:
       tags:
         - Users
@@ -2528,8 +2376,99 @@ paths:
                   message:
                     type: string
                     example: "Not Found"
-
   /users/{id}:
+    get:
+      tags:
+        - Users
+      summary: Get User by ID
+      description: Retrieve a user by their ID.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: The ID of the user to retrieve.
+      responses:
+        "200":
+          description: User fetched successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: User fetched successfully
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: John Doe
+                      username:
+                        type: string
+                        example: johndoe
+                      email:
+                        type: string
+                        example: johndoe@example.com
+                      phone_number:
+                        type: string
+                        example: "1234567890"
+                      role:
+                        type: string
+                        example: USER
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: "2024-06-30T10:00:00Z"
+        "401":
+          description: Unauthorized. Token is missing or invalid.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Unauthorized access
+        "404":
+          description: User not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: User not found
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: An error occurred while fetching user details.
     put:
       tags:
         - Users
@@ -2657,35 +2596,6 @@ paths:
                   message:
                     type: string
                     example: An error occurred while updating user.
-    components:
-      securitySchemes:
-        bearerAuth:
-          type: http
-          scheme: bearer
-          bearerFormat: JWT
-      responses:
-        Unauthorized:
-          description: Authentication failed
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Unauthorized
-        NotFound:
-          description: The specified resource was not found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Not Found"
-
-  /users/{id}:
     delete:
       tags:
         - Users
@@ -3044,6 +2954,88 @@ paths:
                   message:
                     type: string
                     example: An error occurred while fetching tickets
+    post:
+      tags:
+        - Tickets
+      summary: Create a new ticket
+      security:
+        - bearerAuth: []
+      description: Create a new ticket in the system
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                passanger_id:
+                  type: integer
+                  example: 123
+                flight_id:
+                  type: integer
+                  example: 456
+                transaction_id:
+                  type: integer
+                  example: 789
+      responses:
+        "201":
+          description: Ticket successfully created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  passanger_id:
+                    type: integer
+                    example: 123
+                  flight_id:
+                    type: integer
+                    example: 456
+                  transaction_id:
+                    type: integer
+                    example: 789
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Invalid request data
+        "401":
+          description: Unauthorized, user not authenticated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "error"
+                  message:
+                    type: string
+                    example: "Unauthorized"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: An error occurred while creating the ticket
   /tickets/{id}:
     get:
       tags:
@@ -3137,90 +3129,6 @@ paths:
                   message:
                     type: string
                     example: An error occurred while fetching the ticket
-  /tickets:
-    post:
-      tags:
-        - Tickets
-      summary: Create a new ticket
-      security:
-        - bearerAuth: []
-      description: Create a new ticket in the system
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                passanger_id:
-                  type: integer
-                  example: 123
-                flight_id:
-                  type: integer
-                  example: 456
-                transaction_id:
-                  type: integer
-                  example: 789
-      responses:
-        "201":
-          description: Ticket successfully created
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                    example: 1
-                  passanger_id:
-                    type: integer
-                    example: 123
-                  flight_id:
-                    type: integer
-                    example: 456
-                  transaction_id:
-                    type: integer
-                    example: 789
-        "400":
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-                    example: false
-                  message:
-                    type: string
-                    example: Invalid request data
-        "401":
-          description: Unauthorized, user not authenticated.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: "error"
-                  message:
-                    type: string
-                    example: "Unauthorized"
-        "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: boolean
-                    example: false
-                  message:
-                    type: string
-                    example: An error occurred while creating the ticket
-  /tickets/{id}:
     put:
       tags:
         - Tickets
@@ -3311,7 +3219,6 @@ paths:
                   message:
                     type: string
                     example: An error occurred while updating the ticket
-  /tickets/{id}:
     delete:
       tags:
         - Tickets
