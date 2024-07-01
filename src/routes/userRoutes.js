@@ -33,6 +33,6 @@ const userRoutes =
     .post("/", verifyToken, checkRole(["ADMIN", 'USER']), createUserController)
     .put("/:id", verifyToken, checkRole(["USER"]), updateUserController)
     .delete("/:id", verifyToken, checkRole(["ADMIN", 'USER']), deleteUserController)
-    .patch("/profile", verifyToken, checkRole(["USER"]), updateProfile);
+    .patch("/profile", verifyToken, checkRole(["ADMIN","USER"]), updateProfile);
 
 module.exports = { userRoutes };

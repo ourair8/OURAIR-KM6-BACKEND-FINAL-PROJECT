@@ -16,9 +16,9 @@ const { checkPaymentStatus } = require('../features/transactions/controllers/che
 
 const transactionRoutes = express.Router();
 
-transactionRoutes.get('/search-transaction-history', verifyToken, checkRole(['USER']), getTransactionById);
-transactionRoutes.get('/history', verifyToken, checkRole(['USER']), getTransactionHistoryController);
-transactionRoutes.post('/create-transaction-midtrans', verifyToken, checkRole(['USER']), handleCreateTransaction);
+transactionRoutes.get('/search-transaction-history', verifyToken, checkRole(["ADMIN", 'USER']), getTransactionById);
+transactionRoutes.get('/history', verifyToken, checkRole(["ADMIN", 'USER']), getTransactionHistoryController);
+transactionRoutes.post('/create-transaction-midtrans', verifyToken, checkRole(["ADMIN", 'USER']), handleCreateTransaction);
 transactionRoutes.get('/:id', verifyToken, checkRole(['ADMIN', 'USER']), handleGetTransaction);
 transactionRoutes.put('/:id', verifyToken, checkRole(['ADMIN', 'USER']), handleUpdateTransaction);
 transactionRoutes.delete('/:id', verifyToken, checkRole(['ADMIN', 'USER']), handleDeleteTransaction);

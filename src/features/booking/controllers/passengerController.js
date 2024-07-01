@@ -48,7 +48,6 @@ const createPassengerController = async (req, res) => {
       !booker ||
       typeof booker !== "object" ||
       !booker.fullname ||
-      !booker.surname ||
       !booker.phone_number ||
       !booker.email
     ) {
