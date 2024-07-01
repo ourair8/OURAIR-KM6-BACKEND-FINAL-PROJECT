@@ -4,6 +4,7 @@ const app = require('../index');
 
 const server = http.createServer(app);
 const io = new Server(server, {
+    allowEIO3 : true,
     cors: {
         origin: [
             "https://ourair.tech",
