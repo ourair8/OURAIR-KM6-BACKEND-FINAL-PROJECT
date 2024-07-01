@@ -75,7 +75,7 @@ const loginOAuthController = async function (req, res) {
   return res.redirect(
     // `https://xsj9lz0q-5173.asse.devtunnels.ms/auth-user/${token}`
     // `https://ourair-km-6-frontend-final-project.vercel.app/?token=${token}`
-    `http://localhost:5173/auth-user/${token}`
+    `${process.env.PRODUCTION_LOGIN_REDIRECT}${token}`
   ); // redirect to client
 
   } catch (err) {

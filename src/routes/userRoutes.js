@@ -27,7 +27,7 @@ const userRoutes =
 
     express
     .Router()
-    .put("/avatar-profile", verifyToken, checkRole(["USER"]), image.single("avatar"), updateAvatar)
+    .put("/avatar-profile", verifyToken, checkRole(["ADMIN", "USER"]), image.single("avatar"), updateAvatar)
     .get("/", verifyToken, checkRole(["ADMIN", 'USER']), getAllUsersController)
     .get("/:id", verifyToken, checkRole(["ADMIN", 'USER']), getUserByIdController)
     .post("/", verifyToken, checkRole(["ADMIN", 'USER']), createUserController)
