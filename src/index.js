@@ -71,6 +71,10 @@ require("dotenv").config();
 const app = express()
   .set("trust proxy", 1)
   .use(cors(corsOptions))
+  .use((req, res, next) => {
+    console.log('CORS headers:', res.getHeaders());
+    next();
+  })
   // .use(limiter)
   .use(cookieParser())
   .use(compression())
