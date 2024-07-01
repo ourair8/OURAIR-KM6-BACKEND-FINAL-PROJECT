@@ -7,6 +7,7 @@ const io = new Server(server, {
     allowEIO3 : true,
     cors: {
         origin: [
+            "https://ourair.tech",
             "http://localhost:5173",
             "http://localhost:5174",
             "http://localhost:3001",
