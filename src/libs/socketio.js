@@ -3,25 +3,7 @@ const { Server } = require('socket.io');
 const app = require('../index');
 
 const server = http.createServer(app);
-const io = new Server(server, {
-    cors: {
-        origin: [
-            "https://ourair.tech",
-            "ourair.tech",
-            "http://localhost:5173",
-            "http://localhost:5174",
-            "http://localhost:3001",
-            "http://localhost:3000",
-            "https://ourair.my.id",
-            "https://accounts.google.com/o/oauth2/v2",
-            "https://bw2nj1xt-3001.asse.devtunnels.ms",
-            "bw2nj1xt-3001.asse.devtunnels.ms",
-          ],       
-        methods: ['GET', 'POST'],
-        allowedHeaders: ['my-custom-header'],
-        credentials: true
-    }
-});
+const io = new Server(server);
 
 io.on('connection', (socket) => {
     ;
