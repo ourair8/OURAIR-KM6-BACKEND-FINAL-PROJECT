@@ -20,7 +20,7 @@ const getAllUsersController = async(req, res) => {
         const users = await getAllUsersService(page, limit);
         res.status(200).json(users);
     } catch (err) {
-        console.log(err)
+        
         handleError(err, res);
     }
 };

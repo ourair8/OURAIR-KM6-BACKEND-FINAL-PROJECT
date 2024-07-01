@@ -30,7 +30,7 @@ async function userSeeder(req,res) {
     skipDuplicates: true, 
   });
 
-  console.log('Seeding finished.');
+  ;
 
     } catch(err){
         throw err

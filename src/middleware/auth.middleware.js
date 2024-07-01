@@ -17,7 +17,7 @@ const prisma = new PrismaClient();
 //       callbackURL: process.env.GOOGLE_CALLBACK_URL,
 //     },
 //     async (accessToken, refreshToken, profile, done) => {
-//       console.log(profile)
+//       
 //       let user = await prisma.users.findUnique({
 //         where: { googleId: profile.id },
 //       });
@@ -57,7 +57,7 @@ const verifyToken1 = (req, res, next) => {
 
   try {
     const verified = jwt.verify(token, process.env.JWT_SECRET);
-    console.log(verified);
+    ;
     req.user = verified;
     next();
   } catch (err) {
@@ -67,7 +67,7 @@ const verifyToken1 = (req, res, next) => {
 
 // try {
 //   const verified = jwt.verify(token, process.env.JWT_SECRET);
-//   console.log(verified);
+//   ;
 //   req.user = await prisma.users.findUnique({ where: { id: verified.id } });
 //   next();
 // } catch (err) {

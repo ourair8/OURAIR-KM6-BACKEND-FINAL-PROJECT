@@ -34,7 +34,7 @@ async function updateThumbnails(req, res) {
         thumbnail: thumbnail,
       },
     });
-    console.log(`Updated thumbnail for ${cityName}`);
+    ;
   }
     } catch (err) {
         throw err

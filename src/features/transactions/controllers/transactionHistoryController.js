@@ -219,7 +219,7 @@ const getTransactionHistoryController = async function(req, res){
     
       
       
-    console.log(bookings);
+    ;
 
     // const bookingView = await Promise.all(bookings.map(async (transaction) => {
     //     const tickets = await Promise.all(transaction.tickets.map(async (ticket) => {

@@ -16,7 +16,7 @@ const runSeeders = async () => {
   for (const endpoint of endpoints) {
     try {
       const response = await axios.get(`${baseUrl}${endpoint}`);
-      console.log(`Success: ${endpoint} - ${response.status} ${response.statusText}`);
+      ;
     } catch (error) {
       console.error(`Error: ${endpoint} - ${error.message}`);
     }

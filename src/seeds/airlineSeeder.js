@@ -8,7 +8,7 @@ const AirlineSeeder = async function (req, res) {
     // Baca file JSON
     const rawData = fs.readFileSync(`${__dirname}/airline.json`);
     const airlinesData = JSON.parse(rawData.toString());
-    console.log("cek"); //berhasil
+    ; //berhasil
     for (const airportData of airlinesData) {
       const wow = await prisma.airlines.create({
         data: {
@@ -17,9 +17,9 @@ const AirlineSeeder = async function (req, res) {
         },
       });
     }
-    console.log("cek1");
+    ;
 
-    console.log("Data Maskapai telah dimasukkan ke dalam tabel Airline.");
+    ;
   } catch (error) {
     console.error("Terjadi kesalahan:", error);
   } finally {

@@ -35,7 +35,7 @@ const createUserService = async(data) => {
             });
             return user;
        } catch (err) {
-        console.log(err)
+        
         throw err
        }
 };

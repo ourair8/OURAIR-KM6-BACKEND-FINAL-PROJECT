@@ -27,7 +27,7 @@ const testwebsocket = async function(req, res) {
             message: `Your booking was successful. Please complete the payment using the following link`,
         });
     } catch (err) {
-        console.log(err)
+        
         throw err
     }
 }

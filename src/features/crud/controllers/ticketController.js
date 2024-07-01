@@ -24,7 +24,7 @@ const getAllTicketsController = async (req, res) => {
     const tickets = await getAllticketsService();
     res.status(200).json(tickets);
   } catch (err) {
-    console.log(err);
+    ;
     handleError(err, res);
   }
 };

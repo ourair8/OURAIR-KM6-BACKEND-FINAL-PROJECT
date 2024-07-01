@@ -7,9 +7,9 @@ const prisma = require("../config/prisma.config");
 const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_CALLBACK_URL } =
   process.env;
 
-console.log(process.env.GOOGLE_CALLBACK_URL)
-console.log(process.env.GOOGLE_CLIENT_SECRET)
-console.log(GOOGLE_CLIENT_ID)
+
+
+
 const Role = {
   USER: "USER",
   ADMIN: "ADMIN",
@@ -48,7 +48,7 @@ passport.use(
 
         done(null, user);
       } catch (err) {
-        console.log(err)
+        
         done(err, null);
       }
     }

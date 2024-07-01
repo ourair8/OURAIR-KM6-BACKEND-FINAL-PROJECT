@@ -13,7 +13,7 @@ const createPassengerController = async (req, res) => {
   try {
     let { passengers, baby, booker, donation } = req.body;
 
-    console.log(req.body)
+    
 
     if (
       !Array.isArray(passengers) ||
@@ -31,7 +31,7 @@ const createPassengerController = async (req, res) => {
 
     let total_donation = 0
 
-    console.log(total_donation)
+    
 
     if (!donation || typeof donation !== "number" || donation < 0) {
       donation = 0
@@ -39,8 +39,8 @@ const createPassengerController = async (req, res) => {
 
     total_donation = donation
 
-    console.log(donation)
-    console.log(total_donation)
+    
+    
 
 
 
@@ -102,7 +102,7 @@ const createPassengerController = async (req, res) => {
     const tax = totalPrice * 0.1;
     const totalWithTax = totalPrice + tax + total_donation;
 
-    console.log(tax, totalPrice, total_donation)
+    
 
     const createdBooker = await prisma.bookers.create({
       data: {
@@ -184,12 +184,15 @@ const createPassengerController = async (req, res) => {
       orderDetailsMidtrans
     );
 
+    const  token = req.token
+
     const updatedTransactionMidtrans = await prisma.transactions.update({
       where: { id: createdTransaction.id },
       data: {
         user_id : req.user.id,
         midtrans_order_id: orderDetailsMidtrans.transaction_details.order_id,
         payment_link: transactionMidtrans.redirect_url,
+        transaction_token : token
       },
     });
 
@@ -208,16 +211,6 @@ const createPassengerController = async (req, res) => {
     const bookedSeats = flightMongo.seats.filter(seat => seat.isBooked).map(seat => seat.seatNumber);
     
     const io = req.app.get('io');
-    const  token = req.token
-
-    await prisma.users.update({
-      where : {
-        id : req.user.id
-      },
-      data : {
-        session_token : token
-      }
-    })
     
     io.emit(`post-booking-${token}`, { message : `Pemesanan sukses, mohon melakukan pembayaran menggunakan link`, link :  transactionMidtrans.redirect_url });
     io.emit(`seat-${flight_id}`, {

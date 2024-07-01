@@ -79,7 +79,7 @@ const data = [
         await FlightSeats.deleteMany({ flightId: { $in: flightIds } });
 
         await FlightSeats.insertMany(data);
-      console.log('Data inserted successfully!');
+      ;
     } catch (error) {
       console.error('Error inserting data:', error);
     } finally {
@@ -106,7 +106,7 @@ const data = [
         { $set: { seats: seats } }
       );
   
-      console.log(`Data for flightId 1 updated successfully!`);
+      ;
     } catch (error) {
       console.error('Error updating data:', error);
     } finally {

@@ -104,7 +104,7 @@ const seedFlights = async (req, res) => {
 
 
 const updateRatings = async (req, res) => {
-  console.log('mulai')
+  
   console.time('updateRatings'); // Start the timer
   try {
     const airports = await prisma.airports.findMany();
@@ -120,7 +120,7 @@ const updateRatings = async (req, res) => {
       });
     }
 
-    console.log('Ratings updated successfully.');
+    ;
   } catch (error) {
     console.error('Error updating ratings:', error);
   } finally {

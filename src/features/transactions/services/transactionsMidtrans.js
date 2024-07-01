@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 
 async function createTransaction(orderDetails) {
   const transaction = await snap.createTransaction(orderDetails);
-  console.log(transaction);
+  ;
   return transaction;
 }
 

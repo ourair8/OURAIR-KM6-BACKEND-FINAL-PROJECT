@@ -6,7 +6,7 @@ const SECRET_KEY = process.env.JWT_SECRET_KEY
 const verifyToken = (req, res, next) => {
     const { authorization } = req.headers;
 
-    console.log(authorization)
+    
 
     if (!authorization || !authorization.split(' ')[1]) {
         return res.status(401).json({
@@ -18,11 +18,11 @@ const verifyToken = (req, res, next) => {
 
     let token = authorization.split(' ')[1];
 
-    console.log(token);
-    console.log(SECRET_KEY)
+    ;
+    
     jwt.verify(token, SECRET_KEY, (err, decoded) => {
         if (err) {
-            console.log(err)
+            
             return res.status(401).json({ 
                 status: false,
                 message: 'Failed to authenticate token',
@@ -40,7 +40,7 @@ const verifyToken = (req, res, next) => {
 const checkRole = (roles) => {
     return (req, res, next) => {
         if (!roles.includes(req.user.role)) {
-            console.log(req.user.role)
+            
             return res.status(403).json({ message: 'Access forbidden: insufficient rights' });
         }
 

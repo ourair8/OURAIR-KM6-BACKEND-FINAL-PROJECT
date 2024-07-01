@@ -24,7 +24,7 @@ const sendEmailAgainController = async function(req, res) {
 
 
     } catch (err) {
-        console.log(err)
+        
         handleError(err, res);
     }
 }

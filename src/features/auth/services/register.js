@@ -70,7 +70,7 @@ const registerUser = async function(name, phoneNumber, email, password){
      return result.otp_code
 
    } catch (err) {
-      console.log(err)
+      
     throw err
    
    }

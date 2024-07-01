@@ -6,7 +6,7 @@ const {
 async function updateAvatar(req, res) {
   try {
     const avatar = req.file;
-    console.log(req.user);
+    ;
     if (!avatar) {
       return res.status(400).json({
         status: "error",

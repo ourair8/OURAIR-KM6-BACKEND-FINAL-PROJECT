@@ -14,7 +14,7 @@ async function updateAvatarService(avatar) {
 
     const fileUrl = response.url;
 
-    console.log(fileUrl);
+    ;
 
     return prisma.users.update({
       where: {

@@ -34,8 +34,8 @@ const getAirports = async function(req, res) {
           }
     }
 
-    console.log(req.query.search)
-    console.log(filters)
+    
+    
 
     const result = await prisma.airports.findMany({
         where : filters,
@@ -59,7 +59,7 @@ const getAirports = async function(req, res) {
         })
 
     } catch(err) {
-        console.log(err)
+        
         handleError(err, res)
     }
 

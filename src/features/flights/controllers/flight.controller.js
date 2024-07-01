@@ -114,7 +114,7 @@ const getFlightById = async function(req, res) {
             data : flight, result
         })
     } catch (err) {
-        console.log(err)
+        
         handleError(err, res)
     }
 }
@@ -1207,7 +1207,7 @@ const getFlightsByDate = async function(req, res){
         })
 
     } catch (err) {
-        console.log(err)
+        
         return res.status(500).json({
             status: false,
             message: 'Error searching flights'
@@ -1450,28 +1450,28 @@ const getFlightsByDateToFrom = async function(req, res){
     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(' ');
 
-    console.log(toAirport)
+    
 
     let fromAirport = String(req.query.fromairport)
     .split(' ')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(' ');
 
-    console.log(fromAirport)
+    
 
     let toCity = String(req.query.tocity)
     .split(' ')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(' ');
 
-    console.log(toCity)
+    
     
     let fromCity = String(req.query.fromcity)
     .split(' ')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(' ');
 
-    console.log(fromCity)
+    
 
     let page = Number(req.query.page) || 1;
     let limit = Number(req.query.limit) || 10;
@@ -1776,7 +1776,7 @@ const getFlightRecommendation = async function(req, res) {
         let fcountry = String(req.query.fromcountry).toUpperCase()
 
         if(!req.query.tocountry && !req.query.fromcountry){
-            console.log("disini")
+            
             const flight = await prisma.flights.findMany({
                 where : {
                     departure_time: {
@@ -1825,7 +1825,7 @@ const getFlightRecommendation = async function(req, res) {
             })
         }
 
-        console.log("disini 2", fcountry)
+        
 
         if(req.query.tocountry && req.query.fromcountry){
 
@@ -2081,7 +2081,7 @@ const {Seat, FlightSeats } = require('../../../db/schema')
 const getAllSeatFlight = async function(req, res) {
     const flightid = Number(req.query.id)
 
-    console.log(flightid)
+    
     try {
         const seat = await FlightSeats.findOne({ flightId: flightid });
 
@@ -2098,7 +2098,7 @@ const getAllSeatFlight = async function(req, res) {
         })
 
     } catch  (err) {
-        console.log(err)
+        
         handleError(err, res);
     }
 }

@@ -25,7 +25,6 @@ model Users {
   created_at    DateTime
   avatar_link   String?
   googleId      String?
-  session_token String?
 
   otps          Otps[]
   transactions  Transactions[]
@@ -173,6 +172,7 @@ model Transactions {
   booker_id         Int?
   total_baby        Int?
   flight_id         Int?
+  transaction_token String?
 
   users   Users?   @relation(fields: [user_id], references: [id], onDelete: SetNull)
   bookers Bookers? @relation(fields: [booker_id], references: [id], onDelete: SetNull)

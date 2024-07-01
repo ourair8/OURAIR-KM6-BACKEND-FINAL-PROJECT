@@ -70,10 +70,10 @@ try {
     // data: passengers,
     // skipDuplicates: true,
 
-  console.log('Seeding finished.');
+  ;
 
 } catch(err){
-    console.log(err)
+    
 } finally {
     
     return res.json({

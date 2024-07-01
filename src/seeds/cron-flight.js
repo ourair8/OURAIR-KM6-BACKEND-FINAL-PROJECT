@@ -61,11 +61,11 @@ const generateRandomFlight = () => {
 };
 
 const testConnection = async () => {
-  console.log(`CRON IS ACTIVE`);
+  ;
 
   try {
     await prisma.$connect();
-    console.log("Koneksi ke database berhasil");
+    ;
   } catch (error) {
     console.error("Koneksi ke database gagal", error);
   } finally {
@@ -77,7 +77,7 @@ testConnection();
 
 const seedFlights = async (req, res) => {
   try {
-    console.log('Running cron job to seed flights');
+    ;
     const flights = [];
     for (let i = 0; i < 10000; i++) {
       flights.push(generateRandomFlight());
@@ -110,7 +110,7 @@ const seedFlights = async (req, res) => {
       error: err.message,
     });
   } finally {
-    console.log('done');
+    ;
     await prisma.$disconnect();
 
     // return res.json({

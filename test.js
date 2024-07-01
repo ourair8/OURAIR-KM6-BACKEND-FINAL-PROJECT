@@ -9,7 +9,7 @@ const test = async ()=> {
         var tomorrow = new Date();
         tomorrow.setDate(today.getDate() - 1);
 
-        console.log(tomorrow)
+        
         const transaction = await prisma.transactions.updateMany({
             where : 
             {
@@ -23,7 +23,7 @@ const test = async ()=> {
 
         //cron , edit
 
-        console.log(transaction)
+        
     } catch (err) {
         throw err
     }
