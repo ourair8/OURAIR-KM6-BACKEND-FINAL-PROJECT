@@ -12,10 +12,10 @@ const client = createClient({
         port: 17803,
         reconnectStrategy: (retries) => {
             if (retries > 10) {
-                return new Error('Too many retries');
+              return new Error('Retry attempts exhausted');
             }
-            return 100;
-        },
+            return Math.min(retries * 50, 2000);
+          },
         keepAlive: true,
         timeout: 60000 
     }

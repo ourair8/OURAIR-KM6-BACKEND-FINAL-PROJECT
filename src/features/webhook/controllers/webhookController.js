@@ -13,8 +13,8 @@ const handleWebhook = async(req, res) => {
         const notification = await prisma.notifications.create({
             data : {
                 user_id : user,
-                title : 'sistem',
-                message : 'Pembayaran tiket sukses !',
+                title : 'Pembayaran Sukses',
+                message : 'Selamat pembayaran tiket Anda sukses !',
                 is_read : false,
                 created_at : new Date()
             }
@@ -29,7 +29,17 @@ const handleWebhook = async(req, res) => {
         const io = req.app.get('io');
         io.emit(`transaction-update-${token.session_token}`, { notification, order_id, transaction_status, payment_type, status });
 
-        res.status(200).json({ message: 'Transaction status and payment information updated successfully.', status });
+        console.log('cekpoint')
+        console.log(token.session_token)
+        console.log('cekpoint')
+        console.log(notification)
+        console.log('cekpoint')
+        console.log(transaction_status)
+        console.log('cekpoint')
+        console.log(payment_type)
+        console.log('cekpoint')
+        console.log(status)
+        res.status(200).json({ message: 'Selamat pembayaran tiket Anda sukses.', status });
     } catch (error) {
         console.error(error);
         handleError(error, res);

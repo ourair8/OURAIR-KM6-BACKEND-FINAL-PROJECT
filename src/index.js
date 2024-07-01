@@ -22,6 +22,15 @@ Sentry.init({ dsn: process.env.SENTRY_DSN });
 
 client.connect();
 
+client.on('error', (err) => {
+  if (err.code === 'ECONNRESET') {
+    console.error('Connection reset by server, attempting to reconnect...');
+    client.connect().catch(console.error);
+  } else {
+    console.error('Redis client error:', err);
+  }
+});
+
 const swaggerDocument = YAML.parse(file);
 
 var corsOptions = {

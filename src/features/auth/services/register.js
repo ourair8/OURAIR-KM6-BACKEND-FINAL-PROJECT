@@ -59,7 +59,7 @@ const registerUser = async function(name, phoneNumber, email, password){
          data : {
             user_id : user.id,
             title : "Welcome",
-            message : `Hello ${user.name}, thank you for joining ourair`,
+            message : `Halo ${user.name}, selamat datang di OurAir!`,
             is_read : false,
             created_at : new Date()
          }
