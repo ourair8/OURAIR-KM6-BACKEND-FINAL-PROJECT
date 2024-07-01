@@ -5,6 +5,7 @@ const app = require('../index');
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
+        origin: "https://ourair.tech", 
         methods: ['GET', 'POST'],
         allowedHeaders: ['my-custom-header'],
         credentials: true
