@@ -2,6 +2,7 @@
 
 const prisma = require('../../../config/prisma.config');
 const { ErrorWithStatusCode } = require('../../../middleware/errorHandler');
+const bcrypt = require('bcrypt');
 
 const getAllUsersService = async(page, limit) => {
     try {
@@ -25,19 +26,22 @@ const getUserByIdService = async(id) => {
     return user;
 };
 
-const createUserService = async(data) => {
-        try {
-            const user = await prisma.users.create({
-                data: {
-                    ...data,
-                    created_at: new Date()
-                }
-            });
-            return user;
-       } catch (err) {
-        
-        throw err
-       }
+const createUserService = async (data) => {
+    try {
+        const hashedPassword = await bcrypt.hash(data.password, 10);
+
+        const user = await prisma.users.create({
+            data: {
+                ...data,
+                password: hashedPassword,
+                created_at: new Date()
+            }
+        });
+
+        return user;
+    } catch (err) {
+        throw err;
+    }
 };
 
 const updateUserService = async(id, data) => {
