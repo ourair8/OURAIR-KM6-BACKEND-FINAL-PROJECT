@@ -4,7 +4,7 @@ const app = require('../index'); // Assuming this exports your Express app corre
 
 const server = http.createServer(app);
 const io = new Server(server, {
-  allowEIO3: true,
+  allowEIO3: true, 
   }
 );
 
