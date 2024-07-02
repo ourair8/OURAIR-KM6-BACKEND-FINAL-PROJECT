@@ -8,7 +8,7 @@ const endpoints = [
     '/trigger-seed-airplanes',     
     '/thumbnail-airport-seed',     
     '/update-airports-ratings',      
-    '/trigger-user-seeder',        
+    // '/trigger-user-seeder',        
     '/flight-seed',
 ];
 

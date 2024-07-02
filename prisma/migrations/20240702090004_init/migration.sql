@@ -123,7 +123,6 @@ CREATE TABLE "passengers" (
 -- CreateTable
 CREATE TABLE "tickets" (
     "id" SERIAL NOT NULL,
-    "user_id" INTEGER,
     "passanger_id" INTEGER NOT NULL,
     "flight_id" INTEGER,
     "transaction_id" INTEGER,
@@ -147,6 +146,7 @@ CREATE TABLE "transactions" (
     "booker_id" INTEGER,
     "total_baby" INTEGER,
     "flight_id" INTEGER,
+    "transaction_token" TEXT,
 
     CONSTRAINT "transactions_pkey" PRIMARY KEY ("id")
 );

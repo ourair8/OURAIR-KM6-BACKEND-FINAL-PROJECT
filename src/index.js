@@ -1,5 +1,7 @@
 "use strict";
 
+const prisma = require("./config/prisma.config");
+
 const express = require("express");
 const bodyparser = require("body-parser");
 const cookieParser = require("cookie-parser");
@@ -95,6 +97,15 @@ const app = express()
   .use("/api/v1", v1)
   .get("/apasih", (req, res) => {
     res.render("websocket");
+  })
+  .get("/hapus", async (req, res)=> {
+    try {
+      const deletedUsers = await prisma.flights.deleteMany();
+;
+      return res.json({status : true})
+    } catch (err) {
+      throw err
+    }
   })
   .get("/email", (req, res) => {
     const data = { otp: "247824", name: "Our Air wow" };
