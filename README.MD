@@ -6,9 +6,9 @@ OurAir adalah sebuah layanan pemesanan tiket pesawat yang berfokus pada memberik
 
 ## fitur
 
-- Authentication ; 
+- Authentication : 
 register , login / login with google , otp , forgot password 
-- Landing page ; 
+- Landing page : 
 Pencarian Penerbangan , Rekomendasi Destinasi
 - Checkout : 
 Isi Data Pemesan, Isi Data Penumpang , Pilih Kursi , Detail Penerbangan , Pembayaran with midtrans , Donasi Sustainable Development Goals (SDGs)
