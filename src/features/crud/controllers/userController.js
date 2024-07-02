@@ -34,15 +34,22 @@ const getUserByIdController = async(req, res) => {
     }
 };
 
-const createUserController = async(req, res) => {
+const createUserController = async (req, res) => {
     try {
-        const user = await createUserService(req.body);
-        res.status(201).json(user);
+        const data = req.body;
+
+        // // Validasi data pengguna
+        // if (!data.email || !data.password || !data.name) {
+        //     return res.status(400).json({ message: 'Email, password, and name are required.' });
+        // }
+
+        const user = await createUserService(data);
+        res.status(201).json({ message: 'User created successfully', user });
     } catch (err) {
-        handleError(err, res);
+        console.error(err);
+        res.status(500).json({ message: 'Internal Server Error' });
     }
 };
-
 const updateUserController = async(req, res) => {
     try {
         const user = await updateUserService(parseInt(req.params.id), req.body);
