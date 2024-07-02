@@ -33,21 +33,30 @@ client.on('error', (err) => {
 
 const swaggerDocument = YAML.parse(file);
 
-var corsOptions = {
-  origin: [
-    "https://ourair.tech",
-    "http://localhost:5173",
-    "http://localhost:5174",
-    "http://localhost:3001",
-    "http://localhost:3000",
-    "https://ourair.my.id",
-    "https://accounts.google.com",
-    "https://bw2nj1xt-3001.asse.devtunnels.ms"
-  ],
-  optionsSuccessStatus: 200,
-  credentials: true
-};
+const allowedOrigins = [
+  "https://ourair.tech",
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "http://localhost:3001",
+  "http://localhost:3000",
+  "https://ourair.my.id",
+  "https://accounts.google.com/o/oauth2/v2",
+  "https://bw2nj1xt-3001.asse.devtunnels.ms",
+  "bw2nj1xt-3001.asse.devtunnels.ms",
+];
 
+const corsOptions = {
+  origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) !== -1) {
+          callback(null, true);
+      } else {
+          callback(new Error('Not allowed by CORS'));
+      }
+  },
+  optionsSuccessStatus: 200,
+  credentials: true,
+};
 
 const limiterfast = rateLimit({
   windowMs: 60 * 1000,
