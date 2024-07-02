@@ -56,8 +56,8 @@ const sendNotificationToAll = async (req, res) => {
   try {
     const { title, message } = req.body;
 
-    if (!title || !message) {
-      return res.status(400).json({ error: "Title and message are required" });
+    if (typeof title !== 'string' || typeof message !== 'string') {
+      return res.status(400).json({ error: "Title and message must be strings" });
     }
 
     const notifications = await postNotificationToAll(title, message);
@@ -73,6 +73,7 @@ const sendNotificationToAll = async (req, res) => {
     handleError(error, res);
   }
 };
+
 
 module.exports = {
   getNotifications,
