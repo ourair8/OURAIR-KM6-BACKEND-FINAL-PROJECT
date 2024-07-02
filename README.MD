@@ -1,20 +1,19 @@
 
 # OurAir
 
-Sebuah aplikasi web yang menyediakan layanan penerbangan pesawat
+OurAir adalah sebuah layanan pemesanan tiket pesawat yang berfokus pada memberikan pengalaman terbaik kepada pelanggannya. Melalui platform ini, pengguna dapat mencari penerbangan, membandingkan harga, dan melakukan pemesanan dengan mudah. OurAir bertujuan untuk menyediakan layanan berkualitas tinggi dan kemudahan dalam pemesanan penerbangan, dengan dukungan pelanggan yang siap membantu kapan saja.
 
 
 ## fitur
 
-- authentifikasi
-- pencarian penerbangan
-- detail penerbangan
-- detail airport
-- pemesanan penerbangan
-- notifikasi
-- pembayaran menggunakan midtrans
-- seeder
-
+- Authentication : 
+register , login / login with google , otp , forgot password 
+- Landing page : 
+Pencarian Penerbangan , Rekomendasi Destinasi
+- Checkout : 
+Isi Data Pemesan, Isi Data Penumpang , Pilih Kursi , Detail Penerbangan , Pembayaran with midtrans , Donasi Sustainable Development Goals (SDGs)
+- Other features : 
+Riwayat Pesanan , Tentang Kami , Notification , Profile User , seeder
 
 
 ## kontribusi
