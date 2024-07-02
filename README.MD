@@ -19,7 +19,7 @@ Sebuah aplikasi web yang menyediakan layanan penerbangan pesawat
 
 ## kontribusi
 
---Tim Our Air Kelompok 8--
+--Tim Our Air Kelompok 8
 Frontend:
 1. Muh. Dadang Hawari - Universitas Negeri Makassar
 2. Shofiah Hawa - Universitas Gunadarma
