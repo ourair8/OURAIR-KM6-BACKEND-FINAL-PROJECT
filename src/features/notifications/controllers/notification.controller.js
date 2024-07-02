@@ -62,7 +62,7 @@ const sendNotificationToAll = async (req, res) => {
 
     const notifications = await postNotificationToAll(title, message);
     const io = req.app.get('io');
-    io.emit("notification-all", notifications);
+    io.emit("data", notifications);
 
     res.status(200).json({
       status: true,

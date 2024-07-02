@@ -6,7 +6,7 @@ const testwebsocket = async function(req, res) {
     const token = req.token
     
 
-    io.emit(`notification-all`, `Hello, Transaksi Selesai`);
+    io.emit(`data`, `Hello, Transaksi Selesai`);
     i++;
     return res.json({
         message: `Notification number ${i} sent!`
