@@ -19,13 +19,13 @@ Sebuah aplikasi web yang menyediakan layanan penerbangan pesawat
 
 ## kontribusi
 
---Tim Our Air Kelompok 8
-Frontend:
+Tim Our Air Kelompok 8
+--Frontend:
 1. Muh. Dadang Hawari - Universitas Negeri Makassar
 2. Shofiah Hawa - Universitas Gunadarma
 3. Andry Setiawan Manzanaris - Universitas Bina Sarana Informatika
 
-Backend: 
+--Backend: 
 1. Naufal Andya Faiz - Universitas Gunadarma
 2. Adam Wisnu Pradana - Universitas Telkom
 3. Haziq Duha Zainul Ihsan - Universitas Gunadarma
