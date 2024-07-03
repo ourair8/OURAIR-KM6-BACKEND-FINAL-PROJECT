@@ -34,7 +34,6 @@ const createUserService = async (data) => {
                 OR: [
                     { email: data.email },
                     { phone_number: data.phone_number },
-                    { username: data.username }
                 ]
             }
         });
@@ -45,8 +44,6 @@ const createUserService = async (data) => {
                 conflictField = 'Email';
             } else if (existingUser.phone_number === data.phone_number) {
                 conflictField = 'Phone number';
-            } else if (existingUser.username === data.username) {
-                conflictField = 'Username';
             }
             throw new ErrorWithStatusCode(`${conflictField} is already in use`, 409);
         }
@@ -55,7 +52,6 @@ const createUserService = async (data) => {
 
         const userData = {
             name: data.name,
-            username: data.username,
             email: data.email,
             phone_number: data.phone_number,
             password: hashedPassword,
