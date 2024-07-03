@@ -37,6 +37,7 @@ const swaggerDocument = YAML.parse(file);
 
 var corsOptions = {
   origin: [
+    "https://ourair-admin.vercel.app",
     "https://ourair.tech",
     "http://localhost:5173",
     "http://localhost:5174",
