@@ -108,7 +108,7 @@ const app = express()
       throw err
     }
   })
-  .get("/api/v1/donation", async (req, res) => {
+  .get("/api/v1/donation", limiterfast, async (req, res) => {
       try {
         const dailyDonations = await prisma.$queryRaw`
             SELECT DATE_TRUNC('day', created_at) AS day, CAST(SUM(donation) AS INTEGER) AS total_donation

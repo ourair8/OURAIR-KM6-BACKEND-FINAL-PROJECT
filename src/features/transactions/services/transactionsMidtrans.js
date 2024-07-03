@@ -81,12 +81,24 @@ const updateTransaction = async (id, updateData) => {
 
 const deleteTransaction = async (id) => {
   try {
+
+    const isexist = await prisma.transactions.findUnique({
+      where : {
+        id : Number(id)
+      }
+    })
+
+    if(!isexist) {
+      throw new ErrorWithStatusCode(`transaction with id ${id} is not exist`, 404)
+    }
+
     const transaction = await prisma.transactions.delete({
       where: { id: Number(id) },
     });
+
     return transaction;
   } catch (error) {
-    throw new Error('Failed to delete transaction');
+    throw error
   }
 };
 

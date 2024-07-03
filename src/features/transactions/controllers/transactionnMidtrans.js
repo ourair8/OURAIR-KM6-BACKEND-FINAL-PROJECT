@@ -77,9 +77,10 @@ const handleUpdateTransaction = async (req, res) => {
 const handleDeleteTransaction = async (req, res) => {
   try {
     await deleteTransaction(req.params.id);
-    res.status(204).json({ message: "Transaction deleted successfully" });
+    return res.status(204).json({ message: "Transaction deleted successfully" });
   } catch (error) {
-    res.status(500).json({ error: "Internal Server Error" });
+    console.log(error)
+    handleError(error, res)
   }
 };
 
