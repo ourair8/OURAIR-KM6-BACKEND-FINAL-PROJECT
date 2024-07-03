@@ -9,9 +9,9 @@ const handleWebhook = async (req, res) => {
         console.log(req.body)
         const { order_id, transaction_status, payment_type } = req.body;
 
-        // if (transaction_status === "pending"){
-        //     return res.json( {status : true })
-        // }
+        if (transaction_status === "pending"){
+            return res.json( {status : true })
+        }
         
         const transaction = await prisma.transactions.findUnique({
             where: {
