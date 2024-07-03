@@ -1,5 +1,7 @@
 "use strict";
 
+const { ErrorWithStatusCode, handleError } = require("../../../middleware/errorHandler");
+
 const snap = require("../../../config/midtrans");
 // const { PrismaClient } = require("@prisma/client");
 const prisma = require("../../../config/prisma.config");
@@ -46,13 +48,34 @@ const getTransactionById = async (id) => {
 
 const updateTransaction = async (id, updateData) => {
   try {
+
+    const isexist = await prisma.transactions.findUnique({
+      where : {
+        id : Number(id)
+      }
+    })
+
+    if(!isexist) {
+      throw new ErrorWithStatusCode(`transaction with id ${id} is not exist`, 404)
+    }
+
     const transaction = await prisma.transactions.update({
       where: { id: Number(id) },
-      data: updateData,
+      data: {
+        midtrans_order_id : updateData.midtrans_order_id,
+        adult_price : Number(updateData.adult_price),
+        baby_price : Number(updateData.baby_price),
+        tax_price : Number(updateData.tax_price),
+        total_price : Number(updateData.total_price),
+        status : updateData.status
+      },
     });
+
+
     return transaction;
   } catch (error) {
-    throw new Error('Failed to update transaction');
+    console.log(error)
+    throw error
   }
 };
 

@@ -8,6 +8,8 @@ const {
   deleteTransaction,
 } = require("../services/transactionsMidtrans");
 
+const { ErrorWithStatusCode, handleError } = require("../../../middleware/errorHandler");
+
 const handleCreateTransaction = async (req, res) => {
   try {
     const orderDetails = {
@@ -63,12 +65,12 @@ const handleUpdateTransaction = async (req, res) => {
   try {
     const updateData = req.body;
     const updatedTransaction = await updateTransaction(
-      req.params.id,
+      Number(req.params.id),
       updateData
     );
     res.status(200).json(updatedTransaction);
   } catch (error) {
-    res.status(500).json({ error: "Internal Server Error" });
+    handleError(error, res)
   }
 };
 
