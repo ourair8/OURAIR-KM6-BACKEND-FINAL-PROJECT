@@ -107,6 +107,60 @@ const app = express()
       throw err
     }
   })
+  .get("/api/v1/donation", async (req, res) => {
+      try {
+        const dailyDonations = await prisma.$queryRaw`
+        SELECT DATE_TRUNC('day', created_at) AS day, CAST(SUM(donation) AS INTEGER) AS total_donation
+        FROM transactions
+        WHERE created_at >= CURRENT_DATE - INTERVAL '7' DAY
+        GROUP BY DATE_TRUNC('day', created_at)
+    `;
+
+    const weeklyDonations = await prisma.$queryRaw`
+        SELECT DATE_TRUNC('week', created_at) AS week, CAST(SUM(donation) AS INTEGER) AS total_donation
+        FROM transactions
+        WHERE created_at >= CURRENT_DATE - INTERVAL '30' DAY
+        GROUP BY DATE_TRUNC('week', created_at)
+    `;
+
+    const monthlyDonations = await prisma.$queryRaw`
+        SELECT DATE_TRUNC('month', created_at) AS month, CAST(SUM(donation) AS INTEGER) AS total_donation
+        FROM transactions
+        WHERE created_at >= DATE_TRUNC('month', CURRENT_DATE)
+        GROUP BY DATE_TRUNC('month', created_at)
+    `;
+
+    // Convert BigInt values to strings before sending the response
+    const formattedDailyDonations = dailyDonations.map(({ day, total_donation }) => ({
+        day,
+        total_donation: total_donation.toString(),
+    }));
+
+    const formattedWeeklyDonations = weeklyDonations.map(({ week, total_donation }) => ({
+        week,
+        total_donation: total_donation.toString(),
+    }));
+
+    const formattedMonthlyDonations = monthlyDonations.map(({ month, total_donation }) => ({
+        month,
+        total_donation: total_donation.toString(),
+    }));
+
+    return res.json({
+        status: true,
+        message: 'success',
+        data: {
+            dailyDonations: formattedDailyDonations,
+            weeklyDonations: formattedWeeklyDonations,
+            monthlyDonations: formattedMonthlyDonations,
+        }
+    });
+    
+      } catch (error) {
+          throw error
+    }
+  }
+  )
   .get("/email", (req, res) => {
     const data = { otp: "247824", name: "Our Air wow" };
     res.render("email", data);
