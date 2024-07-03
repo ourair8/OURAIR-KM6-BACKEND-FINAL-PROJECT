@@ -69,7 +69,7 @@ async function updateProfile(req, res) {
     const userId = req.user.id;
     const data = req.body;
 
-    const updatableFields = ["name", "username", "phone_number", "email"];
+    const updatableFields = ["name", "phone_number", "email"];
     const updateData = {};
 
     for (const field of updatableFields) {

@@ -37,7 +37,6 @@ const resetPassword = async function(req, res) {
             const payload = {
                 id : result.id,
                 name : result.name,
-                username : result.username,
                 email : result.email,
                 phone_number : result.phone_number,
                 isVerified : result.is_Verified,

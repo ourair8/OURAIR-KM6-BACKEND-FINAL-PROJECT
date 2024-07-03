@@ -38,7 +38,6 @@ passport.use(
             phone_number: "",
             password: "",
             created_at: new Date(),
-            username: null,
             role: Role.USER,
             is_Verified: true,
             role: Role.USER,

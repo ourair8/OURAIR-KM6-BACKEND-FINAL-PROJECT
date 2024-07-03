@@ -53,7 +53,7 @@ const checkRole = (roles) => {
 
 const whoAmIController = (req, res) => {
     try {
-        const { id, name, username, email, phone_number, isVerified, role } = req.user;
+        const { id, name, email, phone_number, isVerified, role } = req.user;
 
         res.json({
             status: true,
@@ -61,7 +61,6 @@ const whoAmIController = (req, res) => {
             data: {
                 id,
                 name,
-                username,
                 email,
                 phone_number,
                 isVerified,

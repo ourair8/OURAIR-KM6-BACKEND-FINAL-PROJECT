@@ -14,7 +14,6 @@ async function userSeeder(req,res) {
     const createdAt = new Date(today.getTime() + Math.random() * (twoMonthsLater.getTime() - today.getTime()));
     users.push({
       name: faker.person.fullName(),
-      username: faker.internet.userName() + i,
       phone_number: faker.phone.number(),
       password: faker.internet.password(),
       email: faker.internet.email(),
