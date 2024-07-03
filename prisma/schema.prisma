@@ -158,7 +158,7 @@ model Tickets {
 
 model Transactions {
   id                Int      @id @default(autoincrement())
-  midtrans_order_id String?  
+  midtrans_order_id String @unique  
   adult_price       Int
   baby_price        Int
   tax_price         Int
