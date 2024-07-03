@@ -186,12 +186,12 @@ model Transactions {
 
 model Payments {
   id             Int      @id @default(autoincrement())
-  transaction_id Int      @unique
+  transaction_id Int?      @unique
   payment_type   String
   payment_status String
   created_at     DateTime
 
-  transaction Transactions @relation(fields: [transaction_id], references: [id])
+  transaction Transactions? @relation(fields: [transaction_id], references: [id], onDelete: SetNull)
 
   @@map("payments")
 }

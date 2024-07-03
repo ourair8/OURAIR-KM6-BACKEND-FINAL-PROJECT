@@ -44,7 +44,7 @@ const checkEmailSendTokentoEmail = async function(req, res) {
         const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '23h' });
 
         
-        let link = `http://localhost:5173/ganti-password/${token}`
+        let link = `https://ourair.tech/ganti-password/${token}`
 
         
         let html = await getHTML("forgotPwEmail.ejs", {name : result.name, resetPasswordUrl : link})
