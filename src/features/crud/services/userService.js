@@ -28,14 +28,43 @@ const getUserByIdService = async(id) => {
 
 const createUserService = async (data) => {
     try {
+
+        const existingUser = await prisma.users.findFirst({
+            where: {
+                OR: [
+                    { email: data.email },
+                    { phone_number: data.phone_number },
+                    { username: data.username }
+                ]
+            }
+        });
+
+        if (existingUser) {
+            let conflictField;
+            if (existingUser.email === data.email) {
+                conflictField = 'Email';
+            } else if (existingUser.phone_number === data.phone_number) {
+                conflictField = 'Phone number';
+            } else if (existingUser.username === data.username) {
+                conflictField = 'Username';
+            }
+            throw new ErrorWithStatusCode(`${conflictField} is already in use`, 409);
+        }
+
         const hashedPassword = await bcrypt.hash(data.password, 10);
 
+        const userData = {
+            name: data.name,
+            username: data.username,
+            email: data.email,
+            phone_number: data.phone_number,
+            password: hashedPassword,
+            role: data.role,
+            created_at: new Date()
+        };
+
         const user = await prisma.users.create({
-            data: {
-                ...data,
-                password: hashedPassword,
-                created_at: new Date()
-            }
+            data: userData
         });
 
         return user;

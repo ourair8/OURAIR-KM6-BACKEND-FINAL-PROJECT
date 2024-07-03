@@ -36,20 +36,40 @@ const getUserByIdController = async(req, res) => {
 
 const createUserController = async (req, res) => {
     try {
-        const data = req.body;
+        const { name, username, email, phone_number, password, role } = req.body;
 
-        // // Validasi data pengguna
-        // if (!data.email || !data.password || !data.name) {
-        //     return res.status(400).json({ message: 'Email, password, and name are required.' });
-        // }
+        if (!name || typeof name !== 'string' || name.length < 3 || name.length > 50) {
+            return res.status(400).json({ message: 'Name must be a string between 3 and 50 characters' });
+        }
 
+        if (!username || typeof username !== 'string' || username.length < 3 || username.length > 30) {
+            return res.status(400).json({ message: 'Username must be a string between 3 and 30 characters' });
+        }
+
+        if (!email || typeof email !== 'string') {
+            return res.status(400).json({ message: 'Email must be a string' });
+        }
+
+        if (!phone_number || typeof phone_number !== 'string' || phone_number.length < 10 || phone_number.length > 15) {
+            return res.status(400).json({ message: 'Phone number must be a string between 10 and 15 characters' });
+        }
+
+        if (!password || typeof password !== 'string' || password.length < 6) {
+            return res.status(400).json({ message: 'Password must be a string with at least 6 characters' });
+        }
+
+        if (!role || typeof role !== 'string') {
+            return res.status(400).json({ message: 'Role must be a string' });
+        }
+
+        const data = { name, username, email, phone_number, password, role };
         const user = await createUserService(data);
         res.status(201).json({ message: 'User created successfully', user });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Internal Server Error' });
+        handleError(err, res)
     }
 };
+
 const updateUserController = async(req, res) => {
     try {
         const user = await updateUserService(parseInt(req.params.id), req.body);
