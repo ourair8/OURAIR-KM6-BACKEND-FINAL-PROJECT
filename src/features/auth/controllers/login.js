@@ -43,6 +43,7 @@ const loginByEmailController = async function (req, res) {
       data: { ...payload, token },
     });
   } catch (err) {
+    console.log(err)
     handleError(err, res);
   }
 };
@@ -79,7 +80,7 @@ const loginOAuthController = async function (req, res) {
   ); // redirect to client
 
   } catch (err) {
-    
+    console.log(err)
     throw err
   }
   // return res.status(200).json({
