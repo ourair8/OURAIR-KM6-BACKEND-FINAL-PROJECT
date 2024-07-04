@@ -26,6 +26,7 @@ const loginByEmailController = async function (req, res) {
       phone_number: result.phone_number,
       isVerified: result.is_Verified,
       role: result.role,
+      avatar_link: result.avatar_link,
     };
 
     const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "23h" });
@@ -65,6 +66,7 @@ const loginOAuthController = async function (req, res) {
     phone_number: result.phone_number,
     isVerified: result.is_Verified,
     role: result.role,
+    avatar_link: result.avatar_link,
   };
 
   let token = jwt.sign(payload, SECRET_KEY, { expiresIn: "23h" });
